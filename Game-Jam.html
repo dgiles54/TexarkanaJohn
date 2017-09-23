@@ -1,8 +1,8 @@
 <!doctype html> 
 <html lang="en"> 
-<head> 
-	<meta charset="UTF-8" />
-	<title>Phaser - Making your first game, part 1</title>
+<head>
+    <meta charset="UTF-8" />
+    <title>Phaser - Making your first game, part 1</title>
     <script src="phaser/phaser.min.js"></script>
     <style type="text/css">
         body {
@@ -10,47 +10,79 @@
         }
     </style>
 </head>
+
 <body>
 
-<script type="text/javascript">
+    <script type="text/javascript">
+        var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+            preload: preload,
+            create: create,
+            update: update
+        });
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+        function preload() {
 
-function preload() {
-    
-    game.load.tilemap('temple','assets/tilemaps/Level1.json',null,Phaser.Tilemap.TILED_JSON);
-    
-    game.load.image('moctRevengeTileset','assets/tilesets/moctRevengeTileset.png');
-}
-    var map;
-    var layer;
+            game.load.tilemap('temple', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
 
-function create() {
-    
-    game.stage.backgroundColor = '#787878';
+            game.load.image('moctRevengeTileset', 'assets/tilesets/moctRevengeTileset.png');
+            game.load.image('player', 'assets/sprites/player.png');
+            game.load.image('lever', 'assets/sprites/lever.png');
+            game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
+        }
+        var map;
+        var layerBG, layerPlatforms, layerLadders;
+        var player;
+        var cursors;
 
-    //  The 'mario' key here is the Loader key given in game.load.tilemap
-    map = game.add.tilemap('temple');
+        function create() {
 
-    //  The first parameter is the tileset name, as specified in the Tiled map editor (and in the tilemap json file)
-    //  The second parameter maps this name to the Phaser.Cache key 'tiles'
-    map.addTilesetImage('moctRevengeTileset');
-    
-    //  Creates a layer from the World1 layer in the map data.
-    //  A Layer is effectively like a Phaser.Sprite, so is added to the display list.
-    layer = map.createLayer('bg');
-    layer = map.createLayer('platforms');
-    layer = map.createLayer('ladders');
+            game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    //  This resizes the game world to match the layer dimensions
-    layer.resizeWorld();
+            game.stage.backgroundColor = '#787878';
 
-}
+            //  The 'mario' key here is the Loader key given in game.load.tilemap
+            map = game.add.tilemap('temple');
 
-function update() {
-}
+            //  The first parameter is the tileset name, as specified in the Tiled map editor (and in the tilemap json file)
+            //  The second parameter maps this name to the Phaser.Cache key 'tiles'
+            map.addTilesetImage('moctRevengeTileset');
 
-</script>
+            //  Creates a layer from the World1 layer in the map data.
+            //  A Layer is effectively like a Phaser.Sprite, so is added to the display list.
+            layerBG = map.createLayer('bg');
+            layerPlatforms = map.createLayer('platforms');
+            layerLadders = map.createLayer('ladders');
+            
+            map.setCollisionBetween(1, 12, true, 'platforms');
+
+            //  This resizes the game world to match the layer dimensions
+            layerBG.resizeWorld();
+
+            player = game.add.sprite(20, 150, 'player');
+            player.anchor.setTo(0.5, 0.5);
+            game.physics.enable(player);
+            player.body.gravity.y = 800;
+            player.body.bounce.y = 0.2;
+
+            cursors = game.input.keyboard.createCursorKeys();
+
+        }
+
+        function update() {
+
+            game.physics.arcade.collide(player, layerPlatforms);
+
+            if (cursors.left.isDown) {
+                player.scale.setTo(-1, 1);
+                player.body.acceleration.x = -500;
+            } else if (cursors.right.isDown) {
+                player.scale.setTo(1, 1);
+                player.body.acceleration.x = 500;
+            } else {
+                player.body.acceleration.x = 0;
+            }
+        }
+    </script>
 
 </body>
 </html>
