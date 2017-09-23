@@ -1,5 +1,6 @@
-<!doctype html> 
-<html lang="en"> 
+<!doctype html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <title>Phaser - Making your first game, part 1</title>
@@ -8,6 +9,7 @@
         body {
             margin: 0;
         }
+
     </style>
 </head>
 
@@ -25,7 +27,7 @@
             game.load.tilemap('temple', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
 
             game.load.image('moctRevengeTileset', 'assets/tilesets/moctRevengeTileset.png');
-            game.load.image('player', 'assets/sprites/player.png');
+            game.load.spritesheet('player', 'assets/sprites/player_walk.png', 64, 64);
             game.load.image('lever', 'assets/sprites/lever.png');
             game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         }
@@ -52,7 +54,7 @@
             layerBG = map.createLayer('bg');
             layerPlatforms = map.createLayer('platforms');
             layerLadders = map.createLayer('ladders');
-            
+
             map.setCollisionBetween(1, 12, true, 'platforms');
 
             //  This resizes the game world to match the layer dimensions
@@ -63,6 +65,9 @@
             game.physics.enable(player);
             player.body.gravity.y = 800;
             player.body.bounce.y = 0.2;
+            player.body.drag.x = 2000;
+            player.body.collideWorldBounds = true;
+            player.animations.add('walk', [0, 1, 2, 3], 5, true);
 
             cursors = game.input.keyboard.createCursorKeys();
 
@@ -74,15 +79,20 @@
 
             if (cursors.left.isDown) {
                 player.scale.setTo(-1, 1);
-                player.body.acceleration.x = -500;
+                player.animations.play('walk');
+                player.body.velocity.x = -200;
             } else if (cursors.right.isDown) {
                 player.scale.setTo(1, 1);
-                player.body.acceleration.x = 500;
+                player.animations.play('walk');
+                player.body.velocity.x = 200;
             } else {
-                player.body.acceleration.x = 0;
+                player.animations.stop('walk');
+                player.body.velocity.x = 0;
             }
         }
+
     </script>
 
 </body>
+
 </html>
