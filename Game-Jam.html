@@ -20,7 +20,7 @@ function preload() {
     
     game.load.tilemap('temple','assets/tilemaps/Level1.json',null,Phaser.Tilemap.TILED_JSON);
     
-    game.load.image('tiles','assets/tilesets/moctRevengeTileset.png')
+    game.load.image('moctRevengeTileset','assets/tilesets/moctRevengeTileset.png')
 }
     var map;
     var layer;
@@ -34,7 +34,7 @@ function create() {
 
     //  The first parameter is the tileset name, as specified in the Tiled map editor (and in the tilemap json file)
     //  The second parameter maps this name to the Phaser.Cache key 'tiles'
-    map.addTilesetImage('moctRevengeTileset', 'tiles');
+    map.addTilesetImage('moctRevengeTileset');
     
     //  Creates a layer from the World1 layer in the map data.
     //  A Layer is effectively like a Phaser.Sprite, so is added to the display list.
