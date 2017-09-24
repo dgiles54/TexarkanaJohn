@@ -17,6 +17,6 @@ var gameOverState = {
     },
 
     actionOnClick: function () {
-        game.state.start('gameState');
+        location.reload();
     }
 };
