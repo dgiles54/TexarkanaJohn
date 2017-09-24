@@ -216,7 +216,7 @@ var gameState = {
         }
        if(player.overlap(endDoor)){
            
-           game.state.start('gameOverState');
+           game.state.start('gameWinState');
        } 
         
     }
