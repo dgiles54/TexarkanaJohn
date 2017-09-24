@@ -204,6 +204,9 @@ var gameState = {
                 healthBar.frame += 1;
                 blowdart.kill();
                 blowdartCreated = false;
+                if(healthBar.frame == healthBar.size){
+                    game.state.start('gameOverState');
+                }
             }
         }
     }
