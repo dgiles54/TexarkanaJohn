@@ -2,7 +2,7 @@ var map;
 var layerBG, layerPlatforms, layerLadders, layerPlayer;
 var player, health = 5;
 var cursors, useKey;
-var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart;
+var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart, endDoor;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -50,6 +50,9 @@ var gameState = {
         //  A Layer is effectively like a Phaser.Sprite, so is added to the display list.
         layerBG = map.createLayer('bg');
         door = game.add.sprite(700, 125, 'door');
+        endDoor = game.add.sprite(750,125,'door');
+        endDoor.visible = false;
+        game.physics.enable(endDoor);
         game.physics.enable(door);
         layerPlatforms = map.createLayer('platforms');
         layerLadders = map.createLayer('ladders');
@@ -122,8 +125,7 @@ var gameState = {
 
     update: function () {
 
-        game.debug.body(player);
-        game.debug.body(pressure_plate);
+        
 
         map.setTileIndexCallback(5, playerLadderClimb, null, layerLadders);
 
@@ -212,6 +214,11 @@ var gameState = {
                 }
             }
         }
+       if(player.overlap(endDoor)){
+           
+           game.state.start('gameOverState');
+       } 
+        
     }
 };
 
@@ -235,16 +242,11 @@ function createBlowDart() {
 }
 
 
-function findWord(array, word) {
-    return -1 < array.map(function (item) {
-        return item.toLowerCase();
-    }).indexOf(word.toLowerCase());
-}
 
 
 function playerLadderClimb() {
     if (useKey.isDown) {
-        player.body.gravity.y = -100;
+        player.body.velocity.y = -100;
     }
 
 }
