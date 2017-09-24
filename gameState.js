@@ -118,6 +118,8 @@ var gameState = {
         pressure_plate.body.immovable = true;
 
         pressure_plate.body.setSize(30, 5, 0, 30);
+        
+        door.body.setSize(50,160,30,0);
 
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
@@ -125,7 +127,7 @@ var gameState = {
 
     update: function () {
 
-        
+        game.debug.body(door);
 
         map.setTileIndexCallback(5, playerLadderClimb, null, layerLadders);
 
