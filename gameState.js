@@ -2,13 +2,15 @@ var map;
 var layerBG, layerPlatforms, layerLadders, layerPlayer;
 var player, health = 5;
 var cursors, useKey;
-var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart;
+var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart, ladder;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
     switchTriggered = false,
     blowdartCreated = false;
 var leverSound, plateSound;
+
+
 
 var gameState = {
 
@@ -28,6 +30,7 @@ var gameState = {
         game.load.image('blowdart', 'assets/sprites/blowdart.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
+        game.load.image('ladder','assets/sprites/ladder.png');
 
 
     },
@@ -52,12 +55,15 @@ var gameState = {
         door = game.add.sprite(700, 125, 'door');
         game.physics.enable(door);
         layerPlatforms = map.createLayer('platforms');
-        layerLadders = map.createLayer('ladders');
+        //layerLadders = map.createLayer('ladders');
+        
+        ladder = game.add.sprite(580, 290, 'ladder');
+        game.physics.enable(ladder);
 
 
 
         map.setCollisionBetween(1, 12, true, 'platforms');
-        map.setCollisionBetween(1, 12, false, 'ladders');
+        //map.setCollisionBetween(1, 12, true, 'ladders');
 
 
         lever = game.add.sprite(1, 300, 'lever');
@@ -124,8 +130,9 @@ var gameState = {
 
         game.debug.body(player);
         game.debug.body(pressure_plate);
+        game.debug.body(ladder);
 
-        map.setTileIndexCallback(5, playerLadderClimb, null, layerLadders);
+        //map.setTileIndexCallback(5, playerLadderClimb(), null, layerLadders);
 
 
 
@@ -134,8 +141,8 @@ var gameState = {
         hintText.text = "Find the key to the locked door.";
         game.physics.arcade.collide(player, layerPlatforms);
         game.physics.arcade.collide(player, door);
-        game.physics.arcade.overlap(player, layerLadders, playerLadderClimb());
-        //game.physics.arcade.overlap(player, pressure_plate, createBlowDart());
+        game.physics.arcade.overlap(player, ladder, playerLadderClimb());
+       //game.physics.arcade.overlap(player, pressure_plate, createBlowDart());
 
         if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
@@ -207,11 +214,18 @@ var gameState = {
                 health -= 1;
                 blowdart.kill();
                 blowdartCreated = false;
-                if(health == 0){
+                if(health == 0) {
                     game.state.start('gameOverState');
                 }
             }
         }
+    },
+    
+    playerLadderClimb: function (player, ladder) {
+        if (useKey.isDown) {
+            player.body.gravity.y = -100;
+        }
+
     }
 };
 
@@ -235,16 +249,7 @@ function createBlowDart() {
 }
 
 
-function findWord(array, word) {
-    return -1 < array.map(function (item) {
-        return item.toLowerCase();
-    }).indexOf(word.toLowerCase());
-}
 
 
-function playerLadderClimb() {
-    if (useKey.isDown) {
-        player.body.gravity.y = -100;
-    }
 
-}
+
