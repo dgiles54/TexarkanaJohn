@@ -135,7 +135,7 @@ var gameState = {
         game.physics.arcade.collide(player, layerPlatforms);
         game.physics.arcade.collide(player, door);
         game.physics.arcade.overlap(player, layerLadders, playerLadderClimb());
-        game.physics.arcade.overlap(player, pressure_plate, createBlowDart());
+        //game.physics.arcade.overlap(player, pressure_plate, createBlowDart());
 
         if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
@@ -155,7 +155,9 @@ var gameState = {
         }
 
 
-
+        if (player.overlap(pressure_plate) && player.body.onFloor()) {
+            createBlowDart();
+        }
 
 
         if (player.overlap(lever) && useKey.isDown) {
@@ -210,7 +212,7 @@ var gameState = {
             }
         }
     }
-}
+};
 
 function createBlowDart() {
 
