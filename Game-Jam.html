@@ -32,15 +32,19 @@
             //game.load.image('lever', 'assets/sprites/lever.png');
             game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
             game.load.image('key','assets/sprites/key.png');
+            game.load.image('keyHole','assets/sprites/keyHole.png');
+            game.load.image('door', 'assets/sprites/door.png');
             
         }
         var map;
-        var layerBG, layerPlatforms, layerLadders;
+        var layerBG, layerPlatforms, layerLadders, layerPlayer;
         var player;
         var cursors, useKey;
-        var lever, pressure_plate, key;
+        var lever, pressure_plate, key, keyInventory, keyHole, door;
         var keyCreated = false;
-        var hintText;
+        var hintText,inventory;
+        var hasKey = false;
+        
         
         function create() {
 
@@ -58,6 +62,8 @@
             //  Creates a layer from the World1 layer in the map data.
             //  A Layer is effectively like a Phaser.Sprite, so is added to the display list.
             layerBG = map.createLayer('bg');
+            door = game.add.sprite(700,125,'door');
+            game.physics.enable(door);
             layerPlatforms = map.createLayer('platforms');
             layerLadders = map.createLayer('ladders');
             
@@ -69,6 +75,8 @@
             lever = game.add.sprite(1,300,'lever');
             game.physics.enable(lever);
             pressure_plate = game.add.sprite(400,448,'pressurePlate');
+            keyHole = game.add.sprite(625,205,'keyHole');
+            
 
             //  This resizes the game world to match the layer dimensions
             layerBG.resizeWorld();
@@ -76,6 +84,10 @@
             
 
             player = game.add.sprite(20, 150, 'player');
+            
+            //layerPlayer = map.createLayer('player');
+            
+            
             player.anchor.setTo(0.5, 0.5);
             game.physics.enable(player);
             player.body.gravity.y = 800;
@@ -88,7 +100,7 @@
             useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
             
             hintText = game.add.text(250,500, 'Find the key to the locked door.', { fontSize: '32px', fill: '#000' });
-
+            inventory = game.add.text(10,10,'INVENTORY', { fontSize: '32px', fill: '#000' });
         }
 
         function update() {
@@ -112,15 +124,20 @@
                 player.body.velocity.x = 0;
             }
             
-            if(player.overlap(lever)){
-                lever.frame = 2;
+            
+            
+            
+            
+            if(player.overlap(lever) && useKey.isDown){
+                lever.frame = 1;
+                key = game.add.sprite(700,420,'key');
+                keyCreated = true;
                 
             }
             
-            if(player.overlap(pressure_plate) && keyCreated == false){
+            if(player.overlap(pressure_plate)){
                 
-                key = game.add.sprite(700,420,'key');
-                keyCreated = true;
+                
             }
             
             if(player.overlap(layerLadders) && useKey.isDown){
@@ -135,11 +152,23 @@
                 }
                 
                 if(player.overlap(key) && useKey.isDown){
-                    game.add.sprite(10,50,'key');
-                key.kill();
+                   keyInventory =  game.add.sprite(10,50,'key');
+                   key.kill();
+                   hasKey = true; 
+                    
                 }
             }
+            
+            if(player.overlap(keyHole) && hasKey == true && useKey.isDown){
+                hintText.text = "Use the key to open the door.";
+                door.body.gravity.y = -100;
+                keyInventory.kill();
+                
+            }
         }
+        function findWord(array, word) {
+    return -1 < array.map(function(item) { return item.toLowerCase(); }).indexOf(word.toLowerCase());
+}
 
     </script>
 
