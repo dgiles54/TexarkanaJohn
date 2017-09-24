@@ -98,6 +98,8 @@
             player.body.drag.x = 2000;
             player.body.collideWorldBounds = true;
             player.animations.add('walk', [0, 1, 2, 3], 5, true);
+            
+            player.body.setSize(40,60,15,0);
 
             cursors = game.input.keyboard.createCursorKeys();
             useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
@@ -108,6 +110,9 @@
 
         function update() {
             
+            game.debug.body(player);
+            
+            map.setTileIndexCallback(5,playerLadderClimb,null,layerLadders);
             
             
             
@@ -149,10 +154,7 @@
             
             
             
-            if(player.overlap(layerLadders) && useKey.isDown){
-                
-                player.body.gravity.y = - 100;
-            }
+           
             
             if(keyCreated){
                 if(player.overlap(key)){
@@ -188,7 +190,12 @@
 }
         
 
-
+function playerLadderClimb(){
+     if(useKey.isDown){
+                player.body.gravity.y = - 100;
+            }
+    
+}
     </script>
 
 </body>
