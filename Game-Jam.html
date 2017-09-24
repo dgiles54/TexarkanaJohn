@@ -99,7 +99,10 @@
             player.body.collideWorldBounds = true;
             player.animations.add('walk', [0, 1, 2, 3], 5, true);
             
+
             player.body.setSize(40,60,15,0);
+
+            game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
             cursors = game.input.keyboard.createCursorKeys();
             useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
