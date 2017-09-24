@@ -1,9 +1,4 @@
 var gameOverState = {
-
-    preload: function() {
-        game.load.image('gameOver','assets/sprites/GameOverScreen.png');
-        game.load.image('button','assets/sprites/retryButton.png');
-
     preload: function () {
         game.load.image('gameOver', 'assets/sprites/GameOverScreen.png');
         game.load.spritesheet('button', 'assets/sprites/retryButton.png', 320, 168);
