@@ -217,6 +217,15 @@
                 keyInventory.kill();
 
             }
+            if(blowdartCreated == true){
+            
+            if(player.overlap(blowdart)){
+                
+                healthBar.frame += 1;
+                blowdart.kill();
+                blowdartCreated = false;
+            }
+            }
         }
 
         function createBlowdart() {
@@ -224,7 +233,7 @@
             if (blowdartCreated == false) {
                 blowdart = game.add.sprite(800, 400, 'blowdart');
                 game.physics.enable(blowdart);
-                blowdart.body.gravity.x = -100;
+                blowdart.body.velocity.x = -100;
                 blowdartCreated = true;
                 plateSound.play();
             }
@@ -233,6 +242,8 @@
                     blowdart.kill();
                     blowdartCreated = false;
                 }
+                
+                
             }
         }
 
