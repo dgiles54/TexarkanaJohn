@@ -34,16 +34,18 @@
             game.load.image('key','assets/sprites/key.png');
             game.load.image('keyHole','assets/sprites/keyHole.png');
             game.load.image('door', 'assets/sprites/door.png');
+            game.load.image('blowdart','assets/sprites/blowdart.png');
+            
             
         }
         var map;
         var layerBG, layerPlatforms, layerLadders, layerPlayer;
         var player;
         var cursors, useKey;
-        var lever, pressure_plate, key, keyInventory, keyHole, door;
+        var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart;
         var keyCreated = false;
         var hintText,inventory;
-        var hasKey = false;
+        var hasKey = false, switchTriggered = false;
         
         
         function create() {
@@ -70,6 +72,7 @@
             
 
             map.setCollisionBetween(1, 12, true, 'platforms');
+            map.setCollisionBetween(1, 12, false, 'ladders');
             
             
             lever = game.add.sprite(1,300,'lever');
@@ -104,9 +107,16 @@
         }
 
         function update() {
-             player.body.gravity.y = 800;
+            
+            
+            
+            
+            
+            player.body.gravity.y = 800;
             hintText.text = "Find the key to the locked door.";
             game.physics.arcade.collide(player, layerPlatforms);
+            
+            game.physics.arcade.collide(player,layerLadders);
        
             if (cursors.left.isDown) {
                 player.scale.setTo(-1, 1);
@@ -135,10 +145,9 @@
                 
             }
             
-            if(player.overlap(pressure_plate)){
-                
-                
-            }
+
+            
+            
             
             if(player.overlap(layerLadders) && useKey.isDown){
                 
@@ -151,24 +160,34 @@
                     hintText.text = "Press 'e' to pickup item.";
                 }
                 
-                if(player.overlap(key) && useKey.isDown){
-                   keyInventory =  game.add.sprite(10,50,'key');
-                   key.kill();
+                if(player.overlap(key) && useKey.isDown && hasKey ==false){
+                    key.kill();
+                   keyInventory =  game.add.sprite(10,50,'key');            
                    hasKey = true; 
+                    
                     
                 }
             }
             
-            if(player.overlap(keyHole) && hasKey == true && useKey.isDown){
+            if(player.overlap(keyHole)){
+                
                 hintText.text = "Use the key to open the door.";
+            }
+            
+            if(player.overlap(keyHole) && hasKey == true && useKey.isDown){
+                
                 door.body.gravity.y = -100;
                 keyInventory.kill();
                 
             }
         }
+        
+        
         function findWord(array, word) {
     return -1 < array.map(function(item) { return item.toLowerCase(); }).indexOf(word.toLowerCase());
 }
+        
+
 
     </script>
 
