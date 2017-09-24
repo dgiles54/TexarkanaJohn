@@ -127,7 +127,7 @@ var gameState = {
 
     update: function () {
 
-        game.debug.body(door);
+       
 
         map.setTileIndexCallback(5, playerLadderClimb, null, layerLadders);
 
