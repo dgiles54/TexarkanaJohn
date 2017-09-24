@@ -26,6 +26,7 @@
             game.load.tilemap('temple', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
 
             game.load.image('moctRevengeTileset', 'assets/tilesets/moctRevengeTileset.png');
+            game.load.spritesheet('healthBar', 'assets/sprites/healthBar.png', 320, 64);
             game.load.spritesheet('player', 'assets/sprites/player_walk.png', 64, 64);
             game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32, 2);
             //game.load.image('lever', 'assets/sprites/lever.png');
@@ -45,7 +46,7 @@
         var cursors, useKey;
         var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart;
         var keyCreated = false;
-        var hintText, inventory;
+        var hintText, inventory, healthBar;
         var hasKey = false,
             switchTriggered = false,
             blowdartCreated = false;
@@ -118,11 +119,14 @@
                 fill: '#000'
             });
             hintText.fixedToCamera = true;
-            inventory = game.add.text(10, 10, 'INVENTORY', {
+            inventory = game.add.text(330, 10, 'INVENTORY', {
                 fontSize: '32px',
                 fill: '#000'
             });
             inventory.fixedToCamera = true;
+            
+            healthBar = game.add.sprite(5, 5, 'healthBar');
+            healthBar.fixedToCamera = true;
 
             key = game.add.sprite(700, 420, 'key');
             key.visible = false;
