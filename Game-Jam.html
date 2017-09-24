@@ -45,7 +45,7 @@
         var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart;
         var keyCreated = false;
         var hintText,inventory;
-        var hasKey = false, switchTriggered = false;
+        var hasKey = false, switchTriggered = false,blowdartCreated = false;
         
         
         function create() {
@@ -78,9 +78,11 @@
             lever = game.add.sprite(1,300,'lever');
             game.physics.enable(lever);
             pressure_plate = game.add.sprite(400,448,'pressurePlate');
+            game.physics.enable(pressure_plate);
+            
             keyHole = game.add.sprite(625,205,'keyHole');
             
-
+            //game.physics.enable(blowdart);
             //  This resizes the game world to match the layer dimensions
             layerBG.resizeWorld();
             
@@ -116,11 +118,15 @@
             key.visible = false;
             
             door.body.immovable = true;
+            pressure_plate.body.immovable = true;
+            
+            pressure_plate.body.setSize(30,5,0,30);
         }
 
         function update() {
             
             game.debug.body(player);
+            game.debug.body(pressure_plate);
             
             map.setTileIndexCallback(5,playerLadderClimb,null,layerLadders);
             
@@ -164,7 +170,7 @@
 
             
             
-            
+            game.physics.arcade.collide(player,pressure_plate,createBlowdart);
            
             
             if(keyCreated){
@@ -194,6 +200,22 @@
                 door.body.gravity.y = -100;
                 keyInventory.kill();
                 
+            }
+        }
+        
+        function createBlowdart(){
+            
+            if(blowdartCreated == false){
+            blowdart = game.add.sprite(800,400,'blowdart');
+            game.physics.enable(blowdart);
+            blowdart.body.gravity.x = -100;
+                blowdartCreated = true;
+        }
+            if(blowdartCreated == true){
+                if(blowdart.x < 0){
+                    blowdart.kill();
+                    blowdartCreated = false;
+                }
             }
         }
         
