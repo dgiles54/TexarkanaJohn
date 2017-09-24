@@ -108,7 +108,14 @@
             useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
             
             hintText = game.add.text(250,500, 'Find the key to the locked door.', { fontSize: '32px', fill: '#000' });
+            hintText.fixedToCamera = true;
             inventory = game.add.text(10,10,'INVENTORY', { fontSize: '32px', fill: '#000' });
+            inventory.fixedToCamera = true;
+            
+            key = game.add.sprite(700,420,'key');
+            key.visible = false;
+            
+            door.body.immovable = true;
         }
 
         function update() {
@@ -123,7 +130,7 @@
             player.body.gravity.y = 800;
             hintText.text = "Find the key to the locked door.";
             game.physics.arcade.collide(player, layerPlatforms);
-            
+            game.physics.arcade.collide(player,door);
             game.physics.arcade.collide(player,layerLadders);
        
             if (cursors.left.isDown) {
@@ -148,7 +155,8 @@
             
             if(player.overlap(lever) && useKey.isDown){
                 lever.frame = 1;
-                key = game.add.sprite(700,420,'key');
+                
+                key.visible = true;
                 keyCreated = true;
                 
             }
@@ -165,9 +173,11 @@
                     hintText.text = "Press 'e' to pickup item.";
                 }
                 
+            
                 if(player.overlap(key) && useKey.isDown && hasKey ==false){
                     key.kill();
-                   keyInventory =  game.add.sprite(10,50,'key');            
+                   keyInventory =  game.add.sprite(10,50,'key');  
+                    keyInventory.fixedToCamera = true;
                    hasKey = true; 
                     
                     
