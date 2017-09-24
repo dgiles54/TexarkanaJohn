@@ -1,6 +1,6 @@
 var map;
 var layerBG, layerPlatforms, layerLadders, layerPlayer;
-var player;
+var player, health = 5;
 var cursors, useKey;
 var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart;
 var keyCreated = false;
@@ -204,9 +204,10 @@ var gameState = {
             if (player.overlap(blowdart)) {
 
                 healthBar.frame += 1;
+                health -= 1;
                 blowdart.kill();
                 blowdartCreated = false;
-                if(healthBar.frame == healthBar.size){
+                if(health == 0){
                     game.state.start('gameOverState');
                 }
             }
@@ -219,7 +220,7 @@ function createBlowDart() {
     if (blowdartCreated == false) {
         blowdart = game.add.sprite(800, 400, 'blowdart');
         game.physics.enable(blowdart);
-        blowdart.body.velocity.x = -100;
+        blowdart.body.velocity.x = -300;
         blowdartCreated = true;
         plateSound.play();
     }

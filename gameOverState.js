@@ -1,10 +1,14 @@
 var gameOverState = {
     preload: function() {
-        game.load.image('gameOver','assets/sprites/GaveOverScreen.png')
+        game.load.image('gameOver','assets/sprites/GameOverScreen.png')
     },
-    var gameOverSprite;
+    
     create: function() {
-        gameOverSprite = game.add.sprite(400,400,'gameOver');
+        game.stage.backgroundColor = '#000000';
+        var gameOverSprite;
+        gameOverSprite = game.add.sprite(250,200,'gameOver');
+        
+        //button = game.add.button(game.world.centerX - 95, 400, 'button', actionOnClick, this, 2, 1, 0);
     },
     
     update: function() {
