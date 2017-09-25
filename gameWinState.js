@@ -9,7 +9,7 @@ var gameWinState = {
         game.stage.backgroundColor = '#000000';
         var gameWinSprite;
 
-        gameWinSprite = game.add.sprite(250,200,'gameWin');
+        gameWinSprite = game.add.sprite(230,200,'gameWin');
         
         button = game.add.button(game.world.centerX - 320, 400, 'button', this.actionOnClick);
         button.onInputOver.add(this.over);

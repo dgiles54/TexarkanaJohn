@@ -184,7 +184,7 @@ var gameState = {
 
             if (player.overlap(key) && useKey.isDown && hasKey == false) {
                 key.kill();
-                keyInventory = game.add.sprite(10, 50, 'key');
+                keyInventory = game.add.sprite(350, 50, 'key');
                 keyInventory.fixedToCamera = true;
                 hasKey = true;
 
