@@ -18,7 +18,7 @@ var gameState = {
 
         game.load.image('moctRevengeTileset', 'assets/tilesets/moctRevengeTileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/healthBar.png', 320, 64);
-        game.load.spritesheet('player', 'assets/sprites/player_walk.png', 64, 64);
+        game.load.spritesheet('player', 'assets/sprites/player.png', 54, 65);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32, 2);
         //game.load.image('lever', 'assets/sprites/lever.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
@@ -87,7 +87,8 @@ var gameState = {
         player.body.bounce.y = 0.2;
         player.body.drag.x = 2000;
         player.body.collideWorldBounds = true;
-        player.animations.add('walk', [0, 1, 2, 3], 5, true);
+        player.animations.add('walk', [0, 1, 2, 3, 4, 5], 7, true);
+        player.animations.add('idle', [6, 7], 2, true);
 
 
         player.body.setSize(40, 64, 15, 0);
@@ -150,7 +151,7 @@ var gameState = {
             player.animations.play('walk');
             player.body.velocity.x = 200;
         } else {
-            player.animations.stop('walk');
+            player.animations.play('idle');
             player.body.velocity.x = 0;
         }
 
