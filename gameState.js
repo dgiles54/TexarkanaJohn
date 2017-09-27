@@ -1,7 +1,7 @@
 var map;
 var layerBG, layerPlatforms, layerLadders, layerPlayer;
-var player, health = 5;
-var cursors, useKey;
+var player, health = 5, attackRate = 200, nextAttack = 0, playerAttacking = false;
+var cursors, useKey, attackKey;
 var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart, endDoor;
 var keyCreated = false;
 var hintText, inventory, healthBar;
@@ -9,6 +9,7 @@ var hasKey = false,
     switchTriggered = false,
     blowdartCreated = false;
 var leverSound, plateSound;
+var attackAnim;
 
 var gameState = {
 
@@ -18,7 +19,7 @@ var gameState = {
 
         game.load.image('moctRevengeTileset', 'assets/tilesets/moctRevengeTileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/healthBar.png', 320, 64);
-        game.load.spritesheet('player', 'assets/sprites/player.png', 54, 65);
+        game.load.spritesheet('player', 'assets/sprites/player.png', 69, 66);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32, 2);
         //game.load.image('lever', 'assets/sprites/lever.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
@@ -84,11 +85,15 @@ var gameState = {
         player.anchor.setTo(0.5, 0.5);
         game.physics.enable(player);
         player.body.gravity.y = 800;
-        player.body.bounce.y = 0.2;
+        player.body.bounce.y = 0.1;
         player.body.drag.x = 2000;
         player.body.collideWorldBounds = true;
         player.animations.add('walk', [0, 1, 2, 3, 4, 5], 7, true);
         player.animations.add('idle', [6, 7], 2, true);
+        attackAnim = player.animations.add('attack', [8, 9, 10, 11], 12, false);
+        attackAnim.onComplete.add(function () {
+            player.frame = 2;
+        })
 
 
         player.body.setSize(40, 64, 15, 0);
@@ -97,6 +102,8 @@ var gameState = {
 
         cursors = game.input.keyboard.createCursorKeys();
         useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
+        attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        attackKey.onDown.add(attack);
 
         hintText = game.add.text(250, 500, 'Find the key to the locked door.', {
             fontSize: '32px',
@@ -141,7 +148,8 @@ var gameState = {
         game.physics.arcade.collide(player, door);
         game.physics.arcade.collide(player, layerLadders);
         //game.physics.arcade.overlap(player, pressure_plate, createBlowDart());
-
+        
+        // make player walk
         if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
             player.animations.play('walk');
@@ -151,20 +159,21 @@ var gameState = {
             player.animations.play('walk');
             player.body.velocity.x = 200;
         } else {
-            player.animations.play('idle');
+            player.animations.stop('walk', 2);
             player.body.velocity.x = 0;
         }
-
+        
+        // make player jump
         if (cursors.up.isDown && player.body.onFloor()) {
             player.body.velocity.y = -200;
-        }
+        }     
 
-
+        // shoot blowdart on pressure plate overlap
         if (player.overlap(pressure_plate) && player.body.onFloor()) {
             createBlowDart();
         }
 
-
+        // press lever
         if (player.overlap(lever) && useKey.isDown) {
             lever.frame = 1;
             leverSound.play();
@@ -172,10 +181,7 @@ var gameState = {
             keyCreated = true;
 
         }
-
-
-
-
+        
         if (keyCreated) {
             if (player.overlap(key)) {
 
@@ -244,12 +250,17 @@ function createBlowDart() {
     }
 }
 
-
-
-
 function playerLadderClimb() {
-    if (useKey.isDown) {
+    if (cursors.up.isDown) {
         player.body.velocity.y = -100;
     }
 
+}
+
+function attack() {
+    if (game.time.now > nextAttack) {
+        nextAttack = game.time.now + attackRate;
+        player.animations.play('attack');
+        console.log('Attacking');
+    }
 }
