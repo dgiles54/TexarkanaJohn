@@ -2,7 +2,7 @@ var map;
 var layerBG, layerPlatforms, layerLadders, layerPlayer;
 var player, health = 5, attackRate = 200, nextAttack = 0, playerAttacking = false;
 var cursors, useKey, attackKey;
-var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart, endDoor;
+var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart, endDoor,snake;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -16,7 +16,7 @@ var gameState = {
     preload: function () {
 
         game.load.tilemap('temple', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
-
+        game.load.spritesheet('snake','assets/sprites/snake.png',128,64);
         game.load.image('moctRevengeTileset', 'assets/tilesets/moctRevengeTileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/healthBar.png', 320, 64);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
@@ -131,6 +131,8 @@ var gameState = {
 
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
+        
+        snake = game.add.sprite(100,420,'snake');
     },
 
     update: function () {
