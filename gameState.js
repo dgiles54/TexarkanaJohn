@@ -19,7 +19,7 @@ var gameState = {
 
         game.load.image('moctRevengeTileset', 'assets/tilesets/moctRevengeTileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/healthBar.png', 320, 64);
-        game.load.spritesheet('player', 'assets/sprites/player.png', 69, 66);
+        game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32, 2);
         //game.load.image('lever', 'assets/sprites/lever.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
