@@ -1,8 +1,12 @@
 var map;
-var layerBG, layerPlatforms, layerLadders, layerPlayer;
-var player, health = 5, attackRate = 200, nextAttack = 0, playerAttacking = false;
+var layerWall, layerPlatforms, layerLadders, layerDetails;
+//var mapLayers, layer;
+var player, health = 5,
+    attackRate = 200,
+    nextAttack = 0,
+    playerAttacking = false;
 var cursors, useKey, attackKey;
-var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart, endDoor,snake;
+var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart, endDoor, snake;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -10,18 +14,20 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
+var levelNum = 1;
 
 var gameState = {
 
     preload: function () {
 
-        game.load.tilemap('temple', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.spritesheet('snake','assets/sprites/snake.png',128,64);
-        game.load.image('moctRevengeTileset', 'assets/tilesets/moctRevengeTileset.png');
+        game.load.tilemap('level1', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('level2', 'assets/tilemaps/Level2.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/healthBar.png', 320, 64);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
+        game.load.spritesheet('snake', 'assets/sprites/snake.png', 128, 64);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32, 2);
-        //game.load.image('lever', 'assets/sprites/lever.png');
+        game.load.image('lever', 'assets/sprites/lever.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
@@ -40,48 +46,38 @@ var gameState = {
 
         game.stage.backgroundColor = '#787878';
 
-        //  The 'mario' key here is the Loader key given in game.load.tilemap
-        map = game.add.tilemap('temple');
+        // map level loader      
+        loadLevel(levelNum);
 
-        //  The first parameter is the tileset name, as specified in the Tiled map editor (and in the tilemap json file)
-        //  The second parameter maps this name to the Phaser.Cache key 'tiles'
-        map.addTilesetImage('moctRevengeTileset');
+        // set map collisions
+        map.setCollisionBetween(1, 10, true, 'Wall');
+        map.setCollisionBetween(1, 15, true, 'Platforms');
 
-        //  Creates a layer from the World1 layer in the map data.
-        //  A Layer is effectively like a Phaser.Sprite, so is added to the display list.
-        layerBG = map.createLayer('bg');
+        // add game objects
         door = game.add.sprite(700, 125, 'door');
-        endDoor = game.add.sprite(750,125,'door');
-        endDoor.visible = false;
-        game.physics.enable(endDoor);
         game.physics.enable(door);
-        layerPlatforms = map.createLayer('platforms');
-        layerLadders = map.createLayer('ladders');
-
-
-
-        map.setCollisionBetween(1, 12, true, 'platforms');
-        map.setCollisionBetween(1, 12, false, 'ladders');
-
+        endDoor = game.add.sprite(750, 125, 'door');
+        game.physics.enable(endDoor);
+        endDoor.visible = false;
+        door.body.immovable = true;
+        door.body.setSize(50, 160, 30, 0);
 
         lever = game.add.sprite(1, 300, 'lever');
         game.physics.enable(lever);
+
         pressure_plate = game.add.sprite(400, 448, 'pressurePlate');
         game.physics.enable(pressure_plate);
+        pressure_plate.body.immovable = true;
+        pressure_plate.body.setSize(30, 5, 0, 30);
 
         keyHole = game.add.sprite(625, 205, 'keyHole');
+        key = game.add.sprite(700, 420, 'key');
+        key.visible = false;
 
-        //game.physics.enable(blowdart);
-        //  This resizes the game world to match the layer dimensions
-        layerBG.resizeWorld();
+        snake = game.add.sprite(100, 420, 'snake');
 
-
-
-        player = game.add.sprite(20, 150, 'player');
-
-        //layerPlayer = map.createLayer('player');
-
-
+        // player
+        player = game.add.sprite(300, 300, 'player');
         player.anchor.setTo(0.5, 0.5);
         game.physics.enable(player);
         player.body.gravity.y = 800;
@@ -94,17 +90,18 @@ var gameState = {
         attackAnim.onComplete.add(function () {
             player.frame = 2;
         })
-
-
         player.body.setSize(40, 64, 15, 0);
 
+        // game camera
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
+        // controls
         cursors = game.input.keyboard.createCursorKeys();
         useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
         attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         attackKey.onDown.add(attack);
 
+        // HUD
         hintText = game.add.text(250, 500, 'Find the key to the locked door.', {
             fontSize: '32px',
             fill: '#000'
@@ -115,42 +112,28 @@ var gameState = {
             fill: '#000'
         });
         inventory.fixedToCamera = true;
-
         healthBar = game.add.sprite(5, 5, 'healthBar');
         healthBar.fixedToCamera = true;
 
-        key = game.add.sprite(700, 420, 'key');
-        key.visible = false;
-
-        door.body.immovable = true;
-        pressure_plate.body.immovable = true;
-
-        pressure_plate.body.setSize(30, 5, 0, 30);
-        
-        door.body.setSize(50,160,30,0);
-
+        // sound FX
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
-        
-        snake = game.add.sprite(100,420,'snake');
     },
 
     update: function () {
 
-       
+        game.physics.arcade.collide(player, layerWall);
+        game.physics.arcade.collide(player, layerPlatforms);
+        game.physics.arcade.collide(player, layerLadders);
+        game.physics.arcade.collide(player, door);
 
-        map.setTileIndexCallback(5, playerLadderClimb, null, layerLadders);
-
-
-
+        // allow player to climb ladders
+        map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
 
         player.body.gravity.y = 800;
+
         hintText.text = "Find the key to the locked door.";
-        game.physics.arcade.collide(player, layerPlatforms);
-        game.physics.arcade.collide(player, door);
-        game.physics.arcade.collide(player, layerLadders);
-        //game.physics.arcade.overlap(player, pressure_plate, createBlowDart());
-        
+
         // make player walk
         if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
@@ -164,11 +147,11 @@ var gameState = {
             player.animations.stop('walk', 2);
             player.body.velocity.x = 0;
         }
-        
+
         // make player jump
         if (cursors.up.isDown && player.body.onFloor()) {
             player.body.velocity.y = -200;
-        }     
+        }
 
         // shoot blowdart on pressure plate overlap
         if (player.overlap(pressure_plate) && player.body.onFloor()) {
@@ -183,7 +166,8 @@ var gameState = {
             keyCreated = true;
 
         }
-        
+
+        // allow player to pickup key
         if (keyCreated) {
             if (player.overlap(key)) {
 
@@ -201,17 +185,21 @@ var gameState = {
             }
         }
 
+        // update hint text for door
         if (player.overlap(keyHole)) {
 
             hintText.text = "Use the key to open the door.";
         }
 
+        // kill key when it is used
         if (player.overlap(keyHole) && hasKey == true && useKey.isDown) {
 
             door.body.gravity.y = -100;
             keyInventory.kill();
 
         }
+
+        // blowdart
         if (blowdartCreated == true) {
 
             if (player.overlap(blowdart)) {
@@ -220,16 +208,17 @@ var gameState = {
                 health -= 1;
                 blowdart.kill();
                 blowdartCreated = false;
-                if(health == 0){
+                if (health == 0) {
                     game.state.start('gameOverState');
                 }
             }
         }
-       if(player.overlap(endDoor)){
-           
-           game.state.start('gameWinState');
-       } 
-        
+        // when player reaches end of level, go to next level or win state if last level
+        if (player.overlap(endDoor)) {
+            levelNum++;
+            game.state.start('gameState');
+        }
+
     }
 };
 
@@ -265,4 +254,15 @@ function attack() {
         player.animations.play('attack');
         console.log('Attacking');
     }
+}
+
+function loadLevel(levelNum) {
+    map = game.add.tilemap('level' + levelNum);
+    map.addTilesetImage('tileset');
+
+    layerWall = map.createLayer('Wall');
+    layerPlatforms = map.createLayer('Platforms');
+    layerDetails = map.createLayer('Detail');
+    layerLadders = map.createLayer('Ladder');
+    layerWall.resizeWorld();
 }

@@ -53,11 +53,11 @@
         {
          "columns":5,
          "firstgid":1,
-         "image":"spritesheet.png",
+         "image":"tileset.png",
          "imageheight":160,
          "imagewidth":160,
          "margin":0,
-         "name":"ts",
+         "name":"tileset",
          "spacing":0,
          "tilecount":25,
          "tileheight":32,
