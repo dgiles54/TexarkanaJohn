@@ -6,7 +6,7 @@ var player, health = 5,
     nextAttack = 0,
     playerAttacking = false;
 var cursors, useKey, attackKey;
-var keyInventory, endDoor, snake;
+var keyInventory, endDoor, snake, snakes;
 var levers, plates, keys, keyholes, doors, darts;
 var keyCreated = false;
 var hintText, inventory, healthBar;
@@ -15,7 +15,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 1;
+var levelNum = 2;
 
 var gameState = {
 
@@ -24,7 +24,7 @@ var gameState = {
         game.load.tilemap('level1', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level2', 'assets/tilemaps/Level2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tileset', 'assets/tilesets/tileset.png');
-        game.load.spritesheet('healthBar', 'assets/sprites/healthBar.png', 320, 64);
+        game.load.spritesheet('healthBar', 'assets/sprites/health.png', 320, 64);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
         game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48,3);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32, 2);
@@ -53,8 +53,7 @@ var gameState = {
         // set map collisions
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
-        map.setCollision(19);
-        map.setCollision(20);
+        
 
         // add game objects
         levers = game.add.group();
@@ -78,6 +77,8 @@ var gameState = {
         darts = game.add.group();
         darts.enableBody = true;
         map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);
+        
+        
 
 
         //door = game.add.sprite(700, 125, 'door');
@@ -88,11 +89,14 @@ var gameState = {
         game.physics.enable(endDoor);
         endDoor.visible = false;
 
-        snake = game.add.sprite(100, 420, 'snake');
-        snake.animations.add('move',null,5,true);
-        game.physics.enable(snake);
-        snake.scale.setTo(0.75,0.75);
-        snake.body.velocity.x = 100;
+        //snake = game.add.sprite(100, 420, 'snake');
+       
+        //game.physics.enable(snakes);
+        //snakes.callAll('physics.enable','physics');
+        //snakes.callAll('animations.play','animations','move');
+        //snake.scale.setTo(0.75,0.75);
+        //snakes.body.velocity.x = 100;
+        //snakes.callAll('body.velocity.x',null,'100');
         
 
         // player
@@ -109,7 +113,7 @@ var gameState = {
         attackAnim.onComplete.add(function () {
             player.frame = 2;
         })
-        player.body.setSize(40, 64, 15, 0);
+        player.body.setSize(20, 64, 15, 0);
 
         // game camera
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
@@ -137,9 +141,14 @@ var gameState = {
         // sound FX
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
+        
+       
+       initializeSnakes(); 
     },
 
     update: function () {
+        
+        snakes.callAll('animations.play','animations','move');
 
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
@@ -148,8 +157,9 @@ var gameState = {
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
-        game.physics.arcade.collide(snake, layerCollision);
-        game.physics.arcade.collide(snake, layerCollision2);
+        
+        game.physics.arcade.collide(snakes, layerCollision);
+        game.physics.arcade.collide(snakes, layerCollision2);
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
@@ -160,10 +170,12 @@ var gameState = {
 
         hintText.text = "Find the key to the locked door.";
         
-        snake.animations.play('move');
+        //snake.animations.play('move');
 
         // make player walk
-        if (cursors.left.isDown) {
+        if (attackKey.isDown) {
+            player.body.velocity.x = 0;
+        } else if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
             player.animations.play('walk');
             player.body.velocity.x = -200;
@@ -178,7 +190,7 @@ var gameState = {
 
         // make player jump
         if (cursors.up.isDown && player.body.onFloor()) {
-            player.body.velocity.y = -200;
+            player.body.velocity.y = -300;
         }
 
 
@@ -244,10 +256,11 @@ function attack() {
         nextAttack = game.time.now + attackRate;
         player.animations.play('attack');
         console.log('Attacking');
-        if(player.overlap(snake)){
-            
-            snake.kill();
-        }
+        snakes.forEach(function(snake) {
+            if(player.overlap(snake)){
+                snake.kill();
+            }
+        });
     }
 }
 
@@ -300,9 +313,22 @@ function snakeReverse(snake){
     snake.scale.setTo(-1,1);
     snake.body.velocity.x = -100;
 }
-
+ 
 function snakeReverse2(snake){
     
     snake.scale.setTo(1,1);
     snake.body.velocity.x = 100;
+}
+
+function initializeSnakes(){
+    snakes = game.add.group();
+        snakes.enableBody = true;
+        map.createFromObjects('Snakes',33,'snake',0,true,false,snakes);
+     snakes.forEach(function(snake) {
+            snake.body.velocity.x = 100;
+            snake.anchor.setTo(0.7,0);
+        });
+    map.setCollision(19);
+        map.setCollision(20);
+     snakes.callAll('animations.add', 'animations', 'move',null,5,true);
 }

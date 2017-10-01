@@ -68,6 +68,28 @@
         }, 
         {
          "draworder":"topdown",
+         "name":"Snakes",
+         "objects":[
+                {
+                 "gid":32,
+                 "height":32,
+                 "id":24,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":513.5,
+                 "y":480
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "name":"Levers",
          "objects":[
                 {
@@ -176,7 +198,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":21,
+ "nextobjectid":25,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
@@ -185,7 +207,7 @@
         {
          "columns":5,
          "firstgid":1,
-         "image":"D:\/Coding\/Phaser\/School-Project-02\/assets\/tilesets\/tileset.png",
+         "image":"..\/tilesets\/tileset.png",
          "imageheight":160,
          "imagewidth":160,
          "margin":0,
@@ -198,7 +220,7 @@
         {
          "columns":4,
          "firstgid":26,
-         "image":"D:\/Pictures\/Pixel Art\/sprites\/objects\/objects.png",
+         "image":"..\/tilesets\/objects.png",
          "imageheight":64,
          "imagewidth":128,
          "margin":0,
