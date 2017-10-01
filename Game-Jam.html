@@ -17,12 +17,15 @@
     <script src="gameState.js"></script>
     <script src="gameOverState.js"></script>
     <script src="gameWinState.js"></script>
+    <script src="gameStartState.js"></script>
     <script>
         var game = new Phaser.Game(800, 600, Phaser.AUTO);
         game.state.add('gameState', gameState);
         game.state.add('gameOverState', gameOverState);
         game.state.add('gameWinState',gameWinState);
-        game.state.start('gameState');
+        game.state.add('gameState', gameState);
+        game.state.add('gameStartState', gameStartState);
+        game.state.start('gameStartState');
 
     </script>
 
