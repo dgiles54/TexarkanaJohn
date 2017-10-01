@@ -111,7 +111,7 @@ var gameState = {
 
 
         // player
-        player = game.add.sprite(300, 300, 'player');
+        player = game.add.sprite(game.world.width-50, game.world.height-100 , 'player');
         player.anchor.setTo(0.5, 0.5);
         game.physics.enable(player);
         player.body.gravity.y = PLAYER_GRAVITY;
@@ -125,6 +125,7 @@ var gameState = {
             player.frame = 2;
         })
         player.body.setSize(20, 64, 15, 0);
+        player.scale.setTo(-1, 1);
 
         // game camera
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
