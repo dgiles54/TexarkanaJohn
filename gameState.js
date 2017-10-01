@@ -53,6 +53,8 @@ var gameState = {
         // set map collisions
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
+        map.setCollision(19);
+        map.setCollision(20);
 
         // add game objects
         levers = game.add.group();
@@ -87,6 +89,9 @@ var gameState = {
         endDoor.visible = false;
 
         snake = game.add.sprite(100, 420, 'snake');
+        game.physics.enable(snake);
+        snake.scale.setTo(0.75,0.75);
+        snake.body.velocity.x = 100;
 
         // player
         player = game.add.sprite(300, 300, 'player');
@@ -141,9 +146,13 @@ var gameState = {
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
+        game.physics.arcade.collide(snake, layerCollision);
+        game.physics.arcade.collide(snake, layerCollision2);
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
+         map.setTileIndexCallback(19, snakeReverse, null, layerCollision);
+        map.setTileIndexCallback(20, snakeReverse2, null, layerCollision2);
 
         player.body.gravity.y = 800;
 
@@ -231,6 +240,10 @@ function attack() {
         nextAttack = game.time.now + attackRate;
         player.animations.play('attack');
         console.log('Attacking');
+        if(player.overlap(snake)){
+            
+            snake.kill();
+        }
     }
 }
 
@@ -242,6 +255,8 @@ function loadLevel(levelNum) {
     layerPlatforms = map.createLayer('Platforms');
     layerDetails = map.createLayer('Detail');
     layerLadders = map.createLayer('Ladder');
+    layerCollision = map.createLayer('Collision');
+    layerCollision2 = map.createLayer('Collision2');
     layerWall.resizeWorld();
 }
 
@@ -274,4 +289,16 @@ function insertKey(player, keyhole) {
         doors.killAll(); // temporary
         keyInventory.kill();
     }
+}
+
+function snakeReverse(snake){
+    
+    snake.scale.setTo(-0.75,0.75);
+    snake.body.velocity.x = -100;
+}
+
+function snakeReverse2(snake){
+    
+    snake.scale.setTo(0.75,0.75);
+    snake.body.velocity.x = 100;
 }
