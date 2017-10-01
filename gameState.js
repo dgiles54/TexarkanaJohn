@@ -95,7 +95,8 @@ var gameState = {
         doors = game.add.group();
         doors.enableBody = true;
         map.createFromObjects("Door",32, 'door', 0, true, false, doors);
-        doors.children[0].body.immovable = true;
+        doors.setAll('body.immovable', true);
+        doors.setAll('outOfBoundsKill', true);
 
 
 
@@ -330,8 +331,10 @@ function takeKey(player, key) {
 }
 
 function insertKey(player, keyhole) {
+    var keyholeID = parseInt(keyhole.name.charAt(7)) - 1; // to match with doorID
     if (hasKey == true && useKey.isDown) {
-        doors.killAll(); // temporary
+        // open door that matches specific keyhole
+        doors.children[keyholeID].body.gravity.y = -300;
         keyInventory.kill();
     }
 }

@@ -186,14 +186,14 @@
          "objects":[
                 {
                  "gid":32,
-                 "height":97.5,
+                 "height":160,
                  "id":20,
                  "name":"door1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":64,
-                 "x":-0.5,
+                 "width":48,
+                 "x":5,
                  "y":96.5
                 }],
          "opacity":1,
