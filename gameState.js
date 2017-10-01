@@ -16,7 +16,7 @@ var player,
     playerClimbing = false;
 var cursors, useKey, attackKey;
 var keyInventory, endDoor, snake, snakes;
-var levers, plates, keys, keyholes, doors, darts;
+var levers, plates, keys, keyholes, doors, darts, door;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -64,6 +64,9 @@ var gameState = {
         // set map collisions
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
+        
+        layerCollision.visible = false;
+        layerCollision2.visible = false;
 
 
         // add game objects
@@ -82,12 +85,13 @@ var gameState = {
         map.createFromObjects('Keyholes', 29, 'keyHole', 0, true, false, keyholes);
         doors = game.add.group();
         doors.enableBody = true;
-        map.createFromObjects('Doors', 30, 'door', 0, true, false, doors);
-        game.physics.enable(doors);
+        //map.createFromObjects('Doors', 30, 'door', 0, true, false, doors);
+        //game.physics.enable(doors);
         doors.setAll('body.immovable', true);
         darts = game.add.group();
         darts.enableBody = true;
         map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);
+        map.createFromObjects("Door",32, 'door',0,true,false,door);
 
 
 
