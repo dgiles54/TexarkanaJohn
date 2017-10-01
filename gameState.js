@@ -72,14 +72,14 @@ var gameState = {
         // add game objects
         levers = game.add.group();
         levers.enableBody = true;
-        map.createFromObjects('Levers', 26, 'lever', 0, true, false, levers);
+        map.createFromObjects('Lever', 33, 'lever', 0, true, false, levers);
         plates = game.add.group();
         plates.enableBody = true;
         map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
         keys = game.add.group();
         keys.enableBody = true;
         map.createFromObjects('Key', 32, 'key', 0, true, false, keys);
-        keys.visible = true;
+        keys.setAll('visible', false);
         keyholes = game.add.group();
         keyholes.enableBody = true;
         map.createFromObjects('Keyhole', 33, 'keyHole', 0, true, false, keyholes);
@@ -307,21 +307,16 @@ function loadLevel(levelNum) {
 }
 
 function pushLever(player, lever) {
-    if (player.overlap(lever) && useKey.isDown) {
+    var leverID = parseInt(lever.name.charAt(5)) - 1;
+    if (useKey.justDown) {
         lever.frame = 1;
         leverSound.play();
-        keys.visible = true;
+        keys.children[leverID].visible = true;
         keyCreated = true;
-
     }
 }
 
 function takeKey(player, key) {
-    if (keyCreated) {
-        hintText.text = "Press 'e' to pickup item.";
-    }
-
-
     if (useKey.isDown && hasKey == false) {
         key.kill();
         keyInventory = game.add.sprite(350, 50, 'key');
