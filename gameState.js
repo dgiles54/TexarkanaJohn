@@ -6,7 +6,7 @@ var player, health = 5,
     nextAttack = 0,
     playerAttacking = false;
 var cursors, useKey, attackKey;
-var keyInventory, endDoor, snake;
+var keyInventory, endDoor, snake, snakes;
 var levers, plates, keys, keyholes, doors, darts;
 var keyCreated = false;
 var hintText, inventory, healthBar;
@@ -15,7 +15,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 1;
+var levelNum = 2;
 
 var gameState = {
 
@@ -24,7 +24,7 @@ var gameState = {
         game.load.tilemap('level1', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level2', 'assets/tilemaps/Level2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tileset', 'assets/tilesets/tileset.png');
-        game.load.spritesheet('healthBar', 'assets/sprites/healthBar.png', 320, 64);
+        game.load.spritesheet('healthBar', 'assets/sprites/health.png', 320, 64);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
         game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48,3);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32, 2);
@@ -78,6 +78,10 @@ var gameState = {
         darts = game.add.group();
         darts.enableBody = true;
         map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);
+        
+        snakes = game.add.group();
+        snakes.enableBody = true;
+        map.createFromObjects('Snakes',32,'snake',0,true,false,snakes);
 
 
         //door = game.add.sprite(700, 125, 'door');
@@ -88,11 +92,14 @@ var gameState = {
         game.physics.enable(endDoor);
         endDoor.visible = false;
 
-        snake = game.add.sprite(100, 420, 'snake');
-        snake.animations.add('move',null,5,true);
-        game.physics.enable(snake);
-        snake.scale.setTo(0.75,0.75);
-        snake.body.velocity.x = 100;
+        //snake = game.add.sprite(100, 420, 'snake');
+        snakes.callAll('animations.add', 'animations', 'move',null,5,true);
+        //game.physics.enable(snakes);
+        snakes.callAll('physics.enable','physics');
+        //snakes.callAll('animations.play','animations','move');
+        //snake.scale.setTo(0.75,0.75);
+        //snakes.body.velocity.x = 100;
+        //snakes.callAll('body.velocity.x',null,'100');
         
 
         // player
@@ -140,6 +147,8 @@ var gameState = {
     },
 
     update: function () {
+        
+        snakes.callAll('animations.play','animations','move');
 
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
@@ -160,7 +169,7 @@ var gameState = {
 
         hintText.text = "Find the key to the locked door.";
         
-        snake.animations.play('move');
+        //snake.animations.play('move');
 
         // make player walk
         if (cursors.left.isDown) {
