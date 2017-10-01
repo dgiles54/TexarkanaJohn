@@ -147,6 +147,7 @@ var gameState = {
         
         snakes.forEach(function(snake) {
             snake.body.velocity.x = 100;
+            snake.anchor.setTo(0.7,0);
         });
         
     },
