@@ -113,7 +113,7 @@ var gameState = {
         attackAnim.onComplete.add(function () {
             player.frame = 2;
         })
-        player.body.setSize(40, 64, 15, 0);
+        player.body.setSize(20, 64, 15, 0);
 
         // game camera
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
@@ -188,7 +188,7 @@ var gameState = {
 
         // make player jump
         if (cursors.up.isDown && player.body.onFloor()) {
-            player.body.velocity.y = -200;
+            player.body.velocity.y = -300;
         }
 
 
@@ -311,7 +311,7 @@ function snakeReverse(snake){
     snake.scale.setTo(-1,1);
     snake.body.velocity.x = -100;
 }
-
+ 
 function snakeReverse2(snake){
     
     snake.scale.setTo(1,1);
