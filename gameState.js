@@ -83,11 +83,11 @@ var gameState = {
         keyholes = game.add.group();
         keyholes.enableBody = true;
         map.createFromObjects('Keyholes', 29, 'keyHole', 0, true, false, keyholes);
-        doors = game.add.group();
-        doors.enableBody = true;
+//        doors = game.add.group();
+//        doors.enableBody = true;
         //map.createFromObjects('Doors', 30, 'door', 0, true, false, doors);
         //game.physics.enable(doors);
-        doors.setAll('body.immovable', true);
+//        doors.setAll('body.immovable', true);
         darts = game.add.group();
         darts.enableBody = true;
         map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);
@@ -100,9 +100,9 @@ var gameState = {
         //game.physics.enable(door);
         //door.body.immovable = true;
         //door.body.setSize(50, 160, 30, 0);
-        endDoor = game.add.sprite(750, 125, 'door');
-        game.physics.enable(endDoor);
-        endDoor.visible = false;
+//        endDoor = game.add.sprite(750, 125, 'door');
+//        game.physics.enable(endDoor);
+//        endDoor.visible = false;
 
         //snake = game.add.sprite(100, 420, 'snake');
 
