@@ -1,10 +1,19 @@
+var PLAYER_ATTACK_RATE = 200;
+var PLAYER_RUN_SPEED = 200;
+var PLAYER_JUMP_SPEED = 300;
+var PLAYER_GRAVITY = 800;
+var PLAYER_BOUNCE = 0.1;
+var PLAYER_DRAG = 0;
+var SNAKE_ATTACK_RATE = 600;
+
 var map;
 var layerWall, layerPlatforms, layerLadders, layerDetails;
 //var mapLayers, layer;
-var player, health = 5,
-    attackRate = 200,
-    nextAttack = 0,
-    playerAttacking = false;
+var player,
+    health = 5,
+    nextAttackPlayer = 0,
+    playerAttacking = false,
+    playerClimbing = false;
 var cursors, useKey, attackKey;
 var keyInventory, endDoor, snake, snakes;
 var levers, plates, keys, keyholes, doors, darts;
@@ -16,6 +25,8 @@ var hasKey = false,
 var leverSound, plateSound;
 var attackAnim;
 var levelNum = 2;
+var snakeDirection = 'right',
+    nextAttackSnake = 0;
 
 var gameState = {
 
@@ -24,9 +35,9 @@ var gameState = {
         game.load.tilemap('level1', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level2', 'assets/tilemaps/Level2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tileset', 'assets/tilesets/tileset.png');
-        game.load.spritesheet('healthBar', 'assets/sprites/health.png', 320, 64);
+        game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
-        game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48,3);
+        game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48, 3);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32, 2);
         game.load.image('lever', 'assets/sprites/lever.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
@@ -36,7 +47,7 @@ var gameState = {
         game.load.image('blowdart', 'assets/sprites/blowdart.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
-
+        game.load.audio('ouch', 'assets/audio/ouch.wav');
 
     },
 
@@ -53,7 +64,7 @@ var gameState = {
         // set map collisions
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
-        
+
 
         // add game objects
         levers = game.add.group();
@@ -77,8 +88,8 @@ var gameState = {
         darts = game.add.group();
         darts.enableBody = true;
         map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);
-        
-        
+
+
 
 
         //door = game.add.sprite(700, 125, 'door');
@@ -90,22 +101,22 @@ var gameState = {
         endDoor.visible = false;
 
         //snake = game.add.sprite(100, 420, 'snake');
-       
+
         //game.physics.enable(snakes);
         //snakes.callAll('physics.enable','physics');
         //snakes.callAll('animations.play','animations','move');
         //snake.scale.setTo(0.75,0.75);
         //snakes.body.velocity.x = 100;
         //snakes.callAll('body.velocity.x',null,'100');
-        
+
 
         // player
         player = game.add.sprite(300, 300, 'player');
         player.anchor.setTo(0.5, 0.5);
         game.physics.enable(player);
-        player.body.gravity.y = 800;
-        player.body.bounce.y = 0.1;
-        player.body.drag.x = 2000;
+        player.body.gravity.y = PLAYER_GRAVITY;
+        player.body.bounce.y = PLAYER_BOUNCE;
+        player.body.drag.x = PLAYER_DRAG;
         player.body.collideWorldBounds = true;
         player.animations.add('walk', [0, 1, 2, 3, 4, 5], 7, true);
         player.animations.add('idle', [6, 7], 2, true);
@@ -125,15 +136,21 @@ var gameState = {
         attackKey.onDown.add(attack);
 
         // HUD
-        hintText = game.add.text(250, 500, 'Find the key to the locked door.', {
+        hintText = game.add.text(0, 0, 'Find the key to the locked door.', {
             fontSize: '32px',
-            fill: '#000'
+            fill: '#000',
+            boundsAlignH: 'center',
+            boundsAlignV: 'bottom'
         });
+        hintText.setTextBounds(0, 0, game.width, game.height);
         hintText.fixedToCamera = true;
-        inventory = game.add.text(330, 10, 'INVENTORY', {
+        inventory = game.add.text(0, 0, 'INVENTORY', {
             fontSize: '32px',
-            fill: '#000'
+            fill: '#000',
+            boundsAlignH: 'center',
+            boundsAlignV: 'top'
         });
+        inventory.setTextBounds(0, 0, game.width, game.height);
         inventory.fixedToCamera = true;
         healthBar = game.add.sprite(5, 5, 'healthBar');
         healthBar.fixedToCamera = true;
@@ -141,14 +158,13 @@ var gameState = {
         // sound FX
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
-        
-       
-       initializeSnakes(); 
+        loseHealthSound = game.add.audio('ouch');
+
+        initializeSnakes();
     },
 
     update: function () {
-        
-        snakes.callAll('animations.play','animations','move');
+        snakes.callAll('animations.play', 'animations', 'move');
 
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
@@ -157,7 +173,8 @@ var gameState = {
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
-        
+        game.physics.arcade.collide(player, snakes, dmgPlayer);
+
         game.physics.arcade.collide(snakes, layerCollision);
         game.physics.arcade.collide(snakes, layerCollision2);
 
@@ -166,10 +183,8 @@ var gameState = {
         map.setTileIndexCallback(19, snakeReverse, null, layerCollision);
         map.setTileIndexCallback(20, snakeReverse2, null, layerCollision2);
 
-        player.body.gravity.y = 800;
-
         hintText.text = "Find the key to the locked door.";
-        
+
         //snake.animations.play('move');
 
         // make player walk
@@ -178,11 +193,11 @@ var gameState = {
         } else if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
             player.animations.play('walk');
-            player.body.velocity.x = -200;
+            player.body.velocity.x = -PLAYER_RUN_SPEED;
         } else if (cursors.right.isDown) {
             player.scale.setTo(1, 1);
             player.animations.play('walk');
-            player.body.velocity.x = 200;
+            player.body.velocity.x = PLAYER_RUN_SPEED;
         } else {
             player.animations.stop('walk', 2);
             player.body.velocity.x = 0;
@@ -190,9 +205,13 @@ var gameState = {
 
         // make player jump
         if (cursors.up.isDown && player.body.onFloor()) {
-            player.body.velocity.y = -300;
+            player.body.velocity.y = -PLAYER_JUMP_SPEED;
         }
 
+        // if health reaches 0, game over
+        if (health == 0) {
+            game.state.start('gameOverState');
+        }
 
         if (blowdartCreated == true) {
 
@@ -202,9 +221,6 @@ var gameState = {
                 health -= 1;
                 blowdart.kill();
                 blowdartCreated = false;
-                if (health == 0) {
-                    game.state.start('gameOverState');
-                }
             }
         }
 
@@ -247,17 +263,20 @@ function shootDart() {
 function playerLadderClimb() {
     if (cursors.up.isDown) {
         player.body.velocity.y = -100;
+        playerClimbing = true;
+    } else {
+        playerClimbing = false;
     }
 
 }
 
 function attack() {
-    if (game.time.now > nextAttack) {
-        nextAttack = game.time.now + attackRate;
+    if (game.time.now > nextAttackPlayer) {
+        nextAttackPlayer = game.time.now + PLAYER_ATTACK_RATE;
         player.animations.play('attack');
         console.log('Attacking');
-        snakes.forEach(function(snake) {
-            if(player.overlap(snake)){
+        snakes.forEach(function (snake) {
+            if (player.overlap(snake)) {
                 snake.kill();
             }
         });
@@ -308,27 +327,53 @@ function insertKey(player, keyhole) {
     }
 }
 
-function snakeReverse(snake){
-    
-    snake.scale.setTo(-1,1);
+function snakeReverse(snake) {
+
+    snake.scale.setTo(-1, 1);
     snake.body.velocity.x = -100;
-}
- 
-function snakeReverse2(snake){
-    
-    snake.scale.setTo(1,1);
-    snake.body.velocity.x = 100;
+    snakeDirection = 'left';
 }
 
-function initializeSnakes(){
+function snakeReverse2(snake) {
+
+    snake.scale.setTo(1, 1);
+    snake.body.velocity.x = 100;
+    snakeDirection = 'right';
+}
+
+function initializeSnakes() {
     snakes = game.add.group();
-        snakes.enableBody = true;
-        map.createFromObjects('Snakes',33,'snake',0,true,false,snakes);
-     snakes.forEach(function(snake) {
-            snake.body.velocity.x = 100;
-            snake.anchor.setTo(0.7,0);
-        });
+    snakes.enableBody = true;
+    map.createFromObjects('Snakes', 33, 'snake', 0, true, false, snakes);
+    snakes.forEach(function (snake) {
+        snake.body.velocity.x = 100;
+        snake.anchor.setTo(0.7, 0);
+        snake.body.immovable = true;
+        snake.body.setSize(90, 15, 3, 33);
+    });
     map.setCollision(19);
-        map.setCollision(20);
-     snakes.callAll('animations.add', 'animations', 'move',null,5,true);
+    map.setCollision(20);
+    snakes.callAll('animations.add', 'animations', 'move', null, 5, true);
+}
+
+function dmgPlayer(player, snake) {
+    if (game.time.now > nextAttackSnake) {
+        nextAttackSnake = game.time.now + SNAKE_ATTACK_RATE;
+        healthBar.frame += 1;
+        health -= 1;
+        loseHealthSound.play();
+        if (player.body.touching.left) {
+            player.body.velocity.x = 10000;
+            player.body.acceleration.x = 10000;
+            player.body.velocity.y = -200;
+        } else if (player.body.touching.right) {
+            player.body.velocity.x = -10000;
+            player.body.acceleration.x = -10000;
+            player.body.velocity.y = -200;
+        } else {
+            player.body.velocity.y = -200;
+        }
+    }
+    player.body.velocity.x = 0;
+    player.body.acceleration.x = 0;
 }
