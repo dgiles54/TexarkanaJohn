@@ -53,8 +53,7 @@ var gameState = {
         // set map collisions
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
-        map.setCollision(19);
-        map.setCollision(20);
+        
 
         // add game objects
         levers = game.add.group();
@@ -79,9 +78,7 @@ var gameState = {
         darts.enableBody = true;
         map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);
         
-        snakes = game.add.group();
-        snakes.enableBody = true;
-        map.createFromObjects('Snakes',33,'snake',0,true,false,snakes);
+        
 
 
         //door = game.add.sprite(700, 125, 'door');
@@ -93,7 +90,7 @@ var gameState = {
         endDoor.visible = false;
 
         //snake = game.add.sprite(100, 420, 'snake');
-        snakes.callAll('animations.add', 'animations', 'move',null,5,true);
+       
         //game.physics.enable(snakes);
         //snakes.callAll('physics.enable','physics');
         //snakes.callAll('animations.play','animations','move');
@@ -145,11 +142,8 @@ var gameState = {
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
         
-        snakes.forEach(function(snake) {
-            snake.body.velocity.x = 100;
-            snake.anchor.setTo(0.7,0);
-        });
-        
+       
+       initializeSnakes(); 
     },
 
     update: function () {
@@ -322,4 +316,17 @@ function snakeReverse2(snake){
     
     snake.scale.setTo(1,1);
     snake.body.velocity.x = 100;
+}
+
+function initializeSnakes(){
+    snakes = game.add.group();
+        snakes.enableBody = true;
+        map.createFromObjects('Snakes',33,'snake',0,true,false,snakes);
+     snakes.forEach(function(snake) {
+            snake.body.velocity.x = 100;
+            snake.anchor.setTo(0.7,0);
+        });
+    map.setCollision(19);
+        map.setCollision(20);
+     snakes.callAll('animations.add', 'animations', 'move',null,5,true);
 }
