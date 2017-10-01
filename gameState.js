@@ -6,7 +6,8 @@ var player, health = 5,
     nextAttack = 0,
     playerAttacking = false;
 var cursors, useKey, attackKey;
-var lever, pressure_plate, key, keyInventory, keyHole, door, blowdart, endDoor, snake;
+var keyInventory, endDoor, snake;
+var levers, plates, keys, keyholes, doors, darts;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -54,25 +55,36 @@ var gameState = {
         map.setCollisionBetween(1, 15, true, 'Platforms');
 
         // add game objects
-        door = game.add.sprite(700, 125, 'door');
-        game.physics.enable(door);
+        levers = game.add.group();
+        levers.enableBody = true;
+        map.createFromObjects('Levers', 26, 'lever', 0, true, false, levers);
+        plates = game.add.group();
+        plates.enableBody = true;
+        map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
+        keys = game.add.group();
+        keys.enableBody = true;
+        map.createFromObjects('Keys', 28, 'key', 0, true, false, keys);
+        keys.visible = false;
+        keyholes = game.add.group();
+        keyholes.enableBody = true;
+        map.createFromObjects('Keyholes', 29, 'keyHole', 0, true, false, keyholes);
+        doors = game.add.group();
+        doors.enableBody = true;
+        map.createFromObjects('Doors', 30, 'door', 0, true, false, doors);
+        game.physics.enable(doors);
+        doors.setAll('body.immovable', true);
+        darts = game.add.group();
+        darts.enableBody = true;
+        map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);
+
+
+        //door = game.add.sprite(700, 125, 'door');
+        //game.physics.enable(door);
+        //door.body.immovable = true;
+        //door.body.setSize(50, 160, 30, 0);
         endDoor = game.add.sprite(750, 125, 'door');
         game.physics.enable(endDoor);
         endDoor.visible = false;
-        door.body.immovable = true;
-        door.body.setSize(50, 160, 30, 0);
-
-        lever = game.add.sprite(1, 300, 'lever');
-        game.physics.enable(lever);
-
-        pressure_plate = game.add.sprite(400, 448, 'pressurePlate');
-        game.physics.enable(pressure_plate);
-        pressure_plate.body.immovable = true;
-        pressure_plate.body.setSize(30, 5, 0, 30);
-
-        keyHole = game.add.sprite(625, 205, 'keyHole');
-        key = game.add.sprite(700, 420, 'key');
-        key.visible = false;
 
         snake = game.add.sprite(100, 420, 'snake');
 
@@ -125,7 +137,10 @@ var gameState = {
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
         game.physics.arcade.collide(player, layerLadders);
-        game.physics.arcade.collide(player, door);
+        game.physics.arcade.collide(player, doors);
+        game.physics.arcade.overlap(player, levers, pushLever);
+        game.physics.arcade.overlap(player, keys, takeKey);
+        game.physics.arcade.overlap(player, keyholes, insertKey);
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
@@ -153,53 +168,7 @@ var gameState = {
             player.body.velocity.y = -200;
         }
 
-        // shoot blowdart on pressure plate overlap
-        if (player.overlap(pressure_plate) && player.body.onFloor()) {
-            createBlowDart();
-        }
 
-        // press lever
-        if (player.overlap(lever) && useKey.isDown) {
-            lever.frame = 1;
-            leverSound.play();
-            key.visible = true;
-            keyCreated = true;
-
-        }
-
-        // allow player to pickup key
-        if (keyCreated) {
-            if (player.overlap(key)) {
-
-                hintText.text = "Press 'e' to pickup item.";
-            }
-
-
-            if (player.overlap(key) && useKey.isDown && hasKey == false) {
-                key.kill();
-                keyInventory = game.add.sprite(350, 50, 'key');
-                keyInventory.fixedToCamera = true;
-                hasKey = true;
-
-
-            }
-        }
-
-        // update hint text for door
-        if (player.overlap(keyHole)) {
-
-            hintText.text = "Use the key to open the door.";
-        }
-
-        // kill key when it is used
-        if (player.overlap(keyHole) && hasKey == true && useKey.isDown) {
-
-            door.body.gravity.y = -100;
-            keyInventory.kill();
-
-        }
-
-        // blowdart
         if (blowdartCreated == true) {
 
             if (player.overlap(blowdart)) {
@@ -213,16 +182,25 @@ var gameState = {
                 }
             }
         }
+
+
+        if (player.overlap(keys) && keyCreated == true) {
+            hintText.text = "Press 'e' to pickup item.";
+        }
+
+        if (player.overlap(keyholes)) {
+            hintText.text = "Use the key to open the door.";
+        }
+
         // when player reaches end of level, go to next level or win state if last level
         if (player.overlap(endDoor)) {
             levelNum++;
             game.state.start('gameState');
         }
-
     }
 };
 
-function createBlowDart() {
+function shootDart() {
 
     if (blowdartCreated == false) {
         blowdart = game.add.sprite(800, 400, 'blowdart');
@@ -265,4 +243,35 @@ function loadLevel(levelNum) {
     layerDetails = map.createLayer('Detail');
     layerLadders = map.createLayer('Ladder');
     layerWall.resizeWorld();
+}
+
+function pushLever(player, lever) {
+    if (player.overlap(lever) && useKey.isDown) {
+        lever.frame = 1;
+        leverSound.play();
+        keys.visible = true;
+        keyCreated = true;
+
+    }
+}
+
+function takeKey(player, key) {
+    if (keyCreated) {
+        hintText.text = "Press 'e' to pickup item.";
+    }
+
+
+    if (useKey.isDown && hasKey == false) {
+        key.kill();
+        keyInventory = game.add.sprite(350, 50, 'key');
+        keyInventory.fixedToCamera = true;
+        hasKey = true;
+    }
+}
+
+function insertKey(player, keyhole) {
+    if (hasKey == true && useKey.isDown) {
+        doors.killAll(); // temporary
+        keyInventory.kill();
+    }
 }
