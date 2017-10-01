@@ -78,11 +78,11 @@ var gameState = {
         map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
         keys = game.add.group();
         keys.enableBody = true;
-        map.createFromObjects('Keys', 28, 'key', 0, true, false, keys);
-        keys.visible = false;
+        map.createFromObjects('Key', 32, 'key', 0, true, false, keys);
+        keys.visible = true;
         keyholes = game.add.group();
         keyholes.enableBody = true;
-        map.createFromObjects('Keyholes', 29, 'keyHole', 0, true, false, keyholes);
+        map.createFromObjects('Keyhole', 33, 'keyHole', 0, true, false, keyholes);
 //        doors = game.add.group();
 //        doors.enableBody = true;
         //map.createFromObjects('Doors', 30, 'door', 0, true, false, doors);
@@ -239,10 +239,10 @@ var gameState = {
         }
 
         // when player reaches end of level, go to next level or win state if last level
-        if (player.overlap(endDoor)) {
-            levelNum++;
-            game.state.start('gameState');
-        }
+//        if (player.overlap(door)) {
+//            levelNum++;
+//            game.state.start('gameState');
+//        }
     }
 };
 
