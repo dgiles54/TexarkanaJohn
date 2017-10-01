@@ -179,7 +179,9 @@ var gameState = {
         //snake.animations.play('move');
 
         // make player walk
-        if (cursors.left.isDown) {
+        if (attackKey.isDown) {
+            player.body.velocity.x = 0;
+        } else if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
             player.animations.play('walk');
             player.body.velocity.x = -200;
