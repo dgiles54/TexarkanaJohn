@@ -26,7 +26,7 @@ var gameState = {
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/healthBar.png', 320, 64);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
-        game.load.spritesheet('snake', 'assets/sprites/snake.png', 128, 64);
+        game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48,3);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32, 2);
         game.load.image('lever', 'assets/sprites/lever.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
@@ -89,9 +89,11 @@ var gameState = {
         endDoor.visible = false;
 
         snake = game.add.sprite(100, 420, 'snake');
+        snake.animations.add('move',null,5,true);
         game.physics.enable(snake);
         snake.scale.setTo(0.75,0.75);
         snake.body.velocity.x = 100;
+        
 
         // player
         player = game.add.sprite(300, 300, 'player');
@@ -151,12 +153,14 @@ var gameState = {
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
-         map.setTileIndexCallback(19, snakeReverse, null, layerCollision);
+        map.setTileIndexCallback(19, snakeReverse, null, layerCollision);
         map.setTileIndexCallback(20, snakeReverse2, null, layerCollision2);
 
         player.body.gravity.y = 800;
 
         hintText.text = "Find the key to the locked door.";
+        
+        snake.animations.play('move');
 
         // make player walk
         if (cursors.left.isDown) {
@@ -293,12 +297,12 @@ function insertKey(player, keyhole) {
 
 function snakeReverse(snake){
     
-    snake.scale.setTo(-0.75,0.75);
+    snake.scale.setTo(-1,1);
     snake.body.velocity.x = -100;
 }
 
 function snakeReverse2(snake){
     
-    snake.scale.setTo(0.75,0.75);
+    snake.scale.setTo(1,1);
     snake.body.velocity.x = 100;
 }
