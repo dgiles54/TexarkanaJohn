@@ -81,7 +81,7 @@ var gameState = {
         
         snakes = game.add.group();
         snakes.enableBody = true;
-        map.createFromObjects('Snakes',32,'snake',0,true,false,snakes);
+        map.createFromObjects('Snakes',33,'snake',0,true,false,snakes);
 
 
         //door = game.add.sprite(700, 125, 'door');
@@ -95,7 +95,7 @@ var gameState = {
         //snake = game.add.sprite(100, 420, 'snake');
         snakes.callAll('animations.add', 'animations', 'move',null,5,true);
         //game.physics.enable(snakes);
-        snakes.callAll('physics.enable','physics');
+        //snakes.callAll('physics.enable','physics');
         //snakes.callAll('animations.play','animations','move');
         //snake.scale.setTo(0.75,0.75);
         //snakes.body.velocity.x = 100;
@@ -144,6 +144,11 @@ var gameState = {
         // sound FX
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
+        
+        snakes.forEach(function(snake) {
+            snake.body.velocity.x = 100;
+        });
+        
     },
 
     update: function () {
@@ -157,8 +162,9 @@ var gameState = {
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
-        game.physics.arcade.collide(snake, layerCollision);
-        game.physics.arcade.collide(snake, layerCollision2);
+        
+        game.physics.arcade.collide(snakes, layerCollision);
+        game.physics.arcade.collide(snakes, layerCollision2);
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
@@ -253,10 +259,11 @@ function attack() {
         nextAttack = game.time.now + attackRate;
         player.animations.play('attack');
         console.log('Attacking');
-        if(player.overlap(snake)){
-            
-            snake.kill();
-        }
+        snakes.forEach(function(snake) {
+            if(player.overlap(snake)){
+                snake.kill();
+            }
+        });
     }
 }
 
