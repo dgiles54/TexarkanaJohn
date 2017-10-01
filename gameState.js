@@ -91,7 +91,11 @@ var gameState = {
         darts = game.add.group();
         darts.enableBody = true;
         map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);
-        map.createFromObjects("Door",32, 'door',0,true,false,door);
+        
+        doors = game.add.group();
+        doors.enableBody = true;
+        map.createFromObjects("Door",32, 'door', 0, true, false, doors);
+        doors.children[0].body.immovable = true;
 
 
 
