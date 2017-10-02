@@ -7,7 +7,7 @@ var PLAYER_DRAG = 0;
 var SNAKE_ATTACK_RATE = 600;
 
 var map;
-var layerWall, layerPlatforms, layerLadders, layerDetails;
+var layerWall, layerPlatforms, layerLadders, layerDetails, endingLayer;
 //var mapLayers, layer;
 var player,
     health = 5,
@@ -67,6 +67,11 @@ var gameState = {
         map.setCollisionBetween(19, 20, true, 'Collision');
         
         layerCollision.visible = false;
+<<<<<<< HEAD
+=======
+        layerCollision2.visible = false;
+        endingLayer.visible = false;
+>>>>>>> d975537c953bbe6cdcf734af925d1cdb01ec78b1
 
 
         // add game objects
@@ -174,12 +179,15 @@ var gameState = {
     },
 
     update: function () {
+        
+        
         snakes.callAll('animations.play', 'animations', 'move');
 
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
         game.physics.arcade.collide(player, layerLadders);
         game.physics.arcade.collide(player, doors);
+        game.physics.arcade.collide(player, endingLayer);
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
@@ -190,7 +198,12 @@ var gameState = {
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
         map.setTileIndexCallback(19, snakeReverse, null, layerCollision);
+<<<<<<< HEAD
         map.setTileIndexCallback(20, snakeReverse2, null, layerCollision);
+=======
+        map.setTileIndexCallback(20, snakeReverse2, null, layerCollision2);
+        map.setTileIndexCallback(24, gameWin, null, endingLayer);
+>>>>>>> d975537c953bbe6cdcf734af925d1cdb01ec78b1
 
         hintText.text = "Find the key to the locked door.";
 
@@ -300,6 +313,7 @@ function loadLevel(levelNum) {
     layerLadders = map.createLayer('Ladder');
     layerCollision = map.createLayer('Collision');
     layerCollision2 = map.createLayer('Collision2');
+    endingLayer = map.createLayer('EndingPoint');
     layerWall.resizeWorld();
 }
 
@@ -382,4 +396,8 @@ function dmgPlayer(player, snake) {
     }
     player.body.velocity.x = 0;
     player.body.acceleration.x = 0;
+}
+
+function gameWin(){
+    game.state.start('gameWinState');
 }
