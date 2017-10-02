@@ -174,7 +174,8 @@ var gameState = {
     },
 
     update: function () {
-        
+        // for that ladder physics when gravity = 0
+        player.body.gravity.y = PLAYER_GRAVITY;
         
         snakes.callAll('animations.play', 'animations', 'move');
 
@@ -192,8 +193,12 @@ var gameState = {
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
+        
+        // so snakes don't fall off platform
         map.setTileIndexCallback(19, snakeReverse, null, layerCollision);
         map.setTileIndexCallback(20, snakeReverse2, null, layerCollision);
+
+        // winning game location
         map.setTileIndexCallback(24, gameWin, null, endingLayer);
 
         hintText.text = "Find the key to the locked door.";
@@ -215,7 +220,10 @@ var gameState = {
         }
 
         // make player jump
-        if (cursors.up.isDown && player.body.onFloor()) {
+        // if (cursors.up.isDown && player.body.onFloor()) {
+        //     player.body.velocity.y = -PLAYER_JUMP_SPEED;
+        // }
+        if (cursors.up.justDown && cursors.up.justUp && player.body.onFloor()) {
             player.body.velocity.y = -PLAYER_JUMP_SPEED;
         }
 
@@ -272,10 +280,17 @@ function shootDart() {
 }
 
 function playerLadderClimb() {
+    // allows for player to wait on ladder
+    player.body.gravity.y = 0;
+
     if (cursors.up.isDown) {
         player.body.velocity.y = -100;
         playerClimbing = true;
+    } else if (cursors.down.isDown) {
+        player.body.velocity.y = 100;
+        playerClimbing = true;
     } else {
+        player.body.velocity.y = 0; // stops player on ladder
         playerClimbing = false;
     }
 
