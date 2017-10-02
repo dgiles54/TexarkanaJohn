@@ -64,9 +64,9 @@ var gameState = {
         // set map collisions
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
+        map.setCollisionBetween(19, 20, true, 'Collision');
         
         layerCollision.visible = false;
-        layerCollision2.visible = false;
 
 
         // add game objects
@@ -186,16 +186,13 @@ var gameState = {
         game.physics.arcade.collide(player, snakes, dmgPlayer);
 
         game.physics.arcade.collide(snakes, layerCollision);
-        game.physics.arcade.collide(snakes, layerCollision2);
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
         map.setTileIndexCallback(19, snakeReverse, null, layerCollision);
-        map.setTileIndexCallback(20, snakeReverse2, null, layerCollision2);
+        map.setTileIndexCallback(20, snakeReverse2, null, layerCollision);
 
         hintText.text = "Find the key to the locked door.";
-
-        //snake.animations.play('move');
 
         // make player walk
         if (attackKey.isDown) {
@@ -354,13 +351,15 @@ function initializeSnakes() {
     map.createFromObjects('Snakes', 33, 'snake', 0, true, false, snakes);
     snakes.forEach(function (snake) {
         snake.body.velocity.x = 100;
-        snake.anchor.setTo(0.7, 0);
+        snake.anchor.setTo(0.5, 0);
         snake.body.immovable = true;
         snake.body.setSize(90, 15, 3, 33);
+        snake.body.bounce.x = 1;
     });
     map.setCollision(19);
     map.setCollision(20);
     snakes.callAll('animations.add', 'animations', 'move', null, 5, true);
+    snakes.setAll('body.collideWorldBounds', true);
 }
 
 function dmgPlayer(player, snake) {
