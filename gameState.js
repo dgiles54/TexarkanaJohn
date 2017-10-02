@@ -73,6 +73,7 @@ var gameState = {
         levers = game.add.group();
         levers.enableBody = true;
         map.createFromObjects('Lever', 33, 'lever', 0, true, false, levers);
+        levers.setAll('frame', 0);
         plates = game.add.group();
         plates.enableBody = true;
         map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
