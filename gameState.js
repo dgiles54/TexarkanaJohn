@@ -36,8 +36,8 @@ var gameState = {
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
-        game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48, 3);
-        game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32, 2);
+        game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48);
+        game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32);
         game.load.image('lever', 'assets/sprites/lever.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
@@ -63,23 +63,23 @@ var gameState = {
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
         map.setCollisionBetween(19, 20, true, 'Collision');
-        
+
         layerCollision.visible = false;
         endingLayer.visible = false;
 
         // TILEMAP OBJECTS
-        
+
         // levers
         levers = game.add.group();
         levers.enableBody = true;
         map.createFromObjects('Lever', 33, 'lever', 0, true, false, levers);
         levers.setAll('frame', 0);
-        
+
         // pressure plates
         //plates = game.add.group();
         //plates.enableBody = true;
         //map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
-        
+
         // keys and keyholes
         keys = game.add.group();
         keys.enableBody = true;
@@ -88,25 +88,25 @@ var gameState = {
         keyholes = game.add.group();
         keyholes.enableBody = true;
         map.createFromObjects('Keyhole', 33, 'keyHole', 0, true, false, keyholes);
-        
+
         // darts
         //darts = game.add.group();
         //darts.enableBody = true;
         //map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);     
-        
+
         // doors
         doors = game.add.group();
         doors.enableBody = true;
-        map.createFromObjects("Door",32, 'door', 0, true, false, doors);
+        map.createFromObjects("Door", 32, 'door', 0, true, false, doors);
         doors.setAll('body.immovable', true);
         doors.setAll('outOfBoundsKill', true);
-        
+
         // snakes
         initializeSnakes();
-        
+
 
         // PLAYER
-        player = game.add.sprite(game.world.width-50, game.world.height-100 , 'player');
+        player = game.add.sprite(game.world.width - 50, game.world.height - 100, 'player');
         player.anchor.setTo(0.5, 0.5);
         game.physics.enable(player);
         player.body.gravity.y = PLAYER_GRAVITY;
@@ -140,16 +140,7 @@ var gameState = {
         });
         hintText.setTextBounds(0, 0, game.width, game.height);
         hintText.fixedToCamera = true;
-        /*
-        inventory = game.add.text(0, 0, 'INVENTORY', {
-            fontSize: '32px',
-            fill: '#000',
-            boundsAlignH: 'center',
-            boundsAlignV: 'top'
-        });
-        inventory.setTextBounds(0, 0, game.width, game.height);
-        inventory.fixedToCamera = true;
-        */
+        
         healthBar = game.add.sprite(5, 5, 'healthBar');
         healthBar.fixedToCamera = true;
 
@@ -162,7 +153,7 @@ var gameState = {
     update: function () {
         // for that ladder physics when gravity = 0
         player.body.gravity.y = PLAYER_GRAVITY;
-        
+
         snakes.callAll('animations.play', 'animations', 'move');
 
         game.physics.arcade.collide(player, layerWall);
@@ -179,7 +170,7 @@ var gameState = {
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
-        
+
         // so snakes don't fall off platform
         map.setTileIndexCallback(19, snakeReverse, null, layerCollision);
         map.setTileIndexCallback(20, snakeReverse2, null, layerCollision);
@@ -239,10 +230,10 @@ var gameState = {
         }
 
         // when player reaches end of level, go to next level or win state if last level
-//        if (player.overlap(door)) {
-//            levelNum++;
-//            game.state.start('gameState');
-//        }
+        //        if (player.overlap(door)) {
+        //            levelNum++;
+        //            game.state.start('gameState');
+        //        }
     }
 };
 
@@ -321,7 +312,8 @@ function pushLever(player, lever) {
 function takeKey(player, key) {
     if (useKey.isDown && hasKey == false) {
         key.kill();
-        keyInventory = game.add.sprite(350, 50, 'key');
+        keyInventory = game.add.sprite(game.width/2, 0, 'key');
+        keyInventory.anchor.setTo(0.5, 0);
         keyInventory.fixedToCamera = true;
         hasKey = true;
     }
@@ -389,6 +381,6 @@ function dmgPlayer(player, snake) {
     player.body.acceleration.x = 0;
 }
 
-function gameWin(){
+function gameWin() {
     game.state.start('gameWinState');
 }
