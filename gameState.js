@@ -8,7 +8,6 @@ var SNAKE_ATTACK_RATE = 600;
 
 var map;
 var layerWall, layerPlatforms, layerLadders, layerDetails, endingLayer;
-//var mapLayers, layer;
 var player,
     health = 5,
     nextAttackPlayer = 0,
@@ -55,7 +54,6 @@ var gameState = {
     create: function () {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.physics.startSystem(Phaser.Physics.ARCADE);
-
         game.stage.backgroundColor = '#787878';
 
         // map level loader      
@@ -69,14 +67,20 @@ var gameState = {
         layerCollision.visible = false;
         endingLayer.visible = false;
 
-        // add game objects
+        // TILEMAP OBJECTS
+        
+        // levers
         levers = game.add.group();
         levers.enableBody = true;
         map.createFromObjects('Lever', 33, 'lever', 0, true, false, levers);
         levers.setAll('frame', 0);
-        plates = game.add.group();
-        plates.enableBody = true;
-        map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
+        
+        // pressure plates
+        //plates = game.add.group();
+        //plates.enableBody = true;
+        //map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
+        
+        // keys and keyholes
         keys = game.add.group();
         keys.enableBody = true;
         map.createFromObjects('Key', 32, 'key', 0, true, false, keys);
@@ -84,43 +88,24 @@ var gameState = {
         keyholes = game.add.group();
         keyholes.enableBody = true;
         map.createFromObjects('Keyhole', 33, 'keyHole', 0, true, false, keyholes);
-//        doors = game.add.group();
-//        doors.enableBody = true;
-        //map.createFromObjects('Doors', 30, 'door', 0, true, false, doors);
-        //game.physics.enable(doors);
-//        doors.setAll('body.immovable', true);
-        darts = game.add.group();
-        darts.enableBody = true;
-        map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);
         
+        // darts
+        //darts = game.add.group();
+        //darts.enableBody = true;
+        //map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);     
+        
+        // doors
         doors = game.add.group();
         doors.enableBody = true;
         map.createFromObjects("Door",32, 'door', 0, true, false, doors);
         doors.setAll('body.immovable', true);
         doors.setAll('outOfBoundsKill', true);
+        
+        // snakes
+        initializeSnakes();
+        
 
-
-
-
-        //door = game.add.sprite(700, 125, 'door');
-        //game.physics.enable(door);
-        //door.body.immovable = true;
-        //door.body.setSize(50, 160, 30, 0);
-//        endDoor = game.add.sprite(750, 125, 'door');
-//        game.physics.enable(endDoor);
-//        endDoor.visible = false;
-
-        //snake = game.add.sprite(100, 420, 'snake');
-
-        //game.physics.enable(snakes);
-        //snakes.callAll('physics.enable','physics');
-        //snakes.callAll('animations.play','animations','move');
-        //snake.scale.setTo(0.75,0.75);
-        //snakes.body.velocity.x = 100;
-        //snakes.callAll('body.velocity.x',null,'100');
-
-
-        // player
+        // PLAYER
         player = game.add.sprite(game.world.width-50, game.world.height-100 , 'player');
         player.anchor.setTo(0.5, 0.5);
         game.physics.enable(player);
@@ -137,10 +122,10 @@ var gameState = {
         player.body.setSize(20, 64, 15, 0);
         player.scale.setTo(-1, 1);
 
-        // game camera
+        // GAME CAMERA
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
-        // controls
+        // CONTROLS
         cursors = game.input.keyboard.createCursorKeys();
         useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
         attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -155,6 +140,7 @@ var gameState = {
         });
         hintText.setTextBounds(0, 0, game.width, game.height);
         hintText.fixedToCamera = true;
+        /*
         inventory = game.add.text(0, 0, 'INVENTORY', {
             fontSize: '32px',
             fill: '#000',
@@ -163,15 +149,14 @@ var gameState = {
         });
         inventory.setTextBounds(0, 0, game.width, game.height);
         inventory.fixedToCamera = true;
+        */
         healthBar = game.add.sprite(5, 5, 'healthBar');
         healthBar.fixedToCamera = true;
 
-        // sound FX
+        // SOUND FX
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
         loseHealthSound = game.add.audio('ouch');
-
-        initializeSnakes();
     },
 
     update: function () {
@@ -319,7 +304,6 @@ function loadLevel(levelNum) {
     layerDetails = map.createLayer('Detail');
     layerLadders = map.createLayer('Ladder');
     layerCollision = map.createLayer('Collision');
-    layerCollision2 = map.createLayer('Collision2');
     endingLayer = map.createLayer('EndingPoint');
     layerWall.resizeWorld();
 }
