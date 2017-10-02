@@ -67,12 +67,7 @@ var gameState = {
         map.setCollisionBetween(19, 20, true, 'Collision');
         
         layerCollision.visible = false;
-<<<<<<< HEAD
-=======
-        layerCollision2.visible = false;
         endingLayer.visible = false;
->>>>>>> d975537c953bbe6cdcf734af925d1cdb01ec78b1
-
 
         // add game objects
         levers = game.add.group();
@@ -198,12 +193,8 @@ var gameState = {
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
         map.setTileIndexCallback(19, snakeReverse, null, layerCollision);
-<<<<<<< HEAD
         map.setTileIndexCallback(20, snakeReverse2, null, layerCollision);
-=======
-        map.setTileIndexCallback(20, snakeReverse2, null, layerCollision2);
         map.setTileIndexCallback(24, gameWin, null, endingLayer);
->>>>>>> d975537c953bbe6cdcf734af925d1cdb01ec78b1
 
         hintText.text = "Find the key to the locked door.";
 
