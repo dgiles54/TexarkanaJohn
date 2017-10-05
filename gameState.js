@@ -118,7 +118,8 @@ var gameState = {
         attackAnim = player.animations.add('attack', [8, 9, 10, 11], 12, false);
         attackAnim.onComplete.add(function () {
             player.frame = 2;
-        })
+        });
+        player.animations.add('climb', [12, 13, 14, 13], 5, true);
         player.body.setSize(20, 64, 15, 0);
         player.scale.setTo(-1, 1);
 
@@ -263,12 +264,15 @@ function playerLadderClimb() {
     if (cursors.up.isDown) {
         player.body.velocity.y = -100;
         playerClimbing = true;
+        player.animations.play('climb');
     } else if (cursors.down.isDown) {
         player.body.velocity.y = 100;
         playerClimbing = true;
+        player.animations.play('climb');
     } else {
         player.body.velocity.y = 0; // stops player on ladder
         playerClimbing = false;
+        player.animations.stop('climb', 12);
     }
 
 }
