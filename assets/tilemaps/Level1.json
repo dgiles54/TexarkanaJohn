@@ -115,7 +115,7 @@
          "name":"Lever",
          "objects":[
                 {
-                 "gid":26,
+                 "gid":33,
                  "height":32,
                  "id":15,
                  "name":"",
@@ -159,16 +159,16 @@
          "name":"Door",
          "objects":[
                 {
-                 "gid":30,
+                 "gid":32,
                  "height":160,
                  "id":17,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":128,
-                 "x":768,
-                 "y":280
+                 "width":48,
+                 "x":830,
+                 "y":290
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -181,7 +181,7 @@
          "name":"Key",
          "objects":[
                 {
-                 "gid":28,
+                 "gid":32,
                  "height":33,
                  "id":18,
                  "name":"",
@@ -203,7 +203,7 @@
          "name":"Keyhole",
          "objects":[
                 {
-                 "gid":29,
+                 "gid":33,
                  "height":32,
                  "id":19,
                  "name":"",
@@ -255,7 +255,7 @@
          "name":"Snakes",
          "objects":[
                 {
-                 "gid":32,
+                 "gid":33,
                  "height":32,
                  "id":24,
                  "name":"",

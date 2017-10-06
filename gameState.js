@@ -23,7 +23,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 2;
+var levelNum = 1;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -66,6 +66,7 @@ var gameState = {
 
         layerCollisions.visible = false;
         endingLayer.visible = false;
+        startingLayer.visible = false;
 
         // TILEMAP OBJECTS
 
