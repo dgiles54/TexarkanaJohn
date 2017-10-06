@@ -7,7 +7,7 @@ var PLAYER_DRAG = 0;
 var SNAKE_ATTACK_RATE = 600;
 
 var map;
-var layerWall, layerPlatforms, layerLadders, layerDetails, endingLayer;
+var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, startLayer;
 var player,
     health = 5,
     nextAttackPlayer = 0,
@@ -62,9 +62,9 @@ var gameState = {
         // set map collisions
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
-        map.setCollisionBetween(19, 20, true, 'Collision');
+        map.setCollisionBetween(19, 20, true, 'Collisions');
 
-        layerCollision.visible = false;
+        layerCollisions.visible = false;
         endingLayer.visible = false;
 
         // TILEMAP OBJECTS
@@ -167,14 +167,14 @@ var gameState = {
         game.physics.arcade.overlap(player, keyholes, insertKey);
         game.physics.arcade.collide(player, snakes, dmgPlayer);
 
-        game.physics.arcade.collide(snakes, layerCollision);
+        game.physics.arcade.collide(snakes, layerCollisions);
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
 
         // so snakes don't fall off platform
-        map.setTileIndexCallback(19, snakeReverse, null, layerCollision);
-        map.setTileIndexCallback(20, snakeReverse2, null, layerCollision);
+        map.setTileIndexCallback(19, snakeReverse, null, layerCollisions);
+        map.setTileIndexCallback(20, snakeReverse2, null, layerCollisions);
 
         // winning game location
         map.setTileIndexCallback(24, gameWin, null, endingLayer);
@@ -296,10 +296,12 @@ function loadLevel(levelNum) {
 
     layerWall = map.createLayer('Wall');
     layerPlatforms = map.createLayer('Platforms');
-    layerDetails = map.createLayer('Detail');
-    layerLadders = map.createLayer('Ladder');
-    layerCollision = map.createLayer('Collision');
-    endingLayer = map.createLayer('EndingPoint');
+    layerDetails = map.createLayer('Details');
+    layerLadders = map.createLayer('Ladders');
+    layerCollisions = map.createLayer('Collisions');
+    endingLayer = map.createLayer('EndPoint');
+    startingLayer = map.createLayer('StartPoint');
+    layerFaces = map.createLayer('Faces');
     layerWall.resizeWorld();
 }
 
