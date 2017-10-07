@@ -23,7 +23,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 2;
+var levelNum = 3;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -33,11 +33,13 @@ var gameState = {
 
         game.load.tilemap('level1', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level2', 'assets/tilemaps/Level2.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('level3', 'assets/tilemaps/Level3.json', null, Phaser.Tilemap.TILED_JSON)
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
         game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32);
+        game.load.spritesheet('f_block', 'assets/sprites/fall_block.png', 32, 32, 3, 0, 1);
         game.load.image('lever', 'assets/sprites/lever.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
@@ -104,6 +106,12 @@ var gameState = {
 
         // snakes
         initializeSnakes();
+
+        // falling platforms
+        f_platforms = game.add.group();
+        f_platforms.enableBody = true;
+        map.createFromObjects('F_Platforms', 33, 'f_block', 0, true, false, f_platforms);
+        f_platforms.setAll('body.immovable', true);
 
 
         // PLAYER
