@@ -7,7 +7,7 @@ var PLAYER_DRAG = 0;
 var SNAKE_ATTACK_RATE = 600;
 
 var map;
-var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, startLayer;
+var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, startLayer, layerSpikes;
 var player,
     health = 5,
     nextAttackPlayer = 0,
@@ -23,7 +23,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 1;
+var levelNum = 2;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -303,6 +303,7 @@ function loadLevel(levelNum) {
     endingLayer = map.createLayer('EndPoint');
     startingLayer = map.createLayer('StartPoint');
     layerFaces = map.createLayer('Faces');
+    layerSpikes = map.createLayer('Spikes');
     layerWall.resizeWorld();
 }
 
