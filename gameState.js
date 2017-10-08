@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 4;
+var levelNum = 3;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -89,7 +89,7 @@ var gameState = {
             player.frame = 2;
         });
         player.animations.add('climb', [12, 13, 14, 13], 5, true);
-        player.body.setSize(20, 64, 15, 0);
+        player.body.setSize(20, 44, 15, 20);
         player.scale.setTo(-1, 1);
 
         // GAME CAMERA
@@ -173,10 +173,7 @@ var gameState = {
         }
 
         // make player jump
-        // if (cursors.up.isDown && player.body.onFloor()) {
-        //     player.body.velocity.y = -PLAYER_JUMP_SPEED;
-        // }
-        if (cursors.up.justDown && cursors.up.justUp && player.body.onFloor()) {
+        if (cursors.up.justDown && player.body.onFloor()) {
             player.body.velocity.y = -PLAYER_JUMP_SPEED;
         }
 
