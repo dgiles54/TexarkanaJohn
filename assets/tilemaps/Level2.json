@@ -277,7 +277,7 @@
                  "id":30,
                  "name":"lever1",
                  "rotation":180,
-                 "type":"",
+                 "type":"unlock_key",
                  "visible":true,
                  "width":32,
                  "x":835,

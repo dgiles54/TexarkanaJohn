@@ -7,7 +7,8 @@ var PLAYER_DRAG = 0;
 var SNAKE_ATTACK_RATE = 600;
 
 var map;
-var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, startLayer, layerSpikes;
+var startPointX, startPointY, endPointX, endPointY;
+var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, startLayer, layerSpikes, layerLava;
 var player,
     health = 5,
     nextAttackPlayer = 0,
@@ -23,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 3;
+var levelNum = 4;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -33,14 +34,14 @@ var gameState = {
 
         game.load.tilemap('level1', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level2', 'assets/tilemaps/Level2.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.tilemap('level3', 'assets/tilemaps/Level3.json', null, Phaser.Tilemap.TILED_JSON)
+        game.load.tilemap('level3', 'assets/tilemaps/Level3.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('level4', 'assets/tilemaps/Level4.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
         game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48);
-        game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32);
         game.load.spritesheet('f_block', 'assets/sprites/fall_block.png', 32, 32, 3, 0, 1);
-        game.load.image('lever', 'assets/sprites/lever.png');
+        game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
@@ -65,57 +66,15 @@ var gameState = {
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
         map.setCollisionBetween(19, 20, true, 'Collisions');
+        map.setCollisionBetween(22, 23, true, 'Lava');
 
         layerCollisions.visible = false;
-        endingLayer.visible = false;
-        startingLayer.visible = false;
-
-        // TILEMAP OBJECTS
-
-        // levers
-        levers = game.add.group();
-        levers.enableBody = true;
-        map.createFromObjects('Lever', 33, 'lever', 0, true, false, levers);
-        levers.setAll('frame', 0);
-
-        // pressure plates
-        //plates = game.add.group();
-        //plates.enableBody = true;
-        //map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
-
-        // keys and keyholes
-        keys = game.add.group();
-        keys.enableBody = true;
-        map.createFromObjects('Key', 32, 'key', 0, true, false, keys);
-        keys.setAll('visible', false);
-        keyholes = game.add.group();
-        keyholes.enableBody = true;
-        map.createFromObjects('Keyhole', 33, 'keyHole', 0, true, false, keyholes);
-
-        // darts
-        //darts = game.add.group();
-        //darts.enableBody = true;
-        //map.createFromObjects('Darts', 31, 'blowdart', 0, true, false, darts);     
-
-        // doors
-        doors = game.add.group();
-        doors.enableBody = true;
-        map.createFromObjects("Door", 32, 'door', 0, true, false, doors);
-        doors.setAll('body.immovable', true);
-        doors.setAll('outOfBoundsKill', true);
 
         // snakes
         initializeSnakes();
 
-        // falling platforms
-        f_platforms = game.add.group();
-        f_platforms.enableBody = true;
-        map.createFromObjects('F_Platforms', 33, 'f_block', 0, true, false, f_platforms);
-        f_platforms.setAll('body.immovable', true);
-
-
         // PLAYER
-        player = game.add.sprite(game.world.width - 50, game.world.height - 100, 'player');
+        player = game.add.sprite(startPointX, startPointY, 'player');
         player.anchor.setTo(0.5, 0.5);
         game.physics.enable(player);
         player.body.gravity.y = PLAYER_GRAVITY;
@@ -150,7 +109,7 @@ var gameState = {
         });
         hintText.setTextBounds(0, 0, game.width, game.height);
         hintText.fixedToCamera = true;
-        
+
         healthBar = game.add.sprite(5, 5, 'healthBar');
         healthBar.fixedToCamera = true;
 
@@ -175,6 +134,7 @@ var gameState = {
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
         game.physics.arcade.collide(player, snakes, dmgPlayer);
+        game.physics.arcade.collide(player, layerLava, dmgPlayer);
 
         game.physics.arcade.collide(snakes, layerCollisions);
 
@@ -304,31 +264,69 @@ function loadLevel(levelNum) {
     map.addTilesetImage('tileset');
 
     layerWall = map.createLayer('Wall');
+
+    doors = game.add.group();
+    doors.enableBody = true;
+    map.createFromObjects("Door", 32, 'door', 0, true, false, doors);
+    doors.setAll('body.immovable', true);
+    doors.setAll('outOfBoundsKill', true);
+
+    layerLava = map.createLayer('Lava');
     layerPlatforms = map.createLayer('Platforms');
     layerDetails = map.createLayer('Details');
     layerLadders = map.createLayer('Ladders');
     layerCollisions = map.createLayer('Collisions');
-    endingLayer = map.createLayer('EndPoint');
-    startingLayer = map.createLayer('StartPoint');
     layerFaces = map.createLayer('Faces');
     layerSpikes = map.createLayer('Spikes');
     layerWall.resizeWorld();
+
+    levers = game.add.group();
+    levers.enableBody = true;
+    map.createFromObjects('Lever', 33, 'lever', 0, true, false, levers);
+    levers.setAll('anchor.setTo', 0.5, 0.5);
+
+    keys = game.add.group();
+    keys.enableBody = true;
+    map.createFromObjects('Key', 32, 'key', 0, true, false, keys);
+    keys.setAll('visible', false);
+    keyholes = game.add.group();
+    keyholes.enableBody = true;
+    map.createFromObjects('Keyhole', 33, 'keyHole', 0, true, false, keyholes);
+
+    f_platforms = game.add.group();
+    f_platforms.enableBody = true;
+    map.createFromObjects('F_Platforms', 33, 'f_block', 0, true, false, f_platforms);
+    f_platforms.setAll('body.immovable', true);
+
+    startPointX = map.objects['StartPoint'][0].x;
+    startPointY = map.objects['StartPoint'][0].y;
 }
 
 function pushLever(player, lever) {
     var leverID = parseInt(lever.name.charAt(5)) - 1;
-    if (useKey.justDown) {
-        lever.frame = 1;
-        leverSound.play();
-        keys.children[leverID].visible = true;
-        keyCreated = true;
+    console.log(leverID);
+    if (map.objects['Lever'][leverID].type == "unlock_key") {
+        if (useKey.justDown) {
+            lever.frame = 1;
+            leverSound.play();
+            keys.children[leverID].visible = true;
+            keyCreated = true;
+        }
+    }
+    if (map.objects['Lever'][leverID].type == "unlock_door") {
+        if (useKey.justDown) {
+            console.log('unlocking door');
+            lever.frame = 1;
+            leverSound.play();
+            doors.children[leverID].body.gravity.y = -300;
+        }
     }
 }
 
 function takeKey(player, key) {
     if (useKey.isDown && hasKey == false) {
         key.kill();
-        keyInventory = game.add.sprite(game.width/2, 0, 'key');
+        keyInventory = game.add.sprite(game.width / 2, 0, 'key');
         keyInventory.anchor.setTo(0.5, 0);
         keyInventory.fixedToCamera = true;
         hasKey = true;
