@@ -7,7 +7,7 @@ var PLAYER_DRAG = 0;
 var SNAKE_ATTACK_RATE = 600;
 
 var map;
-var startPointX, startPointY, endPointX, endPointY;
+var startPointX, startPointY, endPoint;
 var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, layerSpikes, layerLava;
 var player,
     health = 5,
@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 3;
+var levelNum = 1;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -68,8 +68,10 @@ var gameState = {
         map.setCollisionBetween(19, 20, true, 'Collisions');
         map.setCollisionBetween(21, 21, true, 'Spikes');
         map.setCollisionBetween(22, 23, true, 'Lava');
+        map.setCollision(24, true, 'EndPoint');
 
         layerCollisions.visible = false;
+        endPoint.visible = false;
 
         // snakes
         initializeSnakes();
@@ -130,7 +132,7 @@ var gameState = {
         game.physics.arcade.collide(player, layerPlatforms);
         game.physics.arcade.collide(player, layerLadders);
         game.physics.arcade.collide(player, doors);
-        game.physics.arcade.collide(player, endingLayer);
+        game.physics.arcade.collide(player, endPoint, nextLevel);
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
@@ -281,6 +283,7 @@ function loadLevel(levelNum) {
     layerCollisions = map.createLayer('Collisions');
     layerFaces = map.createLayer('Faces');
     layerSpikes = map.createLayer('Spikes');
+    endPoint = map.createLayer('EndPoint');
     layerWall.resizeWorld();
 
     levers = game.add.group();
@@ -333,6 +336,7 @@ function takeKey(player, key) {
         keyInventory.anchor.setTo(0.5, 0);
         keyInventory.fixedToCamera = true;
         hasKey = true;
+        keyCreated = false;
     }
 }
 
@@ -342,6 +346,7 @@ function insertKey(player, keyhole) {
         // open door that matches specific keyhole
         doors.children[keyholeID].body.gravity.y = -300;
         keyInventory.kill();
+        hasKey = false;
     }
 }
 
@@ -399,6 +404,11 @@ function dmgPlayer(player, snake) {
 }
 
 function resetLevel() {
+    game.state.start(game.state.current);
+}
+
+function nextLevel() {
+    levelNum++;
     game.state.start(game.state.current);
 }
 
