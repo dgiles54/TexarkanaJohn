@@ -8,7 +8,7 @@ var SNAKE_ATTACK_RATE = 600;
 
 var map;
 var startPointX, startPointY, endPointX, endPointY;
-var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, startLayer, layerSpikes, layerLava;
+var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, layerSpikes, layerLava;
 var player,
     health = 5,
     nextAttackPlayer = 0,
@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 1;
+var levelNum = 4;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -66,6 +66,7 @@ var gameState = {
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
         map.setCollisionBetween(19, 20, true, 'Collisions');
+        map.setCollisionBetween(21, 21, true, 'Spikes');
         map.setCollisionBetween(22, 23, true, 'Lava');
 
         layerCollisions.visible = false;
@@ -134,9 +135,14 @@ var gameState = {
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
         game.physics.arcade.collide(player, snakes, dmgPlayer);
-        game.physics.arcade.collide(player, layerLava, dmgPlayer);
+        game.physics.arcade.collide(player, layerLava);
+        game.physics.arcade.collide(player, layerSpikes);
 
         game.physics.arcade.collide(snakes, layerCollisions);
+
+        // kill players with insta-death things
+        map.setTileIndexCallback(21, resetLevel, null, layerSpikes);
+        map.setTileIndexCallback([22, 23], resetLevel, null, layerLava);
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
@@ -393,6 +399,10 @@ function dmgPlayer(player, snake) {
     }
     player.body.velocity.x = 0;
     player.body.acceleration.x = 0;
+}
+
+function resetLevel() {
+    game.state.start(game.state.current);
 }
 
 function gameWin() {
