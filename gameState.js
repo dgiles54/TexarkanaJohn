@@ -290,6 +290,9 @@ function attack() {
 }
 
 function loadLevel(levelNum) {
+    keyCreated = false;
+    hasKey = false;
+    
     map = game.add.tilemap('level' + levelNum);
     map.addTilesetImage('tileset');
 
