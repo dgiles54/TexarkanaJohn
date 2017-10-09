@@ -41,7 +41,8 @@ var gameState = {
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
         game.load.spritesheet('snake', 'assets/sprites/snake2.png', 96, 48);
         game.load.spritesheet('f_block', 'assets/sprites/fall_block.png', 32, 32, 3, 0, 1);
-        game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32);
+        game.load.spritesheet('leverL', 'assets/sprites/lever_left.png', 32, 32);
+        game.load.spritesheet('leverR', 'assets/sprites/lever_right.png', 32, 32);
         game.load.spritesheet('rockSpawner', 'assets/sprites/snakehead4-sheet.png', 64, 64);
         game.load.spritesheet('boulderBroken', 'assets/sprites/boulderBroken.png',64,64,3);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
@@ -310,8 +311,8 @@ function loadLevel(levelNum) {
 
     levers = game.add.group();
     levers.enableBody = true;
-    map.createFromObjects('Lever', 33, 'lever', 0, true, false, levers);
-    levers.setAll('anchor.setTo', 0.5, 0.5);
+    map.createFromObjects('Lever', 32, 'leverR', 0, true, false, levers);
+    map.createFromObjects('Lever', 33, 'leverL', 0, true, false, levers);
 
     keys = game.add.group();
     keys.enableBody = true;
