@@ -24,7 +24,8 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 1;
+var levelNum = 1,
+    maxLevels = 4;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -142,8 +143,6 @@ var gameState = {
 
     update: function () {
         // for that ladder physics when gravity = 0
-        console.log(player.body.gravity.y, playerClimbing);
-
         player.body.gravity.y = PLAYER_GRAVITY;
         playerClimbing = false;
 
@@ -493,7 +492,12 @@ function resetLevel() {
 
 function nextLevel() {
     levelNum++;
-    game.state.start(game.state.current);
+
+    if (levelNum <= 4) {
+        game.state.start(game.state.current);
+    } else {
+        game.state.start('gameWinState');
+    }
 }
 
 function gameWin() {

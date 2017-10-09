@@ -1,6 +1,4 @@
-var moc;
-var rev;
-var button;
+var moc, rev, button;
 var gameStartState = {
     preload: function () {
         // game.load.image('title', 'assets/sprites/titleScreen.png');
@@ -10,11 +8,12 @@ var gameStartState = {
     create: function () {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.stage.backgroundColor = '#000';
+
         // var title = game.add.image(game.width/2, game.height/2, 'title');
         // title.anchor.x = 0.5;
         // title.anchor.y = 0.5;
         moc = game.add.bitmapText(game.width/2, game.height/2 - 128, 'blocktopia', 'Moctezuma\'s', 64);
-        moc.anchor.set(0.5);
+        moc.anchor.setTo(0.5);
 
         rev = game.add.bitmapText(game.width/2, game.height/2 - 72, 'blocktopia', 'Revenge', 56);
         rev.anchor.setTo(0.5);
@@ -38,11 +37,11 @@ var gameStartState = {
     },
 
     over: function () {
-        temp.tint = 0x93052A;
+        temp.tint = 0x66ff66;
     },
     
     down: function(){
-        temp.tint = 0xFFC300;
+        temp.tint = 0x00ff00;
     },
     
     out: function(){
