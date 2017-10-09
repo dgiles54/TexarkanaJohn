@@ -252,7 +252,57 @@
         {
          "draworder":"topdown",
          "name":"Rocks",
-         "objects":[],
+         "objects":[
+                {
+                 "gid":32,
+                 "height":64,
+                 "id":25,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":626,
+                 "y":398.666666666667
+                }, 
+                {
+                 "gid":32,
+                 "height":64,
+                 "id":26,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":260.333333333333,
+                 "y":400.666666666667
+                }, 
+                {
+                 "gid":32,
+                 "height":64,
+                 "id":27,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":443,
+                 "y":400
+                }, 
+                {
+                 "gid":33,
+                 "height":64,
+                 "id":28,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":812,
+                 "y":398.666666666667
+                }],
+         "offsetx":-6.33333333333337,
+         "offsety":0.666666666666686,
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -387,7 +437,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":25,
+ "nextobjectid":30,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

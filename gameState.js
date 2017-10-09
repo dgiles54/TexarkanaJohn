@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 2;
+var levelNum = 3;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -43,6 +43,7 @@ var gameState = {
         game.load.spritesheet('f_block', 'assets/sprites/fall_block.png', 32, 32, 3, 0, 1);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32);
         game.load.spritesheet('rockSpawner', 'assets/sprites/snakehead4-sheet.png', 64, 64);
+        game.load.spritesheet('boulderBroken', 'assets/sprites/boulderBroken.png',64,64,3);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
@@ -134,6 +135,7 @@ var gameState = {
         // boulder group
         boulders = game.add.group();
         boulders.enableBody = true;
+        //boulders.callAll('animations.add','animations','break',3,2,false);
 
     },
 
@@ -156,7 +158,7 @@ var gameState = {
         game.physics.arcade.collide(player, layerSpikes);
         game.physics.arcade.collide(snakes, layerCollisions);
         game.physics.arcade.collide(player, f_platforms, startCrumbleTimer);
-        game.physics.arcade.collide(boulders, layerPlatforms);
+        game.physics.arcade.collide(boulders, layerPlatforms,killBoulder);
 
 
         // kill players with insta-death things
@@ -467,13 +469,23 @@ function rockSpawn() {
 
     rockSpawners.forEach( function (rockPlace){
         
-        boulders.create(rockPlace.x,rockPlace.y,'boulder');
+        boulders.create(rockPlace.x,rockPlace.y,'boulderBroken');
     });
+    
+    
     
     boulders.forEach( function (boulder) {
         boulder.body.velocity.y = 100;
-    });
-    
-    
+        boulder.body.setSize(50,50,0,0);
+       
+    });   
+}
+
+function killBoulder(boulder) {
+    anim = boulder.animations.add('break', null, 10, false); 
+    boulder.animations.play('break');
+    anim.killOnComplete = true;
+//    game.add.sprite(boulder.x,boulder.y,'boulderBroken');
+//    boulder.kill()
 }
 
