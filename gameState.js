@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 3;
+var levelNum = 1;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -54,7 +54,7 @@ var gameState = {
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
         game.load.audio('ouch', 'assets/audio/ouch.wav');
-
+        game.load.bitmapFont('blocktopia', 'assets/fonts/blocktopia.png', 'assets/fonts/blocktopia.xml');
     },
 
 
@@ -79,9 +79,6 @@ var gameState = {
 
         // SNAKES
         initializeSnakes();
-
-        // FALLING PLATFORMS
-
 
         // PLAYER
         player = game.add.sprite(startPointX, startPointY, 'player');
@@ -111,13 +108,16 @@ var gameState = {
         attackKey.onDown.add(attack);
 
         // HUD
-        hintText = game.add.text(0, 0, 'Find the key to the locked door.', {
-            fontSize: '32px',
-            fill: '#000',
-            boundsAlignH: 'center',
-            boundsAlignV: 'bottom'
-        });
-        hintText.setTextBounds(0, 0, game.width, game.height);
+        hintText = game.add.bitmapText(game.width/2, game.height - 16, 'blocktopia', 'Find the key to the locked door.', 32); 
+        hintText.anchor.set(0.5, 0.5);
+        hintText.alpha = 0.6;
+        // {
+            // fontSize: '32px',
+            // fill: '#fff',
+            // boundsAlignH: 'center',
+            // boundsAlignV: 'bottom',
+        // });
+        // hintText.setTextBounds(0, 0, game.width, game.height);
         hintText.fixedToCamera = true;
 
         healthBar = game.add.sprite(5, 5, 'healthBar');
@@ -142,7 +142,10 @@ var gameState = {
 
     update: function () {
         // for that ladder physics when gravity = 0
+        console.log(player.body.gravity.y, playerClimbing);
+
         player.body.gravity.y = PLAYER_GRAVITY;
+        playerClimbing = false;
 
         snakes.callAll('animations.play', 'animations', 'move');
 
@@ -169,7 +172,7 @@ var gameState = {
         map.setTileIndexCallback([22, 23], resetLevel, null, layerLava);
 
         // allow player to climb ladders
-        map.setTileIndexCallback(14, playerLadderClimb, null, layerLadders);
+        map.setTileIndexCallback(14, climbLadder, null, layerLadders);
 
         // so snakes don't fall off platform
         map.setTileIndexCallback(19, snakeReverse, null, layerCollisions);
@@ -188,14 +191,20 @@ var gameState = {
             player.body.velocity.x = 0;
         } else if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
-            player.animations.play('walk');
+            if (!playerClimbing) {
+                player.animations.play('walk');
+            }
             player.body.velocity.x = -PLAYER_RUN_SPEED;
         } else if (cursors.right.isDown) {
             player.scale.setTo(1, 1);
-            player.animations.play('walk');
+            if (!playerClimbing) {
+                player.animations.play('walk');
+            }
             player.body.velocity.x = PLAYER_RUN_SPEED;
         } else {
-            player.animations.stop('walk', 2);
+            if (!playerClimbing) {
+                player.animations.play('idle');
+            }
             player.body.velocity.x = 0;
         }
 
@@ -256,10 +265,18 @@ function shootDart() {
     }
 }
 
-function playerLadderClimb() {
-    // allows for player to wait on ladder
-    player.body.gravity.y = 0;
+function climbLadder() {
+    // guess intention
+    // if (cursors.up.justDown || cursors.down.justDown) {
+    //     playerClimbing = true;
+    // }
+    
+    // kill gravity
+    if (playerClimbing) {
+        player.body.gravity.y = 0;
+    }
 
+    // movement/climb
     if (cursors.up.isDown) {
         player.body.velocity.y = -100;
         playerClimbing = true;
@@ -268,12 +285,13 @@ function playerLadderClimb() {
         player.body.velocity.y = 100;
         playerClimbing = true;
         player.animations.play('climb');
-    } else {
-        player.body.velocity.y = 0; // stops player on ladder
+    } else if (cursors.left.isDown || cursors.right.isDown) {
         playerClimbing = false;
+    } else { // stops player on ladder
+        player.body.velocity.y = 0;
+        playerClimbing = true;
         player.animations.stop('climb', 12);
     }
-
 }
 
 function attack() {
