@@ -16,7 +16,7 @@ var player,
     playerClimbing = false;
 var cursors, useKey, attackKey;
 var keyInventory, endDoor, snake, snakes;
-var levers, plates, keys, keyholes, doors, darts, door;
+var levers, plates, keys, keyholes, doors, darts, door, f_platforms;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 1;
+var levelNum = 3;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -73,8 +73,11 @@ var gameState = {
         layerCollisions.visible = false;
         endPoint.visible = false;
 
-        // snakes
+        // SNAKES
         initializeSnakes();
+
+        // FALLING PLATFORMS
+
 
         // PLAYER
         player = game.add.sprite(startPointX, startPointY, 'player');
@@ -139,8 +142,8 @@ var gameState = {
         game.physics.arcade.collide(player, snakes, dmgPlayer);
         game.physics.arcade.collide(player, layerLava);
         game.physics.arcade.collide(player, layerSpikes);
-
         game.physics.arcade.collide(snakes, layerCollisions);
+        game.physics.arcade.collide(player, f_platforms, startCrumbleTimer);
 
         // kill players with insta-death things
         map.setTileIndexCallback(21, resetLevel, null, layerSpikes);
@@ -157,6 +160,9 @@ var gameState = {
         map.setTileIndexCallback(24, gameWin, null, endingLayer);
 
         hintText.text = "Find the key to the locked door.";
+
+        // falling blocks happen
+        f_platforms.forEach(function(f_block) { crumbleBlock(f_block); });
 
         // make player walk
         if (attackKey.isDown) {
@@ -175,7 +181,7 @@ var gameState = {
         }
 
         // make player jump
-        if (cursors.up.justDown && player.body.onFloor()) {
+        if (cursors.up.justDown && (player.body.onFloor() || player.body.touching.down)) {
             player.body.velocity.y = -PLAYER_JUMP_SPEED;
         }
 
@@ -303,6 +309,7 @@ function loadLevel(levelNum) {
     f_platforms.enableBody = true;
     map.createFromObjects('F_Platforms', 33, 'f_block', 0, true, false, f_platforms);
     f_platforms.setAll('body.immovable', true);
+    f_platforms.forEach(function(f_block) { f_block.animations.add('crumble', [1, 2], 3, true); f_block.activated = false; f_block.deathTime = null;})
 
     startPointX = map.objects['StartPoint'][0].x;
     startPointY = map.objects['StartPoint'][0].y;
@@ -401,6 +408,26 @@ function dmgPlayer(player, snake) {
     }
     player.body.velocity.x = 0;
     player.body.acceleration.x = 0;
+}
+
+function startCrumbleTimer(player, f_block) {
+    // start timer
+    if (!f_block.activated) {
+        f_block.deathTime = game.time.now + 2000;
+        f_block.activated = true;
+    }
+}
+
+function crumbleBlock(f_block) {
+     if (f_block.activated) {
+        // check timer
+        if (game.time.now > f_block.deathTime + 500) {
+            f_block.exists = false;
+        } else if (game.time.now > f_block.deathTime) {
+            // trigger animation
+            f_block.animations.play('crumble');
+        }
+    }
 }
 
 function resetLevel() {
