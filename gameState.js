@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 3;
+var levelNum = 2;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -159,6 +159,8 @@ var gameState = {
         game.physics.arcade.collide(snakes, layerCollisions);
         game.physics.arcade.collide(player, f_platforms, startCrumbleTimer);
         game.physics.arcade.collide(boulders, layerPlatforms,killBoulder);
+        game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
+       
 
 
         // kill players with insta-death things
@@ -323,7 +325,7 @@ function loadLevel(levelNum) {
     
     rockSpawners = game.add.group();
     rockSpawners.enableBody = true;
-    map.createFromObjects('Rocks', 33, 'rockSpawner', 1, true, false, rockSpawners);
+    map.createFromObjects('Rocks', 32, 'rockSpawner', 1, true, false, rockSpawners);
 
 
 
@@ -432,6 +434,16 @@ function dmgPlayer(player, snake) {
     player.body.acceleration.x = 0;
 }
 
+function boulderDmgPlayer(player, boulder){
+  if(boulder.hurtPlayer != true){ 
+    boulder.hurtPlayer = true;
+    healthBar.frame += 1;
+    health -= 1;
+    loseHealthSound.play();
+    killBoulder(boulder);
+  }
+}
+
 function startCrumbleTimer(player, f_block) {
     // start timer
     if (!f_block.activated) {
@@ -474,14 +486,15 @@ function rockSpawn() {
     
     
     
-    boulders.forEach( function (boulder) {
+    boulders.forEach( function ( boulder) {
         boulder.body.velocity.y = 100;
         boulder.body.setSize(50,50,0,0);
-       
+        boulder.body.immovable = true;
+        boulder.hurtPlayer = false;
     });   
 }
 
-function killBoulder(boulder) {
+function killBoulder( boulder) {
     anim = boulder.animations.add('break', null, 10, false); 
     boulder.animations.play('break');
     anim.killOnComplete = true;
