@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 2;
+var levelNum = 3;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -130,7 +130,7 @@ var gameState = {
         
         //timer for boulder spawns
         timer = game.time.create(false);
-        timer.loop(2000, rockSpawn, this);
+        timer.loop(3000, rockSpawn, this);
         timer.start();
         
         // boulder group
@@ -344,15 +344,17 @@ function pushLever(player, lever) {
     var leverID = parseInt(lever.name.charAt(5)) - 1;
     console.log(leverID);
     if (map.objects['Lever'][leverID].type == "unlock_key") {
-        if (useKey.justDown) {
+        if (useKey.isDown) {
             lever.frame = 1;
             leverSound.play();
-            keys.children[leverID].visible = true;
-            keyCreated = true;
+            if (keyCreated == false) {
+                keys.children[leverID].visible = true;
+                keyCreated = true;
+            }
         }
     }
     if (map.objects['Lever'][leverID].type == "unlock_door") {
-        if (useKey.justDown) {
+        if (useKey.isDown) {
             console.log('unlocking door');
             lever.frame = 1;
             leverSound.play();
@@ -368,7 +370,6 @@ function takeKey(player, key) {
         keyInventory.anchor.setTo(0.5, 0);
         keyInventory.fixedToCamera = true;
         hasKey = true;
-        keyCreated = false;
     }
 }
 
