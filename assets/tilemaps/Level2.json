@@ -232,7 +232,19 @@
         {
          "draworder":"topdown",
          "name":"Rocks",
-         "objects":[],
+         "objects":[
+                {
+                 "gid":33,
+                 "height":64,
+                 "id":32,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":594.5,
+                 "y":498.5
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -339,7 +351,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":32,
+ "nextobjectid":33,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

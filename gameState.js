@@ -16,7 +16,7 @@ var player,
     playerClimbing = false;
 var cursors, useKey, attackKey;
 var keyInventory, endDoor, snake, snakes;
-var levers, plates, keys, keyholes, doors, darts, door, f_platforms;
+var levers, plates, keys, keyholes, doors, darts, door, f_platforms, rockSpawners, boulders;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 3;
+var levelNum = 2;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 
@@ -39,13 +39,15 @@ var gameState = {
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
-        game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48);
+        game.load.spritesheet('snake', 'assets/sprites/snake2.png', 96, 48);
         game.load.spritesheet('f_block', 'assets/sprites/fall_block.png', 32, 32, 3, 0, 1);
         game.load.spritesheet('lever', 'assets/sprites/lever.png', 32, 32);
+        game.load.spritesheet('rockSpawner', 'assets/sprites/snakehead4-sheet.png', 64, 64);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
-        game.load.image('door', 'assets/sprites/door.png');
+        game.load.image('door', 'assets/sprites/door.png');  
+        game.load.image('boulder', 'assets/sprites/boulder.png');
         game.load.image('blowdart', 'assets/sprites/blowdart.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
@@ -123,6 +125,16 @@ var gameState = {
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
         loseHealthSound = game.add.audio('ouch');
+        
+        //timer for boulder spawns
+        timer = game.time.create(false);
+        timer.loop(2000, rockSpawn, this);
+        timer.start();
+        
+        // boulder group
+        boulders = game.add.group();
+        boulders.enableBody = true;
+
     },
 
     update: function () {
@@ -144,6 +156,8 @@ var gameState = {
         game.physics.arcade.collide(player, layerSpikes);
         game.physics.arcade.collide(snakes, layerCollisions);
         game.physics.arcade.collide(player, f_platforms, startCrumbleTimer);
+        game.physics.arcade.collide(boulders, layerPlatforms);
+
 
         // kill players with insta-death things
         map.setTileIndexCallback(21, resetLevel, null, layerSpikes);
@@ -304,6 +318,12 @@ function loadLevel(levelNum) {
     keyholes = game.add.group();
     keyholes.enableBody = true;
     map.createFromObjects('Keyhole', 33, 'keyHole', 0, true, false, keyholes);
+    
+    rockSpawners = game.add.group();
+    rockSpawners.enableBody = true;
+    map.createFromObjects('Rocks', 33, 'rockSpawner', 1, true, false, rockSpawners);
+
+
 
     f_platforms = game.add.group();
     f_platforms.enableBody = true;
@@ -442,3 +462,18 @@ function nextLevel() {
 function gameWin() {
     game.state.start('gameWinState');
 }
+
+function rockSpawn() {
+
+    rockSpawners.forEach( function (rockPlace){
+        
+        boulders.create(rockPlace.x,rockPlace.y,'boulder');
+    });
+    
+    boulders.forEach( function (boulder) {
+        boulder.body.velocity.y = 100;
+    });
+    
+    
+}
+
