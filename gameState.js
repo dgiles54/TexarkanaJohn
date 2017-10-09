@@ -28,6 +28,7 @@ var levelNum = 1,
     maxLevels = 4;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
+var LIGHT_RADIUS = 100, shadowTexture;
 
 var gameState = {
 
@@ -83,7 +84,7 @@ var gameState = {
 
         // PLAYER
         player = game.add.sprite(startPointX, startPointY, 'player');
-        player.anchor.setTo(0.5, 0.5);
+        player.anchor.setTo(0.33, 0.5);
         game.physics.enable(player);
         player.body.gravity.y = PLAYER_GRAVITY;
         player.body.bounce.y = PLAYER_BOUNCE;
@@ -108,6 +109,17 @@ var gameState = {
         attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         attackKey.onDown.add(attack);
 
+        // LIGHTING
+        
+        // Create shadow texture
+        shadowTexture = game.add.bitmapData(map.widthInPixels, map.heightInPixels);
+        
+        // Create object that uses bitmap as texture
+        var lightSprite = game.add.image(0, 0, shadowTexture);
+        
+        // Set blend mode to multiply
+        lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
+        
         // HUD
         hintText = game.add.bitmapText(game.width/2, game.height - 16, 'blocktopia', 'Find the key to the locked door.', 32); 
         hintText.anchor.set(0.5, 0.5);
@@ -162,9 +174,7 @@ var gameState = {
         game.physics.arcade.collide(snakes, layerCollisions);
         game.physics.arcade.collide(player, f_platforms, startCrumbleTimer);
         game.physics.arcade.collide(boulders, layerPlatforms,killBoulder);
-        game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
-       
-
+        game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);     
 
         // kill players with insta-death things
         map.setTileIndexCallback(21, resetLevel, null, layerSpikes);
@@ -179,6 +189,9 @@ var gameState = {
 
         // winning game location
         map.setTileIndexCallback(24, gameWin, null, endingLayer);
+        
+        // LIGHTING
+        updateShadowTexture();
 
         hintText.text = "Find the key to the locked door.";
 
@@ -529,3 +542,28 @@ function killBoulder( boulder) {
 //    boulder.kill()
 }
 
+function updateShadowTexture() {
+    // Draw shadow
+    shadowTexture.context.fillStyle = 'rgb(20, 20, 20)';
+    shadowTexture.context.fillRect(0, 0, map.widthInPixels, map.heightInPixels);
+    
+    // Change radius randomly each frame
+    var radius = LIGHT_RADIUS + game.rnd.integerInRange(1, 10);
+    
+    // Draw circle of light with soft edge
+    var gradient =
+        shadowTexture.context.createRadialGradient(
+            player.x, player.y, LIGHT_RADIUS * 0.75,
+            player.x, player.y, radius);
+    gradient.addColorStop(0, 'rgba(250, 250, 120, 1.0)');
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
+    
+    // Draw circle of light
+    shadowTexture.context.beginPath();
+    shadowTexture.context.fillStyle = gradient;
+    shadowTexture.context.arc(player.x, player.y, radius, 0, Math.PI*2);
+    shadowTexture.context.fill();
+    
+    // Update texture cache
+    shadowTexture.dirty = true;
+}
