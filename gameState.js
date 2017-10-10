@@ -562,7 +562,7 @@ function killBoulder( boulder) {
 
 function updateShadowTexture() {
     // Draw shadow
-    shadowTexture.context.fillStyle = 'rgb(20, 20, 20)';
+    shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';
     shadowTexture.context.fillRect(0, 0, map.widthInPixels, map.heightInPixels);
     
     // Change radius randomly each frame
