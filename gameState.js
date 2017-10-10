@@ -16,7 +16,7 @@ var player,
     playerClimbing = false;
 var cursors, useKey, attackKey;
 var keyInventory, endDoor, snake, snakes;
-var levers, plates, keys, keyholes, doors, darts, door, f_platforms, rockSpawners, boulders;
+var levers, plates, keys, keyholes, doors, darts, door, f_platforms, rockSpawners, boulders, torches;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -28,7 +28,8 @@ var levelNum = 1,
     maxLevels = 4;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
-var LIGHT_RADIUS = 100, shadowTexture;
+var LIGHT_RADIUS = 100,
+    shadowTexture;
 var playerTorch, holdingTorch = false;
 
 var gameState = {
@@ -48,11 +49,12 @@ var gameState = {
         game.load.spritesheet('leverL', 'assets/sprites/lever_left.png', 32, 32);
         game.load.spritesheet('leverR', 'assets/sprites/lever_right.png', 32, 32);
         game.load.spritesheet('rockSpawner', 'assets/sprites/snakehead4-sheet.png', 64, 64);
-        game.load.spritesheet('boulderBroken', 'assets/sprites/boulderBroken.png',64,64,3);
+        game.load.spritesheet('boulderBroken', 'assets/sprites/boulderBroken.png', 64, 64, 3);
+        game.load.image('torch', 'assets/sprites/torch.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
-        game.load.image('door', 'assets/sprites/door.png');  
+        game.load.image('door', 'assets/sprites/door.png');
         game.load.image('boulder', 'assets/sprites/boulder.png');
         game.load.image('blowdart', 'assets/sprites/blowdart.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
@@ -118,25 +120,25 @@ var gameState = {
         playerTorch = game.add.sprite(player.x, player.y, 'playerTorch');
         playerTorch.anchor.setTo(0.33, 0.5);
         playerTorch.visible = false;
-        
+
         // Create shadow texture
         shadowTexture = game.add.bitmapData(map.widthInPixels, map.heightInPixels);
-        
+
         // Create object that uses bitmap as texture
         var lightSprite = game.add.image(0, 0, shadowTexture);
-        
+
         // Set blend mode to multiply
         lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
-        
+
         // HUD
-        hintText = game.add.bitmapText(game.width/2, game.height - 16, 'blocktopia', 'Find the key to the locked door.', 32); 
+        hintText = game.add.bitmapText(game.width / 2, game.height - 16, 'blocktopia', 'Find the key to the locked door.', 32);
         hintText.anchor.set(0.5, 0.5);
         hintText.alpha = 0.6;
         // {
-            // fontSize: '32px',
-            // fill: '#fff',
-            // boundsAlignH: 'center',
-            // boundsAlignV: 'bottom',
+        // fontSize: '32px',
+        // fill: '#fff',
+        // boundsAlignH: 'center',
+        // boundsAlignV: 'bottom',
         // });
         // hintText.setTextBounds(0, 0, game.width, game.height);
         hintText.fixedToCamera = true;
@@ -148,12 +150,12 @@ var gameState = {
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
         loseHealthSound = game.add.audio('ouch');
-        
+
         //timer for boulder spawns
         timer = game.time.create(false);
         timer.loop(3000, rockSpawn, this);
         timer.start();
-        
+
         // boulder group
         boulders = game.add.group();
         boulders.enableBody = true;
@@ -181,8 +183,8 @@ var gameState = {
         game.physics.arcade.collide(player, layerSpikes);
         game.physics.arcade.collide(snakes, layerCollisions);
         game.physics.arcade.collide(player, f_platforms, startCrumbleTimer);
-        game.physics.arcade.collide(boulders, layerPlatforms,killBoulder);
-        game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);     
+        game.physics.arcade.collide(boulders, layerPlatforms, killBoulder);
+        game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
 
         // kill players with insta-death things
         map.setTileIndexCallback(21, resetLevel, null, layerSpikes);
@@ -197,16 +199,18 @@ var gameState = {
 
         // winning game location
         map.setTileIndexCallback(24, gameWin, null, endingLayer);
-        
+
         // LIGHTING
-        updateShadowTexture();
         playerTorch.x = player.x;
         playerTorch.y = player.y;
+        updateShadowTexture();
 
         hintText.text = "Find the key to the locked door.";
 
         // falling blocks happen
-        f_platforms.forEach(function(f_block) { crumbleBlock(f_block); });
+        f_platforms.forEach(function (f_block) {
+            crumbleBlock(f_block);
+        });
 
         // make player walk
         if (attackKey.isDown) {
@@ -300,7 +304,7 @@ function climbLadder() {
     // if (cursors.up.justDown || cursors.down.justDown) {
     //     playerClimbing = true;
     // }
-    
+
     // kill gravity
     if (playerClimbing) {
         player.body.gravity.y = 0;
@@ -340,11 +344,14 @@ function attack() {
 function loadLevel(levelNum) {
     keyCreated = false;
     hasKey = false;
-    
+
     map = game.add.tilemap('level' + levelNum);
     map.addTilesetImage('tileset');
 
     layerWall = map.createLayer('Wall');
+
+    torches = game.add.group();
+    map.createFromObjects('Torches', 33, 'torch', 0, true, false, torches);
 
     doors = game.add.group();
     doors.enableBody = true;
@@ -374,7 +381,7 @@ function loadLevel(levelNum) {
     keyholes = game.add.group();
     keyholes.enableBody = true;
     map.createFromObjects('Keyhole', 33, 'keyHole', 0, true, false, keyholes);
-    
+
     rockSpawners = game.add.group();
     rockSpawners.enableBody = true;
     map.createFromObjects('Rocks', 32, 'rockSpawner', 1, true, false, rockSpawners);
@@ -385,7 +392,11 @@ function loadLevel(levelNum) {
     f_platforms.enableBody = true;
     map.createFromObjects('F_Platforms', 33, 'f_block', 0, true, false, f_platforms);
     f_platforms.setAll('body.immovable', true);
-    f_platforms.forEach(function(f_block) { f_block.animations.add('crumble', [1, 2], 3, true); f_block.activated = false; f_block.deathTime = null;})
+    f_platforms.forEach(function (f_block) {
+        f_block.animations.add('crumble', [1, 2], 3, true);
+        f_block.activated = false;
+        f_block.deathTime = null;
+    })
 
     startPointX = map.objects['StartPoint'][0].x;
     startPointY = map.objects['StartPoint'][0].y;
@@ -393,7 +404,6 @@ function loadLevel(levelNum) {
 
 function pushLever(player, lever) {
     var leverID = parseInt(lever.name.charAt(5)) - 1;
-    console.log(leverID);
     if (map.objects['Lever'][leverID].type == "unlock_key") {
         if (useKey.isDown) {
             lever.frame = 1;
@@ -406,7 +416,6 @@ function pushLever(player, lever) {
     }
     if (map.objects['Lever'][leverID].type == "unlock_door") {
         if (useKey.isDown) {
-            console.log('unlocking door');
             lever.frame = 1;
             leverSound.play();
             doors.children[leverID].body.gravity.y = -300;
@@ -487,14 +496,14 @@ function dmgPlayer(player, snake) {
     player.body.acceleration.x = 0;
 }
 
-function boulderDmgPlayer(player, boulder){
-  if(boulder.hurtPlayer != true){ 
-    boulder.hurtPlayer = true;
-    healthBar.frame += 1;
-    health -= 1;
-    loseHealthSound.play();
-    killBoulder(boulder);
-  }
+function boulderDmgPlayer(player, boulder) {
+    if (boulder.hurtPlayer != true) {
+        boulder.hurtPlayer = true;
+        healthBar.frame += 1;
+        health -= 1;
+        loseHealthSound.play();
+        killBoulder(boulder);
+    }
 }
 
 function startCrumbleTimer(player, f_block) {
@@ -506,7 +515,7 @@ function startCrumbleTimer(player, f_block) {
 }
 
 function crumbleBlock(f_block) {
-     if (f_block.activated) {
+    if (f_block.activated) {
         // check timer
         if (game.time.now > f_block.deathTime + 500) {
             f_block.exists = false;
@@ -537,52 +546,71 @@ function gameWin() {
 
 function rockSpawn() {
 
-    rockSpawners.forEach( function (rockPlace){
-        
-        boulders.create(rockPlace.x,rockPlace.y,'boulderBroken');
+    rockSpawners.forEach(function (rockPlace) {
+
+        boulders.create(rockPlace.x, rockPlace.y, 'boulderBroken');
     });
-    
-    
-    
-    boulders.forEach( function ( boulder) {
+
+
+
+    boulders.forEach(function (boulder) {
         boulder.body.velocity.y = 100;
-        boulder.body.setSize(50,50,0,0);
+        boulder.body.setSize(50, 50, 0, 0);
         boulder.body.immovable = true;
         boulder.hurtPlayer = false;
-    });   
+    });
 }
 
-function killBoulder( boulder) {
-    anim = boulder.animations.add('break', null, 10, false); 
+function killBoulder(boulder) {
+    anim = boulder.animations.add('break', null, 10, false);
     boulder.animations.play('break');
     anim.killOnComplete = true;
-//    game.add.sprite(boulder.x,boulder.y,'boulderBroken');
-//    boulder.kill()
+    //    game.add.sprite(boulder.x,boulder.y,'boulderBroken');
+    //    boulder.kill()
 }
 
+// Create light sources
 function updateShadowTexture() {
     // Draw shadow
     shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';
     shadowTexture.context.fillRect(0, 0, map.widthInPixels, map.heightInPixels);
-    
+
     // Change radius randomly each frame
     var radius = LIGHT_RADIUS + game.rnd.integerInRange(1, 10);
-    
+
     // Draw circle of light with soft edge
     var gradient =
         shadowTexture.context.createRadialGradient(
-            player.x, player.y, LIGHT_RADIUS * 0.75,
-            player.x, player.y, radius);
+            playerTorch.x, playerTorch.y, LIGHT_RADIUS * 0.1,
+            playerTorch.x, playerTorch.y, radius);
     gradient.addColorStop(0, 'rgba(250, 250, 120, 1.0)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
-    
+
     if (holdingTorch) {
         shadowTexture.context.beginPath();
         shadowTexture.context.fillStyle = gradient;
-        shadowTexture.context.arc(player.x, player.y, radius, 0, Math.PI*2);
+        shadowTexture.context.arc(playerTorch.x, playerTorch.y, radius, 0, Math.PI * 2);
         shadowTexture.context.fill();
     }
-    
+
+    torches.forEach(function (torch) {
+        // Change radius randomly each frame
+        var radius = LIGHT_RADIUS*2 + game.rnd.integerInRange(1, 10);
+
+        // Draw circle of light with soft edge
+        var gradient =
+            shadowTexture.context.createRadialGradient(
+                torch.x, torch.y, LIGHT_RADIUS * 0.05,
+                torch.x, torch.y, radius);
+        gradient.addColorStop(0, 'rgba(250, 250, 120, 1.0)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
+        
+        shadowTexture.context.beginPath();
+        shadowTexture.context.fillStyle = gradient;
+        shadowTexture.context.arc(torch.x, torch.y, radius, 0, Math.PI * 2);
+        shadowTexture.context.fill();
+    });
+
     // Update texture cache
     shadowTexture.dirty = true;
 }

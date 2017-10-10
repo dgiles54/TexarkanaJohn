@@ -145,6 +145,52 @@
         }, 
         {
          "draworder":"topdown",
+         "name":"Torches",
+         "objects":[
+                {
+                 "gid":33,
+                 "height":22,
+                 "id":28,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":10,
+                 "x":330,
+                 "y":184
+                }, 
+                {
+                 "gid":33,
+                 "height":22,
+                 "id":30,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":10,
+                 "x":730,
+                 "y":183
+                }, 
+                {
+                 "gid":33,
+                 "height":22,
+                 "id":31,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":10,
+                 "x":844,
+                 "y":406
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "name":"Lever",
          "objects":[
                 {
@@ -315,7 +361,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":26,
+ "nextobjectid":32,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
