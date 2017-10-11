@@ -347,6 +347,7 @@ function attack() {
 function loadLevel(levelNum) {
     keyCreated = false;
     hasKey = false;
+    holdingTorch = false;
 
     map = game.add.tilemap('level' + levelNum);
     map.addTilesetImage('tileset');
@@ -366,7 +367,7 @@ function loadLevel(levelNum) {
         smokeEmitter.minParticleSpeed.set(-10, 5);
         smokeEmitter.gravity = -30;
         smokeEmitter.setAlpha(0.1, 1, 200);
-        smokeEmitter.flow(2000, 100, 5);
+        smokeEmitter.flow(2000, 100, 3);
     });
 
     doors = game.add.group();
