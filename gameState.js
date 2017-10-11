@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 4,
+var levelNum = 1,
     maxLevels = 4;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
@@ -32,6 +32,7 @@ var LIGHT_RADIUS = 100,
     GLOW_RADIUS = 75,
     shadowTexture;
 var playerTorch, holdingTorch = false;
+var smokeEmitter;
 
 var gameState = {
 
@@ -51,7 +52,8 @@ var gameState = {
         game.load.spritesheet('leverR', 'assets/sprites/lever_right.png', 32, 32);
         game.load.spritesheet('rockSpawner', 'assets/sprites/snakehead4-sheet.png', 64, 64);
         game.load.spritesheet('boulderBroken', 'assets/sprites/boulderBroken.png', 64, 64, 3);
-        game.load.image('torch', 'assets/sprites/torch.png');
+        game.load.spritesheet('smokeParticles', 'assets/sprites/smokeParticles.png', 1, 1);
+        game.load.spritesheet('torch', 'assets/sprites/torch.png', 10, 23);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
@@ -104,7 +106,7 @@ var gameState = {
         player.animations.add('climb', [12, 13, 14, 13], 5, true);
         player.animations.add('holdingTorch', [15, 16, 17, 18, 19, 20], 7, true);
         player.body.setSize(20, 44, 15, 20);
-        player.scale.setTo(-1, 1);
+        player.scale.setTo(1, 1);
 
         // GAME CAMERA
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
@@ -236,7 +238,7 @@ var gameState = {
             player.body.velocity.x = PLAYER_RUN_SPEED;
         } else {
             if (!playerClimbing && !holdingTorch) {
-                player.animations.play('idle');
+                player.frame = 0;
             } else if (!playerClimbing && holdingTorch) {
                 player.frame = 15;
             }
@@ -353,6 +355,19 @@ function loadLevel(levelNum) {
 
     torches = game.add.group();
     map.createFromObjects('Torches', 33, 'torch', 0, true, false, torches);
+    
+    torches.forEach(function (torch) {
+        torch.anchor.setTo(0.5, 0.05);
+        torch.animations.add('fire', [0, 1, 2, 3, 2, 1], 2, true);
+        torch.animations.play('fire');
+        smokeEmitter = game.add.emitter(torch.x, torch.y, 500);
+        smokeEmitter.makeParticles('smokeParticles', [0, 1, 2, 3]);
+        smokeEmitter.maxParticleSpeed.set(10, -5);
+        smokeEmitter.minParticleSpeed.set(-10, 5);
+        smokeEmitter.gravity = -30;
+        smokeEmitter.setAlpha(0.1, 1, 200);
+        smokeEmitter.flow(2000, 100, 5);
+    });
 
     doors = game.add.group();
     doors.enableBody = true;
