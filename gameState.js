@@ -24,8 +24,8 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 1,
-    maxLevels = 4;
+var levelNum = 5,
+    maxLevels = 5;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 var LIGHT_RADIUS = 100,
@@ -42,6 +42,7 @@ var gameState = {
         game.load.tilemap('level2', 'assets/tilemaps/Level2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level3', 'assets/tilemaps/Level3.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level4', 'assets/tilemaps/Level4.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('level5', 'assets/tilemaps/Level5.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
@@ -550,7 +551,7 @@ function resetLevel() {
 function nextLevel() {
     levelNum++;
 
-    if (levelNum <= 4) {
+    if (levelNum <= 5) {
         game.state.start(game.state.current);
     } else {
         game.state.start('gameWinState');
