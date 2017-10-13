@@ -181,6 +181,7 @@ var gameState = {
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
+        game.physics.arcade.overlap(player, plates, )
         game.physics.arcade.collide(player, snakes, dmgPlayer);
         game.physics.arcade.collide(player, layerLava);
         game.physics.arcade.collide(player, layerSpikes);
@@ -206,7 +207,7 @@ var gameState = {
         // LIGHTING
         playerTorch.x = player.x;
         playerTorch.y = player.y;
-        updateShadowTexture();
+        //updateShadowTexture();
 
         hintText.text = "Find the key to the locked door.";
 
@@ -356,7 +357,7 @@ function loadLevel(levelNum) {
 
     torches = game.add.group();
     map.createFromObjects('Torches', 33, 'torch', 0, true, false, torches);
-    
+
     torches.forEach(function (torch) {
         torch.anchor.setTo(0.5, 0.05);
         torch.animations.add('fire', [0, 1, 2, 3, 2, 1], 2, true);
@@ -390,6 +391,10 @@ function loadLevel(levelNum) {
     levers.enableBody = true;
     map.createFromObjects('Lever', 32, 'leverR', 0, true, false, levers);
     map.createFromObjects('Lever', 33, 'leverL', 0, true, false, levers);
+
+    plates = game.add.group();
+    plates.enableBody = true;
+    map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
 
     keys = game.add.group();
     keys.enableBody = true;
@@ -591,7 +596,7 @@ function updateShadowTexture() {
     // Draw shadow
     shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';
     shadowTexture.context.fillRect(0, 0, map.widthInPixels, map.heightInPixels);
-    
+
     // Player torch
     // Change radius randomly each frame
     var radius = LIGHT_RADIUS + game.rnd.integerInRange(1, 10);
@@ -610,11 +615,11 @@ function updateShadowTexture() {
         shadowTexture.context.arc(playerTorch.x, playerTorch.y, radius, 0, Math.PI * 2);
         shadowTexture.context.fill();
     }
-    
+
     // Torches in map
     torches.forEach(function (torch) {
         // Change radius randomly each frame
-        var radius = LIGHT_RADIUS*2 + game.rnd.integerInRange(1, 10);
+        var radius = LIGHT_RADIUS * 2 + game.rnd.integerInRange(1, 10);
 
         // Draw circle of light with soft edge
         var gradient =
@@ -623,25 +628,25 @@ function updateShadowTexture() {
                 torch.x, torch.y, radius);
         gradient.addColorStop(0, 'rgba(250, 250, 120, 1.0)');
         gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
-        
+
         shadowTexture.context.beginPath();
         shadowTexture.context.fillStyle = gradient;
         shadowTexture.context.arc(torch.x, torch.y, radius, 0, Math.PI * 2);
         shadowTexture.context.fill();
     });
-    
+
     // Lava glow
     map.objects['LavaGlow'].forEach(function (glowObject) {
         var gradient =
             shadowTexture.context.createRadialGradient(
-                glowObject.x+16, glowObject.y, GLOW_RADIUS * 0.05,
-                glowObject.x+16, glowObject.y, GLOW_RADIUS);
+                glowObject.x + 16, glowObject.y, GLOW_RADIUS * 0.05,
+                glowObject.x + 16, glowObject.y, GLOW_RADIUS);
         gradient.addColorStop(0, 'rgba(250, 75, 50, 1.0)');
         gradient.addColorStop(1, 'rgba(250, 75, 50, 0.0)');
-        
+
         shadowTexture.context.beginPath();
         shadowTexture.context.fillStyle = gradient;
-        shadowTexture.context.arc(glowObject.x+16, glowObject.y, GLOW_RADIUS, 0, Math.PI * 2);
+        shadowTexture.context.arc(glowObject.x + 16, glowObject.y, GLOW_RADIUS, 0, Math.PI * 2);
         shadowTexture.context.fill();
     });
 
