@@ -148,6 +148,7 @@ var gameState = {
 
         healthBar = game.add.sprite(5, 5, 'healthBar');
         healthBar.fixedToCamera = true;
+        healthBar.frame = 5 - health;
 
         // SOUND FX
         leverSound = game.add.audio('leverSound');
@@ -258,9 +259,8 @@ var gameState = {
         if (blowdartCreated == true) {
 
             if (player.overlap(blowdart)) {
-
-                healthBar.frame += 1;
                 health -= 1;
+                healthBar.frame = 5 - health;
                 blowdart.kill();
                 blowdartCreated = false;
             }
@@ -494,8 +494,8 @@ function initializeSnakes() {
 function dmgPlayer(player, snake) {
     if (game.time.now > nextAttackSnake) {
         nextAttackSnake = game.time.now + SNAKE_ATTACK_RATE;
-        healthBar.frame += 1;
         health -= 1;
+        healthBar.frame = 5 - health;
         loseHealthSound.play();
         if (player.body.touching.left) {
             player.body.velocity.x = 10000;
@@ -516,8 +516,8 @@ function dmgPlayer(player, snake) {
 function boulderDmgPlayer(player, boulder) {
     if (boulder.hurtPlayer != true) {
         boulder.hurtPlayer = true;
-        healthBar.frame += 1;
         health -= 1;
+        healthBar.frame = 5 - health;
         loseHealthSound.play();
         killBoulder(boulder);
     }
