@@ -25,7 +25,7 @@ var hasKey = false,
 var leverSound, plateSound;
 var attackAnim;
 var levelNum = 1,
-    maxLevels = 4;
+    maxLevels = 6;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
 var LIGHT_RADIUS = 100,
@@ -42,6 +42,7 @@ var gameState = {
         game.load.tilemap('level2', 'assets/tilemaps/Level2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level3', 'assets/tilemaps/Level3.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level4', 'assets/tilemaps/Level4.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('level6', 'assets/tilemaps/Level6.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
