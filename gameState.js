@@ -15,7 +15,7 @@ var player,
     playerAttacking = false,
     playerClimbing = false;
 var cursors, useKey, attackKey;
-var keyInventory, endDoor, snake, snakes;
+var keyInventory, endDoor, snake, snakes, spider, spiderSpawners;
 var levers, plates, keys, keyholes, doors, darts, door, f_platforms, rockSpawners, boulders, torches;
 var keyCreated = false;
 var hintText, inventory, healthBar;
@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 1,
+var levelNum = 2,
     maxLevels = 6;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
@@ -55,6 +55,7 @@ var gameState = {
         game.load.spritesheet('boulderBroken', 'assets/sprites/boulderBroken.png', 64, 64, 3);
         game.load.spritesheet('smokeParticles', 'assets/sprites/smokeParticles.png', 1, 1);
         game.load.spritesheet('torch', 'assets/sprites/torch.png', 10, 23);
+        game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 48,6);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
@@ -165,18 +166,25 @@ var gameState = {
         boulders = game.add.group();
         boulders.enableBody = true;
         //boulders.callAll('animations.add','animations','break',3,2,false);
+        
+        //spider group
+        spiders = game.add.group();
 
     },
 
     update: function () {
+        
+        
         // for that ladder physics when gravity = 0
         player.body.gravity.y = PLAYER_GRAVITY;
         playerClimbing = false;
 
         snakes.callAll('animations.play', 'animations', 'move');
+        
 
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
+        game.physics.arcade.collide(spiders, layerPlatforms);
         game.physics.arcade.collide(player, layerLadders);
         game.physics.arcade.collide(player, doors);
         game.physics.arcade.collide(player, endPoint, nextLevel);
@@ -185,10 +193,13 @@ var gameState = {
         game.physics.arcade.overlap(player, keyholes, insertKey);
         game.physics.arcade.overlap(player, plates, )
         game.physics.arcade.collide(player, snakes, dmgPlayer);
+        game.physics.arcade.collide(player, spiders, dmgPlayer);
         game.physics.arcade.collide(player, layerLava);
         game.physics.arcade.collide(player, layerSpikes);
         game.physics.arcade.collide(snakes, layerCollisions);
+        game.physics.arcade.collide(spiders, layerCollisions);
         game.physics.arcade.collide(player, f_platforms, startCrumbleTimer);
+        game.physics.arcade.collide(player, spiderSpawners, initializeSpider);
         game.physics.arcade.collide(boulders, layerPlatforms, killBoulder);
         game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
 
@@ -202,6 +213,7 @@ var gameState = {
         // so snakes don't fall off platform
         map.setTileIndexCallback(19, snakeReverse, null, layerCollisions);
         map.setTileIndexCallback(20, snakeReverse2, null, layerCollisions);
+        //map.setTileIndexCallback(14, initializeSpider, null, layerCollisions);
 
         // winning game location
         map.setTileIndexCallback(24, gameWin, null, endingLayer);
@@ -282,6 +294,8 @@ var gameState = {
         //            levelNum++;
         //            game.state.start('gameState');
         //        }
+        
+        
     }
 };
 
@@ -341,6 +355,13 @@ function attack() {
         snakes.forEach(function (snake) {
             if (player.overlap(snake)) {
                 snake.kill();
+            }
+        });
+        spiders.forEach(function (spider) {
+            if (player.overlap(spider)) {
+                spider.body.velocity.x = 0;
+                anim = spider.animations.play('die');
+                anim.killOnComplete = true;
             }
         });
     }
@@ -408,6 +429,11 @@ function loadLevel(levelNum) {
     rockSpawners = game.add.group();
     rockSpawners.enableBody = true;
     map.createFromObjects('Rocks', 32, 'rockSpawner', 1, true, false, rockSpawners);
+    
+    spiderSpawners = game.add.group();
+    spiderSpawners.enableBody = true;
+    map.createFromObjects('Spiders', 32, null, 1, true, false, spiderSpawners);
+    
 
 
 
@@ -478,6 +504,23 @@ function snakeReverse2(snake) {
     snake.scale.setTo(1, 1);
     snake.body.velocity.x = 100;
     snakeDirection = 'right';
+}
+
+function initializeSpider(player,spiderSpawner) {
+    spiders.enableBody = true;
+    spiders.create(player.x,player.y-100,'spider',0,true);  
+    spiders.callAll('animations.add', 'animations', 'move', [3,4,5], 3, true);
+    spiders.callAll('animations.add', 'animations', 'die', [0,1,2], 3, false);
+    spiders.callAll('animations.play', 'animations', 'move');
+    spiders.callAll('anchor.setTo', 'anchor', 0.5,0);
+    spiders.setAll('body.collideWorldBounds', true);
+    spiders.setAll('body.gravity.y',500);
+    spiders.setAll('body.immovable',true);
+    spiderSpawner.kill();
+    spiders.forEach(function (spider){
+        game.physics.arcade.collide(spider,layerPlatforms,spider.body.velocity.x = 100);
+        
+    });
 }
 
 function initializeSnakes() {
