@@ -57,7 +57,7 @@ var gameState = {
         game.load.spritesheet('smokeParticles', 'assets/sprites/smokeParticles.png', 1, 1);
         game.load.spritesheet('torch', 'assets/sprites/torch.png', 10, 23);
         game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 48,6);
-        game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128,3);
+        game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
@@ -447,8 +447,11 @@ function loadLevel(levelNum) {
     spiderWebs = game.add.group();
     spiderWebs.enableBody = true;
     map.createFromObjects('spiderWebs', 32, 'spiderWeb', 0, true, false, spiderWebs);
-    spiderWebs.callAll('animations.add','animations', ' burn', [0,1,2], 5, true);
-    spiderWebs.setAll('body.immovable','body', true);
+    spiderWebs.forEach(function (web) {
+        web.animations.add('burn', [0, 1, 2], 5, false);
+    });
+    spiderWebs.setAll('body.immovable', true);
+    game.physics.enable(spiderWebs);
 
 
     f_platforms = game.add.group();
@@ -724,9 +727,7 @@ function toggleTorch() {
 
 function burnWeb(player, spiderWeb){
     hintText.text = 'burn that shit';
-    spiderWeb.animations.play('burn');
     if(useKey.isDown){
-      spiderWeb.animations.play('burn');
-      //anim.killOnComplete = true;
+      spiderWeb.animations.play('burn').killOnComplete = true;
     }
 }
