@@ -182,7 +182,7 @@ var gameState = {
         playerClimbing = false;
 
         snakes.callAll('animations.play', 'animations', 'move');
-        
+        hintText.text = "Find the key to the locked door.";
 
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
@@ -231,7 +231,7 @@ var gameState = {
         playerTorch.y = player.y;
         //updateShadowTexture();
 
-        hintText.text = "Find the key to the locked door.";
+        
 
         // falling blocks happen
         f_platforms.forEach(function (f_block) {
@@ -448,7 +448,7 @@ function loadLevel(levelNum) {
     spiderWebs.enableBody = true;
     map.createFromObjects('spiderWebs', 32, 'spiderWeb', 0, true, false, spiderWebs);
     spiderWebs.forEach(function (web) {
-        web.animations.add('burn', [0, 1, 2], 5, false);
+        web.animations.add('burn', [0, 1, 2], 9, false);
     });
     spiderWebs.setAll('body.immovable', true);
     game.physics.enable(spiderWebs);
@@ -506,6 +506,7 @@ function insertKey(player, keyhole) {
         doors.children[keyholeID].body.gravity.y = -300;
         keyInventory.kill();
         hasKey = false;
+        keyCreated = false;
     }
 }
 
@@ -728,6 +729,17 @@ function toggleTorch() {
 function burnWeb(player, spiderWeb){
     hintText.text = 'burn that shit';
     if(useKey.isDown){
-      spiderWeb.animations.play('burn').killOnComplete = true;
-    }
+        anim = spiderWeb.animations.play('burn');
+        
+        var webID = parseInt(spiderWeb.name.charAt(9)) - 1;
+         hintText.text = webID;
+
+            if (keyCreated == false) {
+             keys.children[webID].visible = true;
+             keyCreated = true;
+             anim.killOnComplete = true;
+            }  
+    }   
 }
+
+
