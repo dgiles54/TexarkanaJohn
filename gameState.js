@@ -225,7 +225,7 @@ var gameState = {
         // LIGHTING
         playerTorch.x = player.x;
         playerTorch.y = player.y;
-        //updateShadowTexture();
+        updateShadowTexture();
 
         
 
@@ -281,6 +281,13 @@ var gameState = {
         if (player.overlap(keyholes)) {
             hintText.text = "Use the key to open the door.";
         }
+        
+        // fix torch on ladder climb
+        if (holdingTorch && playerClimbing == true) {
+            playerTorch.visible = false;
+        } else if (holdingTorch && playerClimbing == false) {
+            playerTorch.visible = true;
+        }
 
         // when player reaches end of level, go to next level or win state if last level
         //        if (player.overlap(door)) {
@@ -298,7 +305,7 @@ function shootDart(player, plate) {
     var plateID = parseInt(plate.name.charAt(5)) - 1;
     if (map.objects['Plates'][plateID].type == 'active') {
         darts.children[plateID].visible = true;
-        darts.children[plateID].body.velocity.x = -200;
+        darts.children[plateID].body.gravity.x = -200;
         plateSound.play();
         map.objects['Plates'][plateID].type = 'inactive';
     }
@@ -712,23 +719,17 @@ function toggleTorch() {
 
 function burnWeb(player, spiderWeb){
     hintText.text = 'burn that shit';
-    if(useKey.isDown){
-<<<<<<< HEAD
-        spiderWeb.animations.play('burn').killOnComplete = true;
-    }
-=======
+    if (useKey.isDown) {
         anim = spiderWeb.animations.play('burn');
         
         var webID = parseInt(spiderWeb.name.charAt(9)) - 1;
-         hintText.text = webID;
-
-            if (keyCreated == false) {
-             keys.children[webID].visible = true;
-             keyCreated = true;
-             anim.killOnComplete = true;
-            }  
+        hintText.text = webID;
+        if (keyCreated == false) {
+            keys.children[webID].visible = true;
+            keyCreated = true;
+            anim.killOnComplete = true;
+        }  
     }   
->>>>>>> 45d73fb647dd5c0f432eeb5127a841b115d1da14
 }
 
 
