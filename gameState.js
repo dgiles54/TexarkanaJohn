@@ -201,7 +201,7 @@ var gameState = {
         /////
         
         game.physics.arcade.collide(player, snakes, dmgPlayer);
-        game.physics.arcade.collide(player, spiders, dmgPlayer);
+        game.physics.arcade.overlap(player, spiders, dmgPlayer);
         game.physics.arcade.collide(player, layerLava);
         game.physics.arcade.collide(player, layerSpikes);
         game.physics.arcade.collide(snakes, layerCollisions);
