@@ -143,7 +143,31 @@
         {
          "draworder":"topdown",
          "name":"Darts",
-         "objects":[],
+         "objects":[
+                {
+                 "gid":33,
+                 "height":9,
+                 "id":119,
+                 "name":"dart1",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":36,
+                 "x":448,
+                 "y":448
+                }, 
+                {
+                 "gid":33,
+                 "height":9,
+                 "id":117,
+                 "name":"dart2",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":36,
+                 "x":832,
+                 "y":96
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -156,7 +180,7 @@
          "name":"Platforms",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":35,
          "x":0,
          "y":0
@@ -378,10 +402,34 @@
         {
          "draworder":"topdown",
          "name":"Plates",
-         "objects":[],
+         "objects":[
+                {
+                 "gid":27,
+                 "height":32,
+                 "id":118,
+                 "name":"plate1",
+                 "rotation":0,
+                 "type":"active",
+                 "visible":true,
+                 "width":32,
+                 "x":160,
+                 "y":512
+                }, 
+                {
+                 "gid":27,
+                 "height":32,
+                 "id":116,
+                 "name":"plate2",
+                 "rotation":0,
+                 "type":"active",
+                 "visible":true,
+                 "width":32,
+                 "x":704,
+                 "y":96
+                }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -515,7 +563,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":116,
+ "nextobjectid":120,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

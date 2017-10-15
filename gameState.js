@@ -16,7 +16,7 @@ var player,
     playerClimbing = false;
 var cursors, useKey, attackKey;
 var keyInventory, endDoor, snake, snakes, spider, spiderSpawners, spiderWebs, spiderWeb;
-var levers, plates, keys, keyholes, doors, darts, door, f_platforms, rockSpawners, boulders, torches;
+var levers, plates, keys, keyholes, doors, darts, door, f_platforms, rockSpawners, boulders, torches, darts;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 2,
+var levelNum = 4,
     maxLevels = 6;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
@@ -193,15 +193,11 @@ var gameState = {
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
-        game.physics.arcade.overlap(player, plates );
-        
-        //////
-        //this isnt working, idk why
-        game.physics.arcade.overlap(player, spiderWebs, burnWeb);
-        /////
-        
-        game.physics.arcade.collide(player, snakes, dmgPlayer);
+        game.physics.arcade.overlap(player, plates, shootDart);
+        game.physics.arcade.overlap(player, spiderWebs, burnWeb);        
+        game.physics.arcade.overlap(player, snakes, dmgPlayer);
         game.physics.arcade.overlap(player, spiders, dmgPlayer);
+        game.physics.arcade.overlap(player, darts, dmgPlayer);
         game.physics.arcade.collide(player, layerLava);
         game.physics.arcade.collide(player, layerSpikes);
         game.physics.arcade.collide(snakes, layerCollisions);
@@ -278,17 +274,6 @@ var gameState = {
             game.state.start('gameOverState');
         }
 
-        if (blowdartCreated == true) {
-
-            if (player.overlap(blowdart)) {
-                health -= 1;
-                healthBar.frame = 5 - health;
-                blowdart.kill();
-                blowdartCreated = false;
-            }
-        }
-
-
         if (player.overlap(keys) && keyCreated == true) {
             hintText.text = "Press 'e' to pickup item.";
         }
@@ -309,22 +294,13 @@ var gameState = {
     }
 };
 
-function shootDart() {
-
-    if (blowdartCreated == false) {
-        blowdart = game.add.sprite(800, 400, 'blowdart');
-        game.physics.enable(blowdart);
-        blowdart.body.velocity.x = -300;
-        blowdartCreated = true;
+function shootDart(player, plate) {
+    var plateID = parseInt(plate.name.charAt(5)) - 1;
+    if (map.objects['Plates'][plateID].type == 'active') {
+        darts.children[plateID].visible = true;
+        darts.children[plateID].body.velocity.x = -200;
         plateSound.play();
-    }
-    if (blowdartCreated == true) {
-        if (blowdart.x < 0) {
-            blowdart.kill();
-            blowdartCreated = false;
-        }
-
-
+        map.objects['Plates'][plateID].type = 'inactive';
     }
 }
 
@@ -381,6 +357,7 @@ function loadLevel(levelNum) {
     keyCreated = false;
     hasKey = false;
     holdingTorch = false;
+    blowdartCreated = false;
 
     map = game.add.tilemap('level' + levelNum);
     map.addTilesetImage('tileset');
@@ -402,7 +379,14 @@ function loadLevel(levelNum) {
         smokeEmitter.setAlpha(0.1, 1, 200);
         smokeEmitter.flow(2000, 100, 3);
     });
-
+    
+    darts = game.add.group();
+    darts.enableBody = true;
+    map.createFromObjects('Darts', 33, 'blowdart', 0, true, false, darts);
+    darts.setAll('visible', false);
+    darts.setAll('checkWorldBounds', true);
+    darts.setAll('outOfBoundsKill', true);
+    
     doors = game.add.group();
     doors.enableBody = true;
     map.createFromObjects("Door", 32, 'door', 0, true, false, doors);
@@ -728,6 +712,6 @@ function toggleTorch() {
 function burnWeb(player, spiderWeb){
     hintText.text = 'burn that shit';
     if(useKey.isDown){
-      spiderWeb.animations.play('burn').killOnComplete = true;
+        spiderWeb.animations.play('burn').killOnComplete = true;
     }
 }
