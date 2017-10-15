@@ -94,7 +94,7 @@
                  "gid":32,
                  "height":91.5,
                  "id":44,
-                 "name":"spiderWeb1",
+                 "name":"spiderWeb2",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -326,6 +326,18 @@
                  "width":54,
                  "x":907.5,
                  "y":160
+                }, 
+                {
+                 "gid":32,
+                 "height":24,
+                 "id":46,
+                 "name":"key2",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":54,
+                 "x":853.5,
+                 "y":542.5
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -489,7 +501,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":46,
+ "nextobjectid":48,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",
