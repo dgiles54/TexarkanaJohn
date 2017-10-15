@@ -43,6 +43,7 @@ var gameState = {
         game.load.tilemap('level3', 'assets/tilemaps/Level3.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level4', 'assets/tilemaps/Level4.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level6', 'assets/tilemaps/Level6.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('level7', 'assets/tilemaps/Level7.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
@@ -588,7 +589,7 @@ function boulderDmgPlayer(player, boulder) {
 function startCrumbleTimer(player, f_block) {
     // start timer
     if (!f_block.activated) {
-        f_block.deathTime = game.time.now + 2000;
+        f_block.deathTime = game.time.now + 1500;
         f_block.activated = true;
     }
 }
