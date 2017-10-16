@@ -177,7 +177,10 @@ var gameState = {
 
     update: function () {
         
-        
+//        spiders.forEach(function(spider){
+//            
+//            game.debug.body(spider);
+//        });
         // for that ladder physics when gravity = 0
         player.body.gravity.y = PLAYER_GRAVITY;
         playerClimbing = false;
@@ -297,7 +300,9 @@ var gameState = {
         //        }
         
         
-        
+       if(!player.overlap(torches)){
+           hintText.text = 'Press "T" to light your torch';
+       } 
         
     }
 };
@@ -355,6 +360,7 @@ function attack() {
             if (player.overlap(spider)) {
                 spider.body.velocity.x = 0;
                 anim = spider.animations.play('die');
+                //spiders.remove(spider);
                 anim.killOnComplete = true;
             }
         });
@@ -518,10 +524,11 @@ function snakeReverse2(snake) {
 
 function initializeSpider(player,spiderSpawner) {
     spiders.enableBody = true;
-    spiders.create(player.x,player.y-100,'spider',0,true);  
+    spiders.create(spiderSpawner.x,spiderSpawner.y-90,'spider',0,true);  
     spiders.callAll('animations.add', 'animations', 'move', [3,4,5], 5, true);
     spiders.callAll('animations.add', 'animations', 'die', [0,1,2], 5, false);
     spiders.callAll('animations.play', 'animations', 'move');
+    
     spiders.callAll('anchor.setTo', 'anchor', 0.5,0);
     spiders.setAll('body.collideWorldBounds', true);
     spiders.setAll('body.gravity.y',500);
@@ -529,7 +536,7 @@ function initializeSpider(player,spiderSpawner) {
     spiderSpawner.kill();
     spiders.forEach(function (spider){
         game.physics.arcade.collide(spider,layerPlatforms,spider.body.velocity.x = 100);
-        
+        spider.body.setSize(60,30,0,12);
     });
 }
 
@@ -719,10 +726,11 @@ function toggleTorch() {
 }
 
 function burnWeb(player, spiderWeb){
-  hintText.text = 'burn that shit';
+  hintText.text = 'Burn the web by pressing "e"';
     if(spiderWeb.name != ""){
        if(useKey.isDown){
-          anim = spiderWeb.animations.play('burn');      
+          anim = spiderWeb.animations.play('burn'); 
+          game.physics.arcade.overlap(spiderWeb, spiderSpawners, initializeSpider);
           var webID = parseInt(spiderWeb.name.charAt(9)) - 1;
           hintText.text = webID;
           if (keyCreated == false) {
@@ -733,8 +741,9 @@ function burnWeb(player, spiderWeb){
        }
     } else{
         if(useKey.isDown){
-        anim = spiderWeb.animations.play('burn');
-        anim.killOnComplete = true;
+            game.physics.arcade.overlap(spiderWeb, spiderSpawners, initializeSpider);
+            anim = spiderWeb.animations.play('burn');
+            anim.killOnComplete = true;
         }
     }
 }
