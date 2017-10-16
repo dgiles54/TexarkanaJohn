@@ -5,6 +5,7 @@ var PLAYER_GRAVITY = 800;
 var PLAYER_BOUNCE = 0.1;
 var PLAYER_DRAG = 0;
 var SNAKE_ATTACK_RATE = 600;
+var HEART_DROP_CHANCE = 0.5;
 
 var map;
 var startPointX, startPointY, endPoint;
@@ -348,6 +349,8 @@ function climbLadder() {
 
 function attack() {
     if (game.time.now > nextAttackPlayer) {
+        // random for heart drop chance
+
         nextAttackPlayer = game.time.now + PLAYER_ATTACK_RATE;
         player.animations.play('attack');
         console.log('Attacking');
