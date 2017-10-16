@@ -318,8 +318,8 @@
                  "type":"unlock_key",
                  "visible":true,
                  "width":32,
-                 "x":1088,
-                 "y":146
+                 "x":1087,
+                 "y":127
                 }],
          "opacity":1,
          "type":"objectgroup",
