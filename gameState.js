@@ -657,7 +657,7 @@ function killBoulder(boulder) {
 // Create light sources
 function updateShadowTexture() {
     // Draw shadow
-    shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';
+    shadowTexture.context.fillStyle = 'rgb(20, 20, 20)';
     shadowTexture.context.fillRect(0, 0, map.widthInPixels, map.heightInPixels);
 
     // Player torch
@@ -680,7 +680,7 @@ function updateShadowTexture() {
     // Torches in map
     torches.forEach(function (torch) {
         // Change radius randomly each frame
-        var radius = LIGHT_RADIUS * 2 + game.rnd.integerInRange(1, 10);
+        var radius = LIGHT_RADIUS * 1.6 + game.rnd.integerInRange(1, 10);
 
         // Draw circle of light with soft edge
         var gradient =
