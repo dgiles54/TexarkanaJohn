@@ -4,7 +4,7 @@ var PLAYER_JUMP_SPEED = 305;
 var PLAYER_GRAVITY = 800;
 var PLAYER_BOUNCE = 0.02;
 var PLAYER_DRAG = 0;
-var SNAKE_ATTACK_RATE = 600;
+var ENEMY_ATTACK_RATE = 600;
 var HEART_DROP_CHANCE = 0.5;
 
 var map;
@@ -28,11 +28,12 @@ var attackAnim;
 var levelNum = 1,
     maxLevels = 7;
 var snakeDirection = 'right',
-    nextAttackSnake = 0;
+    nextAttackEnemy = 0;
 var LIGHT_RADIUS = 100,
     GLOW_RADIUS = 75,
     shadowTexture;
 var smokeEmitter;
+var heart, heartDropped = false;
 
 var gameState = {
 
@@ -64,6 +65,7 @@ var gameState = {
         game.load.image('door', 'assets/sprites/door.png');
         game.load.image('boulder', 'assets/sprites/boulder.png');
         game.load.image('blowdart', 'assets/sprites/blowdart.png');
+        game.load.image('heart', 'assets/sprites/heart.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
         game.load.audio('ouch', 'assets/audio/ouch.wav');
@@ -150,7 +152,7 @@ var gameState = {
 
         healthBar = game.add.sprite(5, 5, 'healthBar');
         healthBar.fixedToCamera = true;
-        healthBar.frame = 5 - health;
+        healthBar.frame = health;
 
         // SOUND FX
         leverSound = game.add.audio('leverSound');
@@ -169,7 +171,6 @@ var gameState = {
         
         //spider group
         spiders = game.add.group();
-
     },
 
     update: function () {
@@ -207,6 +208,10 @@ var gameState = {
         game.physics.arcade.collide(player, spiderSpawners, initializeSpider);
         game.physics.arcade.collide(boulders, layerPlatforms, killBoulder);
         game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
+        game.physics.arcade.collide(heart, layerPlatforms);
+        if (heartDropped) {
+            game.physics.arcade.overlap(player, heart, healPlayer);
+        }
 
         // kill players with insta-death things
         map.setTileIndexCallback(21, resetLevel, null, layerSpikes);
@@ -277,11 +282,6 @@ var gameState = {
         //            game.state.start('gameState');
         //        }
         
-        
-       if(!player.overlap(torches)){
-           hintText.text = 'Press "T" to light your torch';
-       } 
-        
     }
 };
 
@@ -336,6 +336,10 @@ function attack() {
         // kill snake
         snakes.forEach(function (snake) {
             if (player.overlap(snake) && player.isAttacking) {
+                var chance = Math.random();
+                if (chance < 0.35) {
+                    dropHeart(snake.x, snake.y);
+                }
                 snake.kill();
             }
         });
@@ -345,7 +349,10 @@ function attack() {
             if (player.overlap(spider) && player.isAttacking) {
                 spider.body.velocity.x = 0;
                 anim = spider.animations.play('die');
-                //spiders.remove(spider);
+                var chance = Math.random();
+                if (chance < 0.35) {
+                    dropHeart(spider.x, spider.y);
+                }
                 spider.body.enable = false;
                 anim.killOnComplete = true;
             }
@@ -543,11 +550,11 @@ function initializeSnakes() {
     snakes.setAll('body.collideWorldBounds', true);
 }
 
-function dmgPlayer(player, snake) {
-    if (game.time.now > nextAttackSnake) {
-        nextAttackSnake = game.time.now + SNAKE_ATTACK_RATE;
+function dmgPlayer(player, enemy) {
+    if (game.time.now > nextAttackEnemy) {
+        nextAttackEnemy = game.time.now + ENEMY_ATTACK_RATE;
         health -= 1;
-        healthBar.frame = 5 - health;
+        healthBar.frame = health;
         loseHealthSound.play();
         if (player.body.touching.left) {
             player.body.velocity.x = 10000;
@@ -563,6 +570,15 @@ function dmgPlayer(player, snake) {
     }
     player.body.velocity.x = 0;
     player.body.acceleration.x = 0;
+}
+
+function healPlayer(player, heart) {
+    if (health < 5) {
+        health += 1;
+    }
+    healthBar.frame = health;
+    heart.kill();
+    heartDropped = false;
 }
 
 function boulderDmgPlayer(player, boulder) {
@@ -722,4 +738,11 @@ function burnWeb(player, spiderWeb){
     }
 }
 
-
+function dropHeart(x, y) {
+    heart = game.add.sprite(x, y, 'heart');
+    heart.scale.setTo(0.5, 0.5);
+    game.physics.enable(heart);
+    heart.body.gravity.y = 100;
+    heart.body.bounce.y = 0.75;
+    heartDropped = true;
+}
