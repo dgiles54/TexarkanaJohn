@@ -1,8 +1,8 @@
 var PLAYER_ATTACK_RATE = 200;
 var PLAYER_RUN_SPEED = 200;
-var PLAYER_JUMP_SPEED = 300;
+var PLAYER_JUMP_SPEED = 305;
 var PLAYER_GRAVITY = 800;
-var PLAYER_BOUNCE = 0.1;
+var PLAYER_BOUNCE = 0.02;
 var PLAYER_DRAG = 0;
 var SNAKE_ATTACK_RATE = 600;
 var HEART_DROP_CHANCE = 0.5;
@@ -101,11 +101,13 @@ var gameState = {
         player.body.bounce.y = PLAYER_BOUNCE;
         player.body.drag.x = PLAYER_DRAG;
         player.body.collideWorldBounds = true;
+        player.isAttacking = false;
         player.animations.add('walk', [0, 1, 2, 3, 4, 5], 7, true);
         player.animations.add('idle', [13, 14], 2, true);
         attackAnim = player.animations.add('attack', [6, 7, 8, 9], 12, false);
         attackAnim.onComplete.add(function () {
-            player.frame = 2;
+            player.frame = 0;
+            player.isAttacking = false;
         });
         player.animations.add('climb', [10, 11, 12, 11], 5, true);
         player.body.setSize(20, 44, 15, 20);
@@ -118,7 +120,9 @@ var gameState = {
         cursors = game.input.keyboard.createCursorKeys();
         useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
         attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        attackKey.onDown.add(attack);
+        attackKey.onDown.add(function() {
+            attack();
+        }, this);
 
         // LIGHTING
 
@@ -230,22 +234,20 @@ var gameState = {
         });
 
         // make player walk
-        if (attackKey.isDown) {
-            player.body.velocity.x = 0;
-        } else if (cursors.left.isDown) {
+        if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
-            if (!playerClimbing) {
+            if (!playerClimbing && !player.isAttacking) {
                 player.animations.play('walk');
             }
             player.body.velocity.x = -PLAYER_RUN_SPEED;
         } else if (cursors.right.isDown) {
             player.scale.setTo(1, 1);
-            if (!playerClimbing) {
+            if (!playerClimbing && !player.isAttacking) {
                 player.animations.play('walk');
             }
             player.body.velocity.x = PLAYER_RUN_SPEED;
         } else {
-            if (!playerClimbing) {
+            if (!playerClimbing && !player.isAttacking) {
                 player.frame = 0;
             }
             player.body.velocity.x = 0;
@@ -324,6 +326,7 @@ function climbLadder() {
 
 function attack() {
     if (game.time.now > nextAttackPlayer) {
+        player.isAttacking = true;
         // random for heart drop chance
 
         nextAttackPlayer = game.time.now + PLAYER_ATTACK_RATE;
@@ -332,14 +335,14 @@ function attack() {
 
         // kill snake
         snakes.forEach(function (snake) {
-            if (player.overlap(snake)) {
+            if (player.overlap(snake) && player.isAttacking) {
                 snake.kill();
             }
         });
 
         // kill spider
         spiders.forEach(function (spider) {
-            if (player.overlap(spider)) {
+            if (player.overlap(spider) && player.isAttacking) {
                 spider.body.velocity.x = 0;
                 anim = spider.animations.play('die');
                 //spiders.remove(spider);
