@@ -351,16 +351,21 @@ function attack() {
         nextAttackPlayer = game.time.now + PLAYER_ATTACK_RATE;
         player.animations.play('attack');
         console.log('Attacking');
+
+        // kill snake
         snakes.forEach(function (snake) {
             if (player.overlap(snake)) {
                 snake.kill();
             }
         });
+
+        // kill spider
         spiders.forEach(function (spider) {
             if (player.overlap(spider)) {
                 spider.body.velocity.x = 0;
                 anim = spider.animations.play('die');
                 //spiders.remove(spider);
+                spider.body.enable = false;
                 anim.killOnComplete = true;
             }
         });
