@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 4,
+var levelNum = 5,
     maxLevels = 6;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
@@ -718,18 +718,24 @@ function toggleTorch() {
 }
 
 function burnWeb(player, spiderWeb){
-    hintText.text = 'burn that shit';
-    if (useKey.isDown) {
+  hintText.text = 'burn that shit';
+    if(spiderWeb.name != ""){
+       if(useKey.isDown){
+          anim = spiderWeb.animations.play('burn');      
+          var webID = parseInt(spiderWeb.name.charAt(9)) - 1;
+          hintText.text = webID;
+          if (keyCreated == false) {
+             keys.children[webID].visible = true;
+             keyCreated = true;
+             anim.killOnComplete = true;
+          }  
+       }
+    } else{
+        if(useKey.isDown){
         anim = spiderWeb.animations.play('burn');
-        
-        var webID = parseInt(spiderWeb.name.charAt(9)) - 1;
-        hintText.text = webID;
-        if (keyCreated == false) {
-            keys.children[webID].visible = true;
-            keyCreated = true;
-            anim.killOnComplete = true;
-        }  
-    }   
+        anim.killOnComplete = true;
+        }
+    }
 }
 
 
