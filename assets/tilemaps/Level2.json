@@ -446,19 +446,7 @@
         {
          "draworder":"topdown",
          "name":"Spiders",
-         "objects":[
-                {
-                 "gid":32,
-                 "height":32,
-                 "id":43,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":702.5,
-                 "y":576
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
