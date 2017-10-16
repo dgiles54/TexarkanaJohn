@@ -32,7 +32,6 @@ var snakeDirection = 'right',
 var LIGHT_RADIUS = 100,
     GLOW_RADIUS = 75,
     shadowTexture;
-var playerTorch, holdingTorch = false;
 var smokeEmitter;
 
 var gameState = {
@@ -49,7 +48,6 @@ var gameState = {
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
-        game.load.spritesheet('playerTorch', 'assets/sprites/player_torch.png', 78, 66);
         game.load.spritesheet('snake', 'assets/sprites/snake2.png', 96, 48);
         game.load.spritesheet('f_block', 'assets/sprites/fall_block.png', 32, 32, 3, 0, 1);
         game.load.spritesheet('leverL', 'assets/sprites/lever_left.png', 32, 32);
@@ -104,13 +102,12 @@ var gameState = {
         player.body.drag.x = PLAYER_DRAG;
         player.body.collideWorldBounds = true;
         player.animations.add('walk', [0, 1, 2, 3, 4, 5], 7, true);
-        player.animations.add('idle', [6, 7], 2, true);
-        attackAnim = player.animations.add('attack', [8, 9, 10, 11], 12, false);
+        player.animations.add('idle', [13, 14], 2, true);
+        attackAnim = player.animations.add('attack', [6, 7, 8, 9], 12, false);
         attackAnim.onComplete.add(function () {
             player.frame = 2;
         });
-        player.animations.add('climb', [12, 13, 14, 13], 5, true);
-        player.animations.add('holdingTorch', [15, 16, 17, 18, 19, 20], 7, true);
+        player.animations.add('climb', [10, 11, 12, 11], 5, true);
         player.body.setSize(20, 44, 15, 20);
         player.scale.setTo(1, 1);
 
@@ -122,13 +119,8 @@ var gameState = {
         useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
         attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         attackKey.onDown.add(attack);
-        torchKey = game.input.keyboard.addKey(Phaser.Keyboard.T);
-        torchKey.onDown.add(toggleTorch);
 
         // LIGHTING
-        playerTorch = game.add.sprite(player.x, player.y, 'playerTorch');
-        playerTorch.anchor.setTo(0.33, 0.5);
-        playerTorch.visible = false;
 
         // Create shadow texture
         shadowTexture = game.add.bitmapData(map.widthInPixels, map.heightInPixels);
@@ -228,8 +220,6 @@ var gameState = {
         map.setTileIndexCallback(24, gameWin, null, endingLayer);
 
         // LIGHTING
-        playerTorch.x = player.x;
-        playerTorch.y = player.y;
         updateShadowTexture();
 
         
@@ -244,27 +234,19 @@ var gameState = {
             player.body.velocity.x = 0;
         } else if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
-            playerTorch.scale.setTo(-1, 1);
-            if (!playerClimbing && !holdingTorch) {
+            if (!playerClimbing) {
                 player.animations.play('walk');
-            } else if (!playerClimbing && holdingTorch) {
-                player.animations.play('holdingTorch');
             }
             player.body.velocity.x = -PLAYER_RUN_SPEED;
         } else if (cursors.right.isDown) {
             player.scale.setTo(1, 1);
-            playerTorch.scale.setTo(1, 1);
-            if (!playerClimbing && !holdingTorch) {
+            if (!playerClimbing) {
                 player.animations.play('walk');
-            } else if (!playerClimbing && holdingTorch) {
-                player.animations.play('holdingTorch');
             }
             player.body.velocity.x = PLAYER_RUN_SPEED;
         } else {
-            if (!playerClimbing && !holdingTorch) {
+            if (!playerClimbing) {
                 player.frame = 0;
-            } else if (!playerClimbing && holdingTorch) {
-                player.frame = 15;
             }
             player.body.velocity.x = 0;
         }
@@ -285,13 +267,6 @@ var gameState = {
 
         if (player.overlap(keyholes)) {
             hintText.text = "Use the key to open the door.";
-        }
-        
-        // fix torch on ladder climb
-        if (holdingTorch && playerClimbing == true) {
-            playerTorch.visible = false;
-        } else if (holdingTorch && playerClimbing == false) {
-            playerTorch.visible = true;
         }
 
         // when player reaches end of level, go to next level or win state if last level
@@ -673,17 +648,15 @@ function updateShadowTexture() {
     // Draw circle of light with soft edge
     var gradient =
         shadowTexture.context.createRadialGradient(
-            playerTorch.x, playerTorch.y, LIGHT_RADIUS * 0.1,
-            playerTorch.x, playerTorch.y, radius);
+            player.x, player.y, LIGHT_RADIUS * 0.1,
+            player.x, player.y, radius);
     gradient.addColorStop(0, 'rgba(250, 250, 120, 1.0)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
 
-    if (holdingTorch) {
-        shadowTexture.context.beginPath();
-        shadowTexture.context.fillStyle = gradient;
-        shadowTexture.context.arc(playerTorch.x, playerTorch.y, radius, 0, Math.PI * 2);
-        shadowTexture.context.fill();
-    }
+    shadowTexture.context.beginPath();
+    shadowTexture.context.fillStyle = gradient;
+    shadowTexture.context.arc(player.x, player.y, radius, 0, Math.PI * 2);
+    shadowTexture.context.fill();
 
     // Torches in map
     torches.forEach(function (torch) {
@@ -721,16 +694,6 @@ function updateShadowTexture() {
 
     // Update texture cache
     shadowTexture.dirty = true;
-}
-
-function toggleTorch() {
-    if (holdingTorch) {
-        playerTorch.visible = false;
-        holdingTorch = false;
-    } else {
-        playerTorch.visible = true;
-        holdingTorch = true;
-    }
 }
 
 function burnWeb(player, spiderWeb){
