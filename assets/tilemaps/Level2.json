@@ -89,19 +89,7 @@
         {
          "draworder":"topdown",
          "name":"spiderWebs",
-         "objects":[
-                {
-                 "gid":32,
-                 "height":91.5,
-                 "id":44,
-                 "name":"spiderWeb2",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":85.5,
-                 "x":840,
-                 "y":576
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -326,18 +314,6 @@
                  "width":54,
                  "x":907.5,
                  "y":160
-                }, 
-                {
-                 "gid":32,
-                 "height":24,
-                 "id":46,
-                 "name":"key2",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":54,
-                 "x":853.5,
-                 "y":542.5
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -370,19 +346,7 @@
         {
          "draworder":"topdown",
          "name":"Rocks",
-         "objects":[
-                {
-                 "gid":32,
-                 "height":64,
-                 "id":32,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":64,
-                 "x":594.5,
-                 "y":498.5
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,

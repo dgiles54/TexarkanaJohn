@@ -24,7 +24,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 4,
+var levelNum = 3,
     maxLevels = 6;
 var snakeDirection = 'right',
     nextAttackSnake = 0;
