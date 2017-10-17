@@ -57,7 +57,7 @@ var gameState = {
         game.load.spritesheet('boulderBroken', 'assets/sprites/boulderBroken.png', 64, 64, 3);
         game.load.spritesheet('smokeParticles', 'assets/sprites/smokeParticles.png', 1, 1);
         game.load.spritesheet('torch', 'assets/sprites/torch.png', 10, 23);
-        game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 48,6);
+        game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 48, 6);
         game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
@@ -125,7 +125,7 @@ var gameState = {
         cursors = game.input.keyboard.createCursorKeys();
         useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
         attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        attackKey.onDown.add(function() {
+        attackKey.onDown.add(function () {
             attack();
         }, this);
 
@@ -174,17 +174,17 @@ var gameState = {
         boulders = game.add.group();
         boulders.enableBody = true;
         //boulders.callAll('animations.add','animations','break',3,2,false);
-        
+
         //spider group
         spiders = game.add.group();
     },
 
     update: function () {
-        
-//        spiders.forEach(function(spider){
-//            
-//            game.debug.body(spider);
-//        });
+
+        //        spiders.forEach(function(spider){
+        //            
+        //            game.debug.body(spider);
+        //        });
         // for that ladder physics when gravity = 0
         player.body.gravity.y = PLAYER_GRAVITY;
         playerClimbing = false;
@@ -202,7 +202,7 @@ var gameState = {
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
         game.physics.arcade.overlap(player, plates, shootDart);
-        game.physics.arcade.overlap(player, spiderWebs, burnWeb);        
+        game.physics.arcade.overlap(player, spiderWebs, burnWeb);
         game.physics.arcade.overlap(player, snakes, dmgPlayer);
         game.physics.arcade.overlap(player, spiders, dmgPlayer);
         game.physics.arcade.overlap(player, darts, dmgPlayer);
@@ -237,7 +237,7 @@ var gameState = {
         // LIGHTING
         updateShadowTexture();
 
-        
+
 
         // falling blocks happen
         f_platforms.forEach(function (f_block) {
@@ -287,7 +287,7 @@ var gameState = {
         //            levelNum++;
         //            game.state.start('gameState');
         //        }
-        
+
     }
 };
 
@@ -392,14 +392,14 @@ function loadLevel(levelNum) {
         smokeEmitter.setAlpha(0.1, 1, 200);
         smokeEmitter.flow(2000, 100, 3);
     });
-    
+
     darts = game.add.group();
     darts.enableBody = true;
     map.createFromObjects('Darts', 33, 'blowdart', 0, true, false, darts);
     darts.setAll('visible', false);
     darts.setAll('checkWorldBounds', true);
     darts.setAll('outOfBoundsKill', true);
-    
+
     doors = game.add.group();
     doors.enableBody = true;
     map.createFromObjects("Door", 32, 'door', 0, true, false, doors);
@@ -436,11 +436,11 @@ function loadLevel(levelNum) {
     rockSpawners = game.add.group();
     rockSpawners.enableBody = true;
     map.createFromObjects('Rocks', 32, 'rockSpawner', 1, true, false, rockSpawners);
-    
+
     spiderSpawners = game.add.group();
     spiderSpawners.enableBody = true;
     map.createFromObjects('Spiders', 32, null, 1, true, false, spiderSpawners);
-    
+
     spiderWebs = game.add.group();
     spiderWebs.enableBody = true;
     map.createFromObjects('spiderWebs', 32, 'spiderWeb', 0, true, false, spiderWebs);
@@ -470,11 +470,11 @@ function pushLever(player, lever) {
     if (map.objects['Lever'][leverID].type == "unlock_key") {
         if (useKey.isDown) {
             lever.frame = 1;
-            leverSound.play().onStop.add(function() {
+            leverSound.play().onStop.add(function () {
                 if (keyCreated == false) {
-                keys.children[leverID].visible = true;
-                keyCreated = true;
-                keySound.play();
+                    keys.children[leverID].visible = true;
+                    keyCreated = true;
+                    keySound.play();
                 }
             }, this);
         }
@@ -482,8 +482,10 @@ function pushLever(player, lever) {
     if (map.objects['Lever'][leverID].type == "unlock_door") {
         if (useKey.isDown) {
             lever.frame = 1;
-            leverSound.play();
-            doors.children[leverID].body.gravity.y = -300;
+            leverSound.play().onStop.add(function () {
+                doors.children[leverID].body.gravity.y = -20;
+                doorSound.play();
+            }, this);
         }
     }
 }
@@ -502,7 +504,7 @@ function insertKey(player, keyhole) {
     var keyholeID = parseInt(keyhole.name.charAt(7)) - 1; // to match with doorID
     if (hasKey == true && useKey.isDown) {
         // open door that matches specific keyhole
-        unlockSound.play().onStop.add(function() {
+        unlockSound.play().onStop.add(function () {
             doors.children[keyholeID].body.gravity.y = -20;
             doorSound.play();
             keyInventory.kill();
@@ -526,21 +528,21 @@ function snakeReverse2(snake) {
     snakeDirection = 'right';
 }
 
-function initializeSpider(player,spiderSpawner) {
+function initializeSpider(player, spiderSpawner) {
     spiders.enableBody = true;
-    spiders.create(spiderSpawner.x,spiderSpawner.y-90,'spider',0,true);  
-    spiders.callAll('animations.add', 'animations', 'move', [3,4,5], 5, true);
-    spiders.callAll('animations.add', 'animations', 'die', [0,1,2], 5, false);
+    spiders.create(spiderSpawner.x, spiderSpawner.y - 90, 'spider', 0, true);
+    spiders.callAll('animations.add', 'animations', 'move', [3, 4, 5], 5, true);
+    spiders.callAll('animations.add', 'animations', 'die', [0, 1, 2], 5, false);
     spiders.callAll('animations.play', 'animations', 'move');
-    
-    spiders.callAll('anchor.setTo', 'anchor', 0.5,0);
+
+    spiders.callAll('anchor.setTo', 'anchor', 0.5, 0);
     spiders.setAll('body.collideWorldBounds', true);
-    spiders.setAll('body.gravity.y',500);
-    spiders.setAll('body.immovable',true);
+    spiders.setAll('body.gravity.y', 500);
+    spiders.setAll('body.immovable', true);
     spiderSpawner.kill();
-    spiders.forEach(function (spider){
-        game.physics.arcade.collide(spider,layerPlatforms,spider.body.velocity.x = 100);
-        spider.body.setSize(60,30,0,12);
+    spiders.forEach(function (spider) {
+        game.physics.arcade.collide(spider, layerPlatforms, spider.body.velocity.x = 100);
+        spider.body.setSize(60, 30, 0, 12);
     });
 }
 
@@ -587,7 +589,7 @@ function healPlayer(player, heart) {
     // if (health < 5) {
     //     health += 1;
     // }
-    health = Math.min(5, health+1);
+    health = Math.min(5, health + 1);
     healthBar.frame = health;
     heart.kill();
     heartDropped = false;
@@ -727,22 +729,22 @@ function updateShadowTexture() {
     shadowTexture.dirty = true;
 }
 
-function burnWeb(player, spiderWeb){
-  hintText.text = 'Burn the web by pressing "e"';
-    if(spiderWeb.name != ""){
-       if(useKey.isDown){
-          anim = spiderWeb.animations.play('burn'); 
-          game.physics.arcade.overlap(spiderWeb, spiderSpawners, initializeSpider);
-          var webID = parseInt(spiderWeb.name.charAt(9)) - 1;
-          hintText.text = webID;
-          if (keyCreated == false) {
-             keys.children[webID].visible = true;
-             keyCreated = true;
-             anim.killOnComplete = true;
-          }  
-       }
-    } else{
-        if(useKey.isDown){
+function burnWeb(player, spiderWeb) {
+    hintText.text = 'Burn the web by pressing "e"';
+    if (spiderWeb.name != "") {
+        if (useKey.isDown) {
+            anim = spiderWeb.animations.play('burn');
+            game.physics.arcade.overlap(spiderWeb, spiderSpawners, initializeSpider);
+            var webID = parseInt(spiderWeb.name.charAt(9)) - 1;
+            hintText.text = webID;
+            if (keyCreated == false) {
+                keys.children[webID].visible = true;
+                keyCreated = true;
+                anim.killOnComplete = true;
+            }
+        }
+    } else {
+        if (useKey.isDown) {
             game.physics.arcade.overlap(spiderWeb, spiderSpawners, initializeSpider);
             anim = spiderWeb.animations.play('burn');
             anim.killOnComplete = true;
