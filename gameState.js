@@ -69,6 +69,9 @@ var gameState = {
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
         game.load.audio('ouch', 'assets/audio/ouch.wav');
+        game.load.audio('doorSound', 'assets/audio/door_open.wav');
+        game.load.audio('keySound', 'assets/audio/key_spawn.wav');
+        game.load.audio('unlockSound', 'assets/audio/unlock_door.wav');
         game.load.bitmapFont('blocktopia', 'assets/fonts/blocktopia.png', 'assets/fonts/blocktopia.xml');
     },
 
@@ -158,6 +161,9 @@ var gameState = {
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
         loseHealthSound = game.add.audio('ouch');
+        doorSound = game.add.audio('doorSound');
+        keySound = game.add.audio('keySound');
+        unlockSound = game.add.audio('unlockSound');
 
         //timer for boulder spawns
         timer = game.time.create(false);
@@ -464,11 +470,13 @@ function pushLever(player, lever) {
     if (map.objects['Lever'][leverID].type == "unlock_key") {
         if (useKey.isDown) {
             lever.frame = 1;
-            leverSound.play();
-            if (keyCreated == false) {
+            leverSound.play().onStop.add(function() {
+                if (keyCreated == false) {
                 keys.children[leverID].visible = true;
                 keyCreated = true;
-            }
+                keySound.play();
+                }
+            }, this);
         }
     }
     if (map.objects['Lever'][leverID].type == "unlock_door") {
@@ -494,10 +502,13 @@ function insertKey(player, keyhole) {
     var keyholeID = parseInt(keyhole.name.charAt(7)) - 1; // to match with doorID
     if (hasKey == true && useKey.isDown) {
         // open door that matches specific keyhole
-        doors.children[keyholeID].body.gravity.y = -300;
-        keyInventory.kill();
-        hasKey = false;
-        keyCreated = false;
+        unlockSound.play().onStop.add(function() {
+            doors.children[keyholeID].body.gravity.y = -20;
+            doorSound.play();
+            keyInventory.kill();
+            hasKey = false;
+            keyCreated = false;
+        }, this);
     }
 }
 
