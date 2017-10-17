@@ -584,9 +584,10 @@ function dmgPlayer(player, enemy) {
 }
 
 function healPlayer(player, heart) {
-    if (health < 5) {
-        health += 1;
-    }
+    // if (health < 5) {
+    //     health += 1;
+    // }
+    health = Math.min(5, health+1);
     healthBar.frame = health;
     heart.kill();
     heartDropped = false;
