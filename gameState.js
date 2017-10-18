@@ -25,7 +25,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 5,
+var levelNum = 1,
     maxLevels = 7;
 var snakeDirection = 'right',
     nextAttackEnemy = 0;
@@ -57,11 +57,7 @@ var gameState = {
         game.load.spritesheet('boulderBroken', 'assets/sprites/boulderBroken.png', 64, 64, 3);
         game.load.spritesheet('smokeParticles', 'assets/sprites/smokeParticles.png', 1, 1);
         game.load.spritesheet('torch', 'assets/sprites/torch.png', 10, 23);
-<<<<<<< HEAD
         game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 44,6);
-=======
-        game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 48, 6);
->>>>>>> 69cc90158f09efebcaaab663cd6c258a9880c6de
         game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
@@ -184,11 +180,6 @@ var gameState = {
     },
 
     update: function () {
-
-        //        spiders.forEach(function(spider){
-        //            
-        //            game.debug.body(spider);
-        //        });
         // for that ladder physics when gravity = 0
         player.body.gravity.y = PLAYER_GRAVITY;
         playerClimbing = false;
@@ -547,15 +538,9 @@ function initializeSpider(player, spiderSpawner) {
     spiders.setAll('body.gravity.y', 500);
     spiders.setAll('body.immovable', true);
     spiderSpawner.kill();
-<<<<<<< HEAD
     spiders.forEach(function (spider){
         game.physics.arcade.collide(spider,layerPlatforms,spider.body.velocity.x = 100);
         spider.scale.setTo(0.5, 0.5);
-=======
-    spiders.forEach(function (spider) {
-        game.physics.arcade.collide(spider, layerPlatforms, spider.body.velocity.x = 100);
-        spider.body.setSize(60, 30, 0, 12);
->>>>>>> 69cc90158f09efebcaaab663cd6c258a9880c6de
     });
 }
 
