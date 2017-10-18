@@ -25,7 +25,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 1,
+var levelNum = 5,
     maxLevels = 7;
 var snakeDirection = 'right',
     nextAttackEnemy = 0;
@@ -57,7 +57,7 @@ var gameState = {
         game.load.spritesheet('boulderBroken', 'assets/sprites/boulderBroken.png', 64, 64, 3);
         game.load.spritesheet('smokeParticles', 'assets/sprites/smokeParticles.png', 1, 1);
         game.load.spritesheet('torch', 'assets/sprites/torch.png', 10, 23);
-        game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 48,6);
+        game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 44,6);
         game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
@@ -209,7 +209,10 @@ var gameState = {
         game.physics.arcade.collide(player, layerLava);
         game.physics.arcade.collide(player, layerSpikes);
         game.physics.arcade.collide(snakes, layerCollisions);
+        game.physics.arcade.collide(snakes, layerPlatforms);
+        game.physics.arcade.collide(snakes, f_platforms);
         game.physics.arcade.collide(spiders, layerCollisions);
+        game.physics.arcade.collide(spiders, layerPlatforms);
         game.physics.arcade.collide(player, f_platforms, startCrumbleTimer);
         game.physics.arcade.collide(player, spiderSpawners, initializeSpider);
         game.physics.arcade.collide(boulders, layerPlatforms, killBoulder);
@@ -514,14 +517,14 @@ function insertKey(player, keyhole) {
 
 function snakeReverse(snake) {
 
-    snake.scale.setTo(-1, 1);
+    snake.scale.setTo(-0.5, 0.5);
     snake.body.velocity.x = -100;
     snakeDirection = 'left';
 }
 
 function snakeReverse2(snake) {
 
-    snake.scale.setTo(1, 1);
+    snake.scale.setTo(0.5, 0.5);
     snake.body.velocity.x = 100;
     snakeDirection = 'right';
 }
@@ -540,7 +543,7 @@ function initializeSpider(player,spiderSpawner) {
     spiderSpawner.kill();
     spiders.forEach(function (spider){
         game.physics.arcade.collide(spider,layerPlatforms,spider.body.velocity.x = 100);
-        spider.body.setSize(60,30,0,12);
+        spider.scale.setTo(0.5, 0.5);
     });
 }
 
@@ -549,16 +552,17 @@ function initializeSnakes() {
     snakes.enableBody = true;
     map.createFromObjects('Snakes', 33, 'snake', 0, true, false, snakes);
     snakes.forEach(function (snake) {
+        snake.scale.setTo(0.5, 0.5);
         snake.body.velocity.x = 100;
         snake.anchor.setTo(0.5, 0);
         snake.body.immovable = true;
-        snake.body.setSize(90, 15, 3, 33);
         snake.body.bounce.x = 1;
     });
     map.setCollision(19);
     map.setCollision(20);
     snakes.callAll('animations.add', 'animations', 'move', null, 5, true);
     snakes.setAll('body.collideWorldBounds', true);
+    snakes.setAll('body.gravity.y', 500);
 }
 
 function dmgPlayer(player, enemy) {
