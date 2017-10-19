@@ -17,7 +17,7 @@ var player,
     playerClimbing = false;
 var cursors, useKey, attackKey;
 var keyInventory, endDoor, snake, snakes, spider, spiderSpawners, spiderWebs, spiderWeb;
-var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, darts, dartLoopGroup;
+var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, dartLoopGroup;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -202,14 +202,9 @@ var gameState = {
         playerClimbing = false;
 
         snakes.callAll('animations.play', 'animations', 'move');
-<<<<<<< HEAD
-
-=======
-        hintText.text = "Find the key to the locked door.";
         
         timerDartLoop.resume();
-        
->>>>>>> 20b264689e6567a29b2c7900de499f8adc741aee
+
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
         game.physics.arcade.collide(spiders, layerPlatforms);
