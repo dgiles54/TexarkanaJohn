@@ -17,7 +17,7 @@ var player,
     playerClimbing = false;
 var cursors, useKey, attackKey;
 var keyInventory, endDoor, snake, snakes, spider, spiderSpawners, spiderWebs, spiderWeb;
-var levers, plates, keys, keyholes, doors, darts, door, f_platforms, rockSpawners, boulders, torches, darts;
+var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, darts, dartLoopGroup;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -25,7 +25,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound;
 var attackAnim;
-var levelNum = 1,
+var levelNum = 5,
     maxLevels = 7;
 var nextAttackEnemy = 0;
 var LIGHT_RADIUS = 100,
@@ -182,6 +182,10 @@ var gameState = {
         timer = game.time.create(false);
         timer.loop(3000, rockSpawn, this);
         timer.start();
+        
+        timerDartLoop = game.time.create(true);
+        timerDartLoop.loop(3000, dartLoopSpawn, this);
+        timerDartLoop.start();
 
         // boulder group
         boulders = game.add.group();
@@ -198,7 +202,14 @@ var gameState = {
         playerClimbing = false;
 
         snakes.callAll('animations.play', 'animations', 'move');
+<<<<<<< HEAD
 
+=======
+        hintText.text = "Find the key to the locked door.";
+        
+        timerDartLoop.resume();
+        
+>>>>>>> 20b264689e6567a29b2c7900de499f8adc741aee
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
         game.physics.arcade.collide(spiders, layerPlatforms);
@@ -228,7 +239,9 @@ var gameState = {
         if (heartDropped) {
             game.physics.arcade.overlap(player, heart, healPlayer);
         }
-
+        
+        
+        
         // kill players with insta-death things
         map.setTileIndexCallback(21, resetLevel, null, layerSpikes);
         map.setTileIndexCallback([22, 23], resetLevel, null, layerLava);
@@ -339,6 +352,14 @@ function shootDart(player, plate) {
         plateSound.play();
         map.objects['Plates'][plateID].type = 'inactive';
     }
+    if(map.objects['Plates'][plateID].type == 'stopLoop') {
+        if(map.objects['Plates'][plateID].plateSoundAlreadyPlayed == false){
+           
+           plateSound.play();
+           map.objects['Plates'][plateID].plateSoundAlreadyPlayed = true;
+        }
+        timerDartLoop.pause();
+    } 
 }
 
 function climbLadder() {
@@ -464,6 +485,7 @@ function loadLevel(levelNum) {
     plates = game.add.group();
     plates.enableBody = true;
     map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
+    plates.setAll('plateSoundAlreadyPlayed', false);
 
     keys = game.add.group();
     keys.enableBody = true;
@@ -500,6 +522,9 @@ function loadLevel(levelNum) {
         f_block.activated = false;
         f_block.deathTime = null;
     })
+    
+    dartLoopGroup = game.add.group();
+    map.createFromObjects('dartLoop', 32, null, 0, true, false, dartLoopGroup);
 
     startPointX = map.objects['StartPoint'][0].x;
     startPointY = map.objects['StartPoint'][0].y;
@@ -629,6 +654,7 @@ function boulderDmgPlayer(player, boulder) {
         health -= 1;
         healthBar.frame = 5 - health;
         loseHealthSound.play();
+        
         killBoulder(boulder);
     }
 }
@@ -636,7 +662,7 @@ function boulderDmgPlayer(player, boulder) {
 function startCrumbleTimer(player, f_block) {
     // start timer
     if (!f_block.activated) {
-        f_block.deathTime = game.time.now + 1500;
+        f_block.deathTime = game.time.now + 500;
         f_block.activated = true;
     }
 }
@@ -787,4 +813,15 @@ function dropHeart(x, y) {
     heart.body.gravity.y = 100;
     heart.body.bounce.y = 0.75;
     heartDropped = true;
+}
+
+function dartLoopSpawn() {
+    dartLoopGroup.forEach( function(dartLoopLoc) {
+        
+        dart = darts.create(dartLoopLoc.x, dartLoopLoc.y, 'blowdart');
+        dart.body.velocity.x = -100;
+        dart.checkWorldBounds = true;
+        dart.outOfBoundsKill = true;
+        
+    });
 }
