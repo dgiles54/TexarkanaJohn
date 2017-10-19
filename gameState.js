@@ -238,7 +238,7 @@ var gameState = {
         game.physics.arcade.collide(boulders, layerPlatforms, killBoulder);
         game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
         game.physics.arcade.collide(heart, layerPlatforms);
-        game.physics.arcade.overlap(spears, player, dmgPlayer);
+        game.physics.arcade.collide(player, spears, function() { console.log("hit!"); });
         if (heartDropped) {
             game.physics.arcade.overlap(player, heart, healPlayer);
         }
@@ -472,12 +472,11 @@ function loadLevel(levelNum) {
 
     spears = game.add.group();
     spears.enableBody = true;
-    spears.visible = true;
     map.createFromObjects('Spears', 32, 'spear', 0, true, false, spears);
     spears.forEach(function(spear) {
         // spear.position.y -= 32
-        spear.tween1 = game.add.tween(spear).to({ y: spear.position.y + 32, activated: false }, 500);
-        spear.tween2 = game.add.tween(spear).to({ y: spear.position.y - 32, activated: true }, 500).delay(1000);
+        spear.tween1 = game.add.tween(spear).to({ y: spear.position.y + 32 }, 500);
+        spear.tween2 = game.add.tween(spear).to({ y: spear.position.y - 32 }, 500).delay(1000);
         spear.tween1.chain(spear.tween2);
         spear.tween2.chain(spear.tween1);
 
