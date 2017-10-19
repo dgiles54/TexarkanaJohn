@@ -300,7 +300,7 @@ var gameState = {
         spiders.forEach(function (spider) {
             if (spider.body.velocity.x >= 0) {
                 spider.scale.setTo(0.5, 0.5);
-            } else if (snake.body.velocity.x < 0) {
+            } else if (spider.body.velocity.x < 0) {
                 spider.scale.setTo(-0.5, 0.5);
             }
         });
