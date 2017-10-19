@@ -34,6 +34,19 @@ var LIGHT_RADIUS = 100,
 var smokeEmitter;
 var heart, heartDropped = false;
 
+WebFontConfig = {
+
+    //  'active' means all requested fonts have finished loading
+    //  We set a 1 second delay before calling 'createText'.
+    //  For some reason if we don't the browser cannot render the text the first time it's created.
+    //active: function() { game.time.events.add(Phaser.Timer.SECOND, createText, this); },
+
+    //  The Google Fonts we want to load (specify as many as you like in the array)
+    google: {
+        families: ['VT323', 'Arvo', 'Rokkitt']
+    }
+};
+
 var gameState = {
 
     preload: function () {
@@ -65,6 +78,7 @@ var gameState = {
         game.load.image('boulder', 'assets/sprites/boulder.png');
         game.load.image('blowdart', 'assets/sprites/blowdart.png');
         game.load.image('heart', 'assets/sprites/heart.png');
+        game.load.image('thoughtBubble', 'assets/sprites/thoughtBubble.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
         game.load.audio('ouch', 'assets/audio/ouch.wav');
@@ -72,6 +86,7 @@ var gameState = {
         game.load.audio('keySound', 'assets/audio/key_spawn.wav');
         game.load.audio('unlockSound', 'assets/audio/unlock_door.wav');
         game.load.bitmapFont('blocktopia', 'assets/fonts/blocktopia.png', 'assets/fonts/blocktopia.xml');
+        game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js');
     },
 
 
@@ -140,17 +155,16 @@ var gameState = {
         lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
 
         // HUD
-        hintText = game.add.bitmapText(game.width / 2, game.height - 16, 'blocktopia', 'Find the key to the locked door.', 32);
-        hintText.anchor.set(0.5, 0.5);
-        hintText.alpha = 0.6;
-        // {
-        // fontSize: '32px',
-        // fill: '#fff',
-        // boundsAlignH: 'center',
-        // boundsAlignV: 'bottom',
-        // });
-        // hintText.setTextBounds(0, 0, game.width, game.height);
-        hintText.fixedToCamera = true;
+        player.hintBubble = game.add.sprite(player.x, player.y - 100, 'thoughtBubble');
+        player.hintBubble.visible = false;
+        
+        hintText = game.add.text(player.x + 7, player.y - 95, '', {
+            font: 'VT323',
+            fontSize: 12,
+            wordWrap: true,
+            wordWrapWidth: 95
+        });
+        hintText.visible = false;
 
         healthBar = game.add.sprite(5, 5, 'healthBar');
         healthBar.fixedToCamera = true;
@@ -184,7 +198,6 @@ var gameState = {
         playerClimbing = false;
 
         snakes.callAll('animations.play', 'animations', 'move');
-        hintText.text = "Find the key to the locked door.";
 
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
@@ -283,15 +296,32 @@ var gameState = {
                 spider.scale.setTo(-0.5, 0.5);
             }
         });
+        
+        // HINTS
+        // hint bubble
+        player.hintBubble.x = player.x;
+        player.hintBubble.y = player.y - 100;
+        hintText.x = player.x + 7;
+        hintText.y = player.y - 95;
 
-        if (player.overlap(keys) && keyCreated == true) {
-            hintText.text = "Press 'e' to pickup item.";
+        if (levelNum == 1) {
+            if (player.overlap(keys)) {
+                hintText.text = 'A skull-shaped key! This might be useful to me.';
+                player.hintBubble.visible = true;
+                hintText.visible = true;
+            } else if (player.overlap(keyholes) && hasKey) {
+                hintText.text = 'I should try to use the key I found!';
+                player.hintBubble.visible = true;
+                hintText.visible = true;
+            } else if (player.overlap(levers)) {
+                hintText.text = 'An oddly placed lever. I wonder what it does?';
+                player.hintBubble.visible = true;
+                hintText.visible = true;
+            } else {
+                player.hintBubble.visible = false;
+                hintText.visible = false;
+            }
         }
-
-        if (player.overlap(keyholes)) {
-            hintText.text = "Use the key to open the door.";
-        }
-
         // when player reaches end of level, go to next level or win state if last level
         //        if (player.overlap(door)) {
         //            levelNum++;
