@@ -27,8 +27,7 @@ var leverSound, plateSound;
 var attackAnim;
 var levelNum = 5,
     maxLevels = 7;
-var snakeDirection = 'right',
-    nextAttackEnemy = 0;
+var nextAttackEnemy = 0;
 var LIGHT_RADIUS = 100,
     GLOW_RADIUS = 75,
     shadowTexture;
@@ -232,11 +231,6 @@ var gameState = {
         // allow player to climb ladders
         map.setTileIndexCallback(14, climbLadder, null, layerLadders);
 
-        // so snakes don't fall off platform
-        map.setTileIndexCallback(19, snakeReverse, null, layerCollisions);
-        map.setTileIndexCallback(20, snakeReverse2, null, layerCollisions);
-        //map.setTileIndexCallback(14, initializeSpider, null, layerCollisions);
-
         // winning game location
         map.setTileIndexCallback(24, gameWin, null, endingLayer);
 
@@ -279,6 +273,24 @@ var gameState = {
         if (health == 0) {
             game.state.start('gameOverState');
         }
+        
+        // snake collision
+        snakes.forEach(function (snake) {
+            if (snake.body.velocity.x >= 0) {
+                snake.scale.setTo(0.5, 0.5);
+            } else if (snake.body.velocity.x < 0) {
+                snake.scale.setTo(-0.5, 0.5);
+            }
+        });
+                       
+        // spider collision
+        spiders.forEach(function (spider) {
+            if (spider.body.velocity.x >= 0) {
+                spider.scale.setTo(0.5, 0.5);
+            } else if (snake.body.velocity.x < 0) {
+                spider.scale.setTo(-0.5, 0.5);
+            }
+        });
 
         if (player.overlap(keys) && keyCreated == true) {
             hintText.text = "Press 'e' to pickup item.";
@@ -532,20 +544,6 @@ function insertKey(player, keyhole) {
     }
 }
 
-function snakeReverse(snake) {
-
-    snake.scale.setTo(-0.5, 0.5);
-    snake.body.velocity.x = -100;
-    snakeDirection = 'left';
-}
-
-function snakeReverse2(snake) {
-
-    snake.scale.setTo(0.5, 0.5);
-    snake.body.velocity.x = 100;
-    snakeDirection = 'right';
-}
-
 function initializeSpider(player, spiderSpawner) {
     spiders.enableBody = true;
     spiders.create(spiderSpawner.x, spiderSpawner.y - 90, 'spider', 0, true);
@@ -561,6 +559,7 @@ function initializeSpider(player, spiderSpawner) {
     spiders.forEach(function (spider){
         game.physics.arcade.collide(spider,layerPlatforms,spider.body.velocity.x = 100);
         spider.scale.setTo(0.5, 0.5);
+        spider.body.bounce.x = 1;
     });
 }
 
