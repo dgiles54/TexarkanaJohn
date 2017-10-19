@@ -17,7 +17,7 @@ var player,
     playerClimbing = false;
 var cursors, useKey, attackKey;
 var keyInventory, endDoor, snake, snakes, spider, spiderSpawners, spiderWebs, spiderWeb;
-var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, dartLoopGroup;
+var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, dartLoopGroup, spears;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -79,6 +79,7 @@ var gameState = {
         game.load.image('blowdart', 'assets/sprites/blowdart.png');
         game.load.image('heart', 'assets/sprites/heart.png');
         game.load.image('thoughtBubble', 'assets/sprites/thoughtBubble.png');
+        game.load.image('spear', 'assets/sprites/spear.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
         game.load.audio('ouch', 'assets/audio/ouch.wav');
@@ -202,6 +203,12 @@ var gameState = {
         playerClimbing = false;
 
         snakes.callAll('animations.play', 'animations', 'move');
+
+        spears.forEach(function(spear) {
+            if (!spear.activated) {
+                spear.body.enable = false;
+            }
+        });
         
         timerDartLoop.resume();
 
@@ -231,6 +238,7 @@ var gameState = {
         game.physics.arcade.collide(boulders, layerPlatforms, killBoulder);
         game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
         game.physics.arcade.collide(heart, layerPlatforms);
+        game.physics.arcade.overlap(spears, player, dmgPlayer);
         if (heartDropped) {
             game.physics.arcade.overlap(player, heart, healPlayer);
         }
@@ -462,6 +470,27 @@ function loadLevel(levelNum) {
     doors.setAll('body.immovable', true);
     doors.setAll('outOfBoundsKill', true);
 
+    spears = game.add.group();
+    spears.enableBody = true;
+    spears.visible = true;
+    map.createFromObjects('Spears', 32, 'spear', 0, true, false, spears);
+    spears.forEach(function(spear) {
+        // spear.position.y -= 32
+        spear.tween1 = game.add.tween(spear).to({ y: spear.position.y + 32, activated: false }, 500);
+        spear.tween2 = game.add.tween(spear).to({ y: spear.position.y - 32, activated: true }, 500).delay(1000);
+        spear.tween1.chain(spear.tween2);
+        spear.tween2.chain(spear.tween1);
+
+        // spear.tween1.start();
+        spearID = parseInt(spear.name.charAt(5));
+        if (spearID % 2 == 1) {
+            spear.position.y -= 32;
+            spear.tween1.start();
+        } else {
+            spear.tween2.start();
+        }
+    });
+
     layerLava = map.createLayer('Lava');
     layerPlatforms = map.createLayer('Platforms');
     layerDetails = map.createLayer('Details');
@@ -647,12 +676,13 @@ function boulderDmgPlayer(player, boulder) {
     if (boulder.hurtPlayer != true) {
         boulder.hurtPlayer = true;
         health -= 1;
-        healthBar.frame = 5 - health;
+        healthBar.frame = health;
         loseHealthSound.play();
         
         killBoulder(boulder);
     }
 }
+
 
 function startCrumbleTimer(player, f_block) {
     // start timer
