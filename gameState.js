@@ -207,11 +207,11 @@ var gameState = {
 
         snakes.callAll('animations.play', 'animations', 'move');
 
-        spears.forEach(function(spear) {
-            if (!spear.activated) {
-                spear.body.enable = false;
-            }
-        });
+        // spears.forEach(function(spear) {
+        //     if (!spear.activated) {
+        //         spear.body.enable = false;
+        //     }
+        // });
         
         timerDartLoop.resume();
 
@@ -241,7 +241,7 @@ var gameState = {
         game.physics.arcade.collide(boulders, layerPlatforms, killBoulder);
         game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
         game.physics.arcade.collide(heart, layerPlatforms);
-        game.physics.arcade.collide(player, spears, function() { console.log("hit!"); });
+        game.physics.arcade.collide(player, spears, dmgPlayer);
         if (heartDropped) {
             game.physics.arcade.overlap(player, heart, healPlayer);
         }
@@ -478,9 +478,9 @@ function loadLevel(levelNum) {
     spears.enableBody = true;
     map.createFromObjects('Spears', 32, 'spear', 0, true, false, spears);
     spears.forEach(function(spear) {
-        // spear.position.y -= 32
-        spear.tween1 = game.add.tween(spear).to({ y: spear.position.y + 32 }, 500);
-        spear.tween2 = game.add.tween(spear).to({ y: spear.position.y - 32 }, 500).delay(1000);
+        // spear.position.y -= 32;
+        spear.tween1 = game.add.tween(spear).to({ y: spear.y + 32 }, 500);
+        spear.tween2 = game.add.tween(spear).to({ y: spear.y - 32 }, 500).delay(1000);
         spear.tween1.chain(spear.tween2);
         spear.tween2.chain(spear.tween1);
 
