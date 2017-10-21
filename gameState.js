@@ -241,7 +241,7 @@ var gameState = {
         game.physics.arcade.collide(boulders, layerPlatforms, killBoulder);
         game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
         game.physics.arcade.collide(heart, layerPlatforms);
-        game.physics.arcade.collide(player, spears, dmgPlayer);
+        game.physics.arcade.overlap(player, spears, dmgPlayer);
         if (heartDropped) {
             game.physics.arcade.overlap(player, heart, healPlayer);
         }
@@ -468,16 +468,12 @@ function loadLevel(levelNum) {
     darts.setAll('checkWorldBounds', true);
     darts.setAll('outOfBoundsKill', true);
 
-    doors = game.add.group();
-    doors.enableBody = true;
-    map.createFromObjects("Door", 32, 'door', 0, true, false, doors);
-    doors.setAll('body.immovable', true);
-    doors.setAll('outOfBoundsKill', true);
-
     spears = game.add.group();
     spears.enableBody = true;
     map.createFromObjects('Spears', 32, 'spear', 0, true, false, spears);
     spears.forEach(function(spear) {
+        spear.body.setSize(16, 32, 8, 0);
+
         // spear.position.y -= 32;
         spear.tween1 = game.add.tween(spear).to({ y: spear.y + 32 }, 500);
         spear.tween2 = game.add.tween(spear).to({ y: spear.y - 32 }, 500).delay(1000);
@@ -495,14 +491,20 @@ function loadLevel(levelNum) {
     });
 
     layerLava = map.createLayer('Lava');
+    layerLadders = map.createLayer('Ladders');
     layerPlatforms = map.createLayer('Platforms');
     layerDetails = map.createLayer('Details');
-    layerLadders = map.createLayer('Ladders');
     layerCollisions = map.createLayer('Collisions');
     layerFaces = map.createLayer('Faces');
     layerSpikes = map.createLayer('Spikes');
     endPoint = map.createLayer('EndPoint');
     layerWall.resizeWorld();
+
+    doors = game.add.group();
+    doors.enableBody = true;
+    map.createFromObjects("Door", 32, 'door', 0, true, false, doors);
+    doors.setAll('body.immovable', true);
+    doors.setAll('outOfBoundsKill', true);
 
     levers = game.add.group();
     levers.enableBody = true;
@@ -734,7 +736,6 @@ function rockSpawn() {
 
         boulders.create(rockPlace.x, rockPlace.y, 'boulderBroken');
     });
-
 
 
     boulders.forEach(function (boulder) {
