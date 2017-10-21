@@ -217,6 +217,7 @@ var gameState = {
         timerDartLoop.resume();
 
         game.physics.arcade.collide(player, layerWall);
+        game.physics.arcade.collide(boxes, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
         game.physics.arcade.collide(spiders, layerPlatforms);
         game.physics.arcade.collide(boxes, layerPlatforms);
@@ -315,7 +316,7 @@ var gameState = {
                        
         // spider collision
         spiders.forEach(function (spider) {
-            game.debug.body(spider);
+           
             if (spider.body.velocity.x >= 0) {
                 spider.scale.setTo(0.5, 0.5);
             } else if (spider.body.velocity.x < 0) {
