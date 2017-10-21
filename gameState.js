@@ -222,7 +222,7 @@ var gameState = {
         game.physics.arcade.collide(boxes, layerPlatforms);
         game.physics.arcade.collide(player, layerLadders);
         game.physics.arcade.collide(player, doors);
-        //game.physics.arcade.collide(player, boxes, moveBox);
+        game.physics.arcade.collide(player, boxes, moveBox);
         game.physics.arcade.collide(player, endPoint, nextLevel);
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
