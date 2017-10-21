@@ -17,7 +17,7 @@ var player,
     playerClimbing = false;
 var cursors, useKey, attackKey;
 var keyInventory, endDoor, snake, snakes, spider, spiderSpawners, spiderWebs, spiderWeb;
-var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, dartLoopGroup, spears;
+var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, dartLoopGroup, spears, boxes;
 var keyCreated = false;
 var hintText, inventory, healthBar;
 var hasKey = false,
@@ -25,7 +25,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound, loseHealthSound, doorSound, keySound, unlockSound, templeMusic;
 var attackAnim;
-var levelNum = 1,
+var levelNum = 5,
     maxLevels = 7;
 var nextAttackEnemy = 0;
 var LIGHT_RADIUS = 100,
@@ -80,6 +80,7 @@ var gameState = {
         game.load.image('heart', 'assets/sprites/heart.png');
         game.load.image('thoughtBubble', 'assets/sprites/thoughtBubble.png');
         game.load.image('spear', 'assets/sprites/spear.png');
+        game.load.image('box', 'assets/sprites/Box.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
         game.load.audio('ouch', 'assets/audio/ouch.wav');
@@ -218,13 +219,16 @@ var gameState = {
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
         game.physics.arcade.collide(spiders, layerPlatforms);
+        game.physics.arcade.collide(boxes, layerPlatforms);
         game.physics.arcade.collide(player, layerLadders);
         game.physics.arcade.collide(player, doors);
+        //game.physics.arcade.collide(player, boxes, moveBox);
         game.physics.arcade.collide(player, endPoint, nextLevel);
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
         game.physics.arcade.overlap(player, plates, shootDart);
+        game.physics.arcade.overlap(boxes, plates, shootDart);
         game.physics.arcade.overlap(player, spiderWebs, burnWeb);
         game.physics.arcade.overlap(player, snakes, dmgPlayer);
         game.physics.arcade.overlap(player, spiders, dmgPlayer);
@@ -292,6 +296,8 @@ var gameState = {
         if (cursors.up.justDown && (player.body.onFloor() || player.body.touching.down)) {
             player.body.velocity.y = -PLAYER_JUMP_SPEED;
         }
+        
+        
 
         // if health reaches 0, game over
         if (health == 0) {
@@ -309,6 +315,7 @@ var gameState = {
                        
         // spider collision
         spiders.forEach(function (spider) {
+            game.debug.body(spider);
             if (spider.body.velocity.x >= 0) {
                 spider.scale.setTo(0.5, 0.5);
             } else if (spider.body.velocity.x < 0) {
@@ -346,8 +353,13 @@ var gameState = {
         //            levelNum++;
         //            game.state.start('gameState');
         //        }
+        
+            boxes.forEach( function(box) {
+                box.body.velocity.x = 0;
+            });
 
     }
+
 };
 
 function shootDart(player, plate) {
@@ -554,7 +566,16 @@ function loadLevel(levelNum) {
     
     dartLoopGroup = game.add.group();
     map.createFromObjects('dartLoop', 32, null, 0, true, false, dartLoopGroup);
-
+    
+    boxes = game.add.group();
+    boxes.enableBody = true;
+    map.createFromObjects('Boxes', 32, 'box', 0, true, false, boxes);
+    boxes.setAll('body.gravity.y', 500);
+    boxes.setAll('body.collideWorldBounds', true);
+    boxes.setAll('body.bounce.x', '0.25');
+    boxes.setAll('friction', '0.99');
+    
+    
     startPointX = map.objects['StartPoint'][0].x;
     startPointY = map.objects['StartPoint'][0].y;
 }
@@ -856,4 +877,10 @@ function dartLoopSpawn() {
         dart.outOfBoundsKill = true;
         
     });
+}
+
+function moveBox(player, box) {
+    if (useKey.isDown && player.body.onFloor()) {
+            box.body.velocity.x = player.body.velocity.x;
+        }
 }
