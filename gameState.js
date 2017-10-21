@@ -23,9 +23,9 @@ var hintText, inventory, healthBar;
 var hasKey = false,
     switchTriggered = false,
     blowdartCreated = false;
-var leverSound, plateSound;
+var leverSound, plateSound, loseHealthSound, doorSound, keySound, unlockSound, templeMusic;
 var attackAnim;
-var levelNum = 5,
+var levelNum = 1,
     maxLevels = 7;
 var nextAttackEnemy = 0;
 var LIGHT_RADIUS = 100,
@@ -86,6 +86,7 @@ var gameState = {
         game.load.audio('doorSound', 'assets/audio/door_open.wav');
         game.load.audio('keySound', 'assets/audio/key_spawn.wav');
         game.load.audio('unlockSound', 'assets/audio/unlock_door.wav');
+        game.load.audio('templeMusic', 'assets/audio/temple_theme.wav');
         game.load.bitmapFont('blocktopia', 'assets/fonts/blocktopia.png', 'assets/fonts/blocktopia.xml');
         game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js');
     },
@@ -95,6 +96,8 @@ var gameState = {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#787878';
+        
+        templeMusic = game.add.audio('templeMusic', 0.25, true);
 
         // map level loader      
         loadLevel(levelNum);
@@ -174,8 +177,8 @@ var gameState = {
         // SOUND FX
         leverSound = game.add.audio('leverSound');
         plateSound = game.add.audio('plateSound');
-        loseHealthSound = game.add.audio('ouch');
-        doorSound = game.add.audio('doorSound');
+        loseHealthSound = game.add.audio('ouch', 0.5);
+        doorSound = game.add.audio('doorSound', 0.75);
         keySound = game.add.audio('keySound');
         unlockSound = game.add.audio('unlockSound');
 
@@ -431,6 +434,7 @@ function attack() {
 }
 
 function loadLevel(levelNum) {
+    templeMusic.play();
     keyCreated = false;
     hasKey = false;
     holdingTorch = false;
@@ -704,6 +708,7 @@ function crumbleBlock(f_block) {
 }
 
 function resetLevel() {
+    templeMusic.stop();
     game.state.start(game.state.current);
 }
 
@@ -711,8 +716,10 @@ function nextLevel() {
     levelNum++;
 
     if (levelNum <= maxLevels) {
+        templeMusic.stop();
         game.state.start(game.state.current);
     } else {
+        templeMusic.stop();
         game.state.start('gameWinState');
     }
 }
