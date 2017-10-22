@@ -25,7 +25,7 @@ var hasKey = false,
     blowdartCreated = false;
 var leverSound, plateSound, loseHealthSound, doorSound, keySound, unlockSound, templeMusic;
 var attackAnim;
-var levelNum = 5,
+var levelNum = 1,
     maxLevels = 7;
 var nextAttackEnemy = 0;
 var LIGHT_RADIUS = 100,
@@ -359,8 +359,30 @@ var gameState = {
                 box.body.velocity.x = 0;
             });
 
-    }
+    },
 
+    // DEBUG
+    render: function() {
+        // snakes.forEach(function(snake) {
+        //     game.debug.spriteBounds(snake);
+        // });
+
+        // spiders.forEach(function(spider) {
+        //     game.debug.spriteBounds(spider);
+        // });
+
+        // plates.forEach(function(plate) {
+        //     game.debug.spriteBounds(plate);
+        // });
+
+        dartLoopGroup.forEach(function(dartLoop) {
+            game.debug.spriteBounds(dartLoop);
+        });
+
+        darts.forEach(function(dart) {
+            game.debug.spriteBounds(dart);
+        });
+    }
 };
 
 function shootDart(player, plate) {
@@ -427,6 +449,7 @@ function attack() {
                     dropHeart(snake.x, snake.y);
                 }
                 snake.kill();
+                snake.destroy();
             }
         });
 
@@ -441,6 +464,7 @@ function attack() {
                 }
                 spider.body.enable = false;
                 anim.killOnComplete = true;
+                spider.destroy();
             }
         });
     }
@@ -528,6 +552,9 @@ function loadLevel(levelNum) {
     plates.enableBody = true;
     map.createFromObjects('Plates', 27, 'pressurePlate', 0, true, false, plates);
     plates.setAll('plateSoundAlreadyPlayed', false);
+    plates.forEach(function(plate) {
+        plate.body.setSize(24, 10, 0, 0);
+    });
 
     keys = game.add.group();
     keys.enableBody = true;
@@ -870,13 +897,23 @@ function dropHeart(x, y) {
 }
 
 function dartLoopSpawn() {
-    dartLoopGroup.forEach( function(dartLoopLoc) {
-        
-        dart = darts.create(dartLoopLoc.x, dartLoopLoc.y, 'blowdart');
-        dart.body.velocity.x = -100;
+    dartLoopGroup.forEach(function(dartLoop) {
+        dartLoopID = dartLoopGroup.getChildIndex(dartLoop);
+        dart = darts.create(dartLoop.x, dartLoop.y, 'blowdart');
+
+        // LEFT
+        if (map.objects['dartLoop'][dartLoopID].type == "right") {
+            dart.body.velocity.x = -100;
+        } else {
+            dart.scale.setTo(-1, 1);
+            dart.body.velocity.y = 100;
+        }
         dart.checkWorldBounds = true;
         dart.outOfBoundsKill = true;
         
+        if (!dart.exists) {
+            dart.destroy();
+        }
     });
 }
 
