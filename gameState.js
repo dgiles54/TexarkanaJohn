@@ -188,6 +188,11 @@ var gameState = {
         timer.loop(3000, rockSpawn, this);
         timer.start();
         
+        // dartLoopGroup.forEach(function(dartLoop) {
+        //     dartLoop.loopTimer = game.time.create(true);
+        //     dartLoop.loopTimer.loop(3000, dartLoopSpawn, this);
+        //     dartLoop.loopTimer.start();
+        // });
         timerDartLoop = game.time.create(true);
         timerDartLoop.loop(3000, dartLoopSpawn, this);
         timerDartLoop.start();
@@ -213,8 +218,12 @@ var gameState = {
         //         spear.body.enable = false;
         //     }
         // });
-        
+
         timerDartLoop.resume();
+        
+        // dartLoopGroup.forEach(function(dartLoop) {
+        //     dartLoop.loopTimer.resume();
+        // });
 
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(boxes, layerWall);
@@ -233,7 +242,7 @@ var gameState = {
         game.physics.arcade.overlap(player, spiderWebs, burnWeb);
         game.physics.arcade.overlap(player, snakes, dmgPlayer);
         game.physics.arcade.overlap(player, spiders, dmgPlayer);
-        game.physics.arcade.overlap(player, darts, dmgPlayer);
+        game.physics.arcade.overlap(player, darts, dartDmgPlayer);
         game.physics.arcade.collide(player, layerLava);
         game.physics.arcade.collide(player, layerSpikes);
         game.physics.arcade.collide(snakes, layerCollisions);
@@ -247,6 +256,7 @@ var gameState = {
         game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
         game.physics.arcade.collide(heart, layerPlatforms);
         game.physics.arcade.overlap(player, spears, dmgPlayer);
+        game.physics.arcade.collide(boxes, darts, killDart);
         if (heartDropped) {
             game.physics.arcade.overlap(player, heart, healPlayer);
         }
@@ -379,9 +389,9 @@ var gameState = {
             game.debug.spriteBounds(dartLoop);
         });
 
-        darts.forEach(function(dart) {
-            game.debug.spriteBounds(dart);
-        });
+        // darts.forEach(function(dart) {
+        //     game.debug.spriteBounds(dart);
+        // });
     }
 };
 
@@ -400,6 +410,12 @@ function shootDart(player, plate) {
            map.objects['Plates'][plateID].plateSoundAlreadyPlayed = true;
         }
         timerDartLoop.pause();
+        // dartLoopGroup.forEach(function(dartLoop) {
+        //     // dartLoopID = dartLoopGroup.getChildIndex(dartLoop);
+        //     // if (map.objects['dartLoop'][dartLoopID].loopGroup == plateID + 1) {
+        //     //     dartLoop.loopTimer.pause();
+        //     // }
+        // });
     } 
 }
 
@@ -527,6 +543,12 @@ function loadLevel(levelNum) {
         }
     });
 
+    doors = game.add.group();
+    doors.enableBody = true;
+    map.createFromObjects("Door", 32, 'door', 0, true, false, doors);
+    doors.setAll('body.immovable', true);
+    doors.setAll('outOfBoundsKill', true);
+
     layerLava = map.createLayer('Lava');
     layerLadders = map.createLayer('Ladders');
     layerPlatforms = map.createLayer('Platforms');
@@ -536,12 +558,6 @@ function loadLevel(levelNum) {
     layerSpikes = map.createLayer('Spikes');
     endPoint = map.createLayer('EndPoint');
     layerWall.resizeWorld();
-
-    doors = game.add.group();
-    doors.enableBody = true;
-    map.createFromObjects("Door", 32, 'door', 0, true, false, doors);
-    doors.setAll('body.immovable', true);
-    doors.setAll('outOfBoundsKill', true);
 
     levers = game.add.group();
     levers.enableBody = true;
@@ -712,18 +728,26 @@ function dmgPlayer(player, enemy) {
             player.body.velocity.y = -200;
         }
     }
+
     player.body.velocity.x = 0;
     player.body.acceleration.x = 0;
 }
 
 function healPlayer(player, heart) {
-    // if (health < 5) {
-    //     health += 1;
-    // }
-    health = Math.min(5, health + 1);
-    healthBar.frame = health;
-    heart.kill();
-    heartDropped = false;
+    if (health < 5) {
+        health += 1;
+        healthBar.frame = health;
+        heart.kill();
+        heart.destroy();
+        heartDropped = false;
+    } else {
+        heartDropped = true;
+    }
+    // health = Math.min(5, health + 1);
+    // healthBar.frame = health;
+    // heart.kill();
+    // heart.destroy();
+    // heartDropped = false;
 }
 
 function boulderDmgPlayer(player, boulder) {
@@ -734,6 +758,17 @@ function boulderDmgPlayer(player, boulder) {
         loseHealthSound.play();
         
         killBoulder(boulder);
+    }
+}
+
+function dartDmgPlayer(player, dart) {
+    if (game.time.now > nextAttackEnemy) {
+        nextAttackEnemy = game.time.now + ENEMY_ATTACK_RATE;
+        health -= 1;
+        healthBar.frame = health;
+        loseHealthSound.play();
+
+        killDart(dart);
     }
 }
 
@@ -903,10 +938,10 @@ function dartLoopSpawn() {
 
         // LEFT
         if (map.objects['dartLoop'][dartLoopID].type == "right") {
-            dart.body.velocity.x = -100;
+            dart.body.velocity.x = -300;
         } else {
             dart.scale.setTo(-1, 1);
-            dart.body.velocity.y = 100;
+            dart.body.velocity.y = 300;
         }
         dart.checkWorldBounds = true;
         dart.outOfBoundsKill = true;
@@ -915,6 +950,11 @@ function dartLoopSpawn() {
             dart.destroy();
         }
     });
+}
+
+function killDart(dart) {
+    dart.kill();
+    dart.destroy();
 }
 
 function moveBox(player, box) {
