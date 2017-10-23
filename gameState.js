@@ -32,7 +32,7 @@ var LIGHT_RADIUS = 100,
     GLOW_RADIUS = 75,
     shadowTexture;
 var smokeEmitter;
-var heart, heartDropped = false;
+var hearts; //, heartDropped = false;
 
 WebFontConfig = {
 
@@ -254,12 +254,13 @@ var gameState = {
         game.physics.arcade.collide(player, spiderSpawners, initializeSpider);
         game.physics.arcade.collide(boulders, layerPlatforms, killBoulder);
         game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);
-        game.physics.arcade.collide(heart, layerPlatforms);
+        game.physics.arcade.collide(hearts, layerPlatforms);
         game.physics.arcade.overlap(player, spears, dmgPlayer);
         game.physics.arcade.collide(boxes, darts, killDart);
-        if (heartDropped) {
-            game.physics.arcade.overlap(player, heart, healPlayer);
-        }
+        // if (heartDropped) {
+        //     game.physics.arcade.overlap(player, hearts, healPlayer);
+        // }
+        game.physics.arcade.overlap(player, hearts, healPlayer);
         
         
         
@@ -373,25 +374,6 @@ var gameState = {
 
     // DEBUG
     render: function() {
-        // snakes.forEach(function(snake) {
-        //     game.debug.spriteBounds(snake);
-        // });
-
-        // spiders.forEach(function(spider) {
-        //     game.debug.spriteBounds(spider);
-        // });
-
-        // plates.forEach(function(plate) {
-        //     game.debug.spriteBounds(plate);
-        // });
-
-        dartLoopGroup.forEach(function(dartLoop) {
-            game.debug.spriteBounds(dartLoop);
-        });
-
-        // darts.forEach(function(dart) {
-        //     game.debug.spriteBounds(dart);
-        // });
     }
 };
 
@@ -461,7 +443,7 @@ function attack() {
         snakes.forEach(function (snake) {
             if (player.overlap(snake) && player.isAttacking) {
                 var chance = Math.random();
-                if (chance < 0.35) {
+                if (chance < 0.25) {
                     dropHeart(snake.x, snake.y);
                 }
                 snake.kill();
@@ -475,7 +457,7 @@ function attack() {
                 spider.body.velocity.x = 0;
                 anim = spider.animations.play('die');
                 var chance = Math.random();
-                if (chance < 0.35) {
+                if (chance < 0.25) {
                     dropHeart(spider.x, spider.y);
                 }
                 spider.body.enable = false;
@@ -622,6 +604,9 @@ function loadLevel(levelNum) {
     
     startPointX = map.objects['StartPoint'][0].x;
     startPointY = map.objects['StartPoint'][0].y;
+
+    hearts = game.add.group();
+    hearts.enableBody = true;
 }
 
 function pushLever(player, lever) {
@@ -739,10 +724,13 @@ function healPlayer(player, heart) {
         healthBar.frame = health;
         heart.kill();
         heart.destroy();
-        heartDropped = false;
-    } else {
-        heartDropped = true;
     }
+        // if (hearts.length == 0) {
+        //     heartDropped = false;
+        // }
+    // } else {
+    //     heartDropped = true;
+    // }
     // health = Math.min(5, health + 1);
     // healthBar.frame = health;
     // heart.kill();
@@ -926,9 +914,11 @@ function dropHeart(x, y) {
     heart = game.add.sprite(x, y, 'heart');
     heart.scale.setTo(0.5, 0.5);
     game.physics.enable(heart);
-    heart.body.gravity.y = 100;
+    heart.body.gravity.y = 300;
     heart.body.bounce.y = 0.75;
-    heartDropped = true;
+    // heartDropped = true;
+
+    hearts.add(heart);
 }
 
 function dartLoopSpawn() {
