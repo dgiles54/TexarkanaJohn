@@ -87,6 +87,8 @@ var gameState = {
         game.load.audio('doorSound', 'assets/audio/door_open.wav');
         game.load.audio('keySound', 'assets/audio/key_spawn.wav');
         game.load.audio('unlockSound', 'assets/audio/unlock_door.wav');
+        game.load.audio('whipSound', 'assets/audio/whip.wav');
+        game.load.audio('jumpSound', 'assets/audio/jump.wav');
         game.load.audio('templeMusic', 'assets/audio/temple_theme.wav');
         game.load.bitmapFont('blocktopia', 'assets/fonts/blocktopia.png', 'assets/fonts/blocktopia.xml');
         game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js');
@@ -98,7 +100,7 @@ var gameState = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#787878';
         
-        templeMusic = game.add.audio('templeMusic', 0.25, true);
+        templeMusic = game.add.audio('templeMusic', 0.15, true);
 
         // map level loader      
         loadLevel(levelNum);
@@ -182,6 +184,8 @@ var gameState = {
         doorSound = game.add.audio('doorSound', 0.75);
         keySound = game.add.audio('keySound');
         unlockSound = game.add.audio('unlockSound');
+        whipSound = game.add.audio('whipSound');
+        jumpSound = game.add.audio('jumpSound');
 
         //timer for boulder spawns
         timer = game.time.create(false);
@@ -307,8 +311,18 @@ var gameState = {
         // make player jump
         if (cursors.up.justDown && (player.body.onFloor() || player.body.touching.down)) {
             player.body.velocity.y = -PLAYER_JUMP_SPEED;
+            jumpSound.play();
         }
         
+        // jump animations
+        if (player.body.velocity.y < -5 && !playerClimbing && !player.isAttacking) {
+            player.frame = 3;
+        }
+        
+        // whip sound
+        if (player.frame == 9) {
+            whipSound.play();
+        }
         
 
         // if health reaches 0, game over
