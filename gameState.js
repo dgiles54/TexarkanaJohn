@@ -651,6 +651,7 @@ function pushLever(player, lever) {
 function takeKey(player, key) {
     if (useKey.isDown && player.hasKey == false) {
         key.kill();
+        keyInventory.kill();
         keyInventory = game.add.sprite(5, 42, 'key');
         keyInventory.fixedToCamera = true;
         player.hasKey = true;
@@ -665,6 +666,7 @@ function insertKey(player, keyhole) {
         unlockSound.play().onStop.add(function () {
             doors.children[keyholeID].body.gravity.y = -20;
             doorSound.play();
+            keyInventory.kill();
             keyInventory = game.add.sprite(5, 42, 'keyEmpty');
             keyInventory.fixedToCamera = true;
             player.hasKey = false;
