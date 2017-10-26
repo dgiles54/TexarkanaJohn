@@ -67,6 +67,7 @@ var gameState = {
         game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
+        game.load.image('keyEmpty', 'assets/sprites/keyEmpty.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
         game.load.image('door', 'assets/sprites/door.png');
         game.load.image('boulder', 'assets/sprites/boulder.png');
@@ -122,6 +123,7 @@ var gameState = {
         player.isAttacking = false;
         player.nextAttack = 0;
         player.hasKey = false;
+        player.numberOfKeys = 0;
         player.climbing = false;
         // Physics
         game.physics.enable(player);
@@ -173,6 +175,9 @@ var gameState = {
             wordWrapWidth: 95
         });
         hintText.visible = false;
+        
+        keyInventory = game.add.sprite(5, 42, 'keyEmpty');
+        keyInventory.fixedToCamera = true;
 
         healthBar = game.add.sprite(5, 5, 'healthBar');
         healthBar.fixedToCamera = true;
@@ -350,13 +355,14 @@ var gameState = {
             }
         });
         
-        // HINTS
-        // hint bubble
+
+        // Hint bubble
         player.hintBubble.x = player.x;
         player.hintBubble.y = player.y - 100;
         hintText.x = player.x + 7;
         hintText.y = player.y - 95;
-
+        
+        // Hint text
         if (levelNum == 1) {
             if (player.overlap(keys)) {
                 hintText.text = 'A skull-shaped key! This might be useful to me.';
@@ -375,15 +381,10 @@ var gameState = {
                 hintText.visible = false;
             }
         }
-        // when player reaches end of level, go to next level or win state if last level
-        //        if (player.overlap(door)) {
-        //            levelNum++;
-        //            game.state.start('gameState');
-        //        }
-        
-            boxes.forEach( function(box) {
-                box.body.velocity.x = 0;
-            });
+            
+        boxes.forEach( function(box) {
+            box.body.velocity.x = 0;
+        });
 
     },
 
@@ -650,10 +651,10 @@ function pushLever(player, lever) {
 function takeKey(player, key) {
     if (useKey.isDown && player.hasKey == false) {
         key.kill();
-        keyInventory = game.add.sprite(game.width / 2, 0, 'key');
-        keyInventory.anchor.setTo(0.5, 0);
+        keyInventory = game.add.sprite(5, 42, 'key');
         keyInventory.fixedToCamera = true;
         player.hasKey = true;
+        player.numberOfKeys++;
     }
 }
 
@@ -664,9 +665,11 @@ function insertKey(player, keyhole) {
         unlockSound.play().onStop.add(function () {
             doors.children[keyholeID].body.gravity.y = -20;
             doorSound.play();
-            keyInventory.kill();
+            keyInventory = game.add.sprite(5, 42, 'keyEmpty');
+            keyInventory.fixedToCamera = true;
             player.hasKey = false;
             keyCreated = false;
+            player.numberOfKeys--;
         }, this);
     }
 }
