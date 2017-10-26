@@ -6,33 +6,27 @@ var PLAYER_BOUNCE = 0.02;
 var PLAYER_DRAG = 0;
 var ENEMY_ATTACK_RATE = 600;
 var HEART_DROP_CHANCE = 0.5;
+var LIGHT_RADIUS = 100;
+var GLOW_RADIUS = 75;
 
 var map;
 var startPointX, startPointY, endPoint;
 var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, layerSpikes, layerLava;
-var player,
-    health = 5,
-    nextAttackPlayer = 0,
-    playerAttacking = false,
-    playerClimbing = false;
-var cursors, useKey, attackKey;
-var keyInventory, endDoor, snake, snakes, spider, spiderSpawners, spiderWebs, spiderWeb;
 var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, dartLoopGroup, spears, boxes;
-var keyCreated = false;
-var hintText, inventory, healthBar;
-var hasKey = false,
-    switchTriggered = false,
-    blowdartCreated = false;
+var snake, snakes, spider, spiderSpawners, spiderWebs, spiderWeb;
+var switchTriggered = false,
+    blowdartCreated = false,
+    keyCreated = false;
 var leverSound, plateSound, loseHealthSound, doorSound, keySound, unlockSound, templeMusic;
-var attackAnim;
+var player;
+var cursors, useKey, attackKey;
+var hintText, healthBar, keyInventory;
+var nextAttackEnemy = 0;
+var shadowTexture;
+var smokeEmitter;
+var hearts;
 var levelNum = 1,
     maxLevels = 7;
-var nextAttackEnemy = 0;
-var LIGHT_RADIUS = 100,
-    GLOW_RADIUS = 75,
-    shadowTexture;
-var smokeEmitter;
-var hearts; //, heartDropped = false;
 
 WebFontConfig = {
 
@@ -121,23 +115,30 @@ var gameState = {
 
         // PLAYER
         player = game.add.sprite(startPointX, startPointY, 'player');
+        player.scale.setTo(1, 1);
         player.anchor.setTo(0.33, 0.5);
+        // Attributes
+        player.health = 5;
+        player.isAttacking = false;
+        player.nextAttack = 0;
+        player.hasKey = false;
+        player.climbing = false;
+        // Physics
         game.physics.enable(player);
+        player.body.setSize(20, 44, 15, 20);
         player.body.gravity.y = PLAYER_GRAVITY;
         player.body.bounce.y = PLAYER_BOUNCE;
         player.body.drag.x = PLAYER_DRAG;
         player.body.collideWorldBounds = true;
-        player.isAttacking = false;
+        // Animation
         player.animations.add('walk', [0, 1, 2, 3, 4, 5], 7, true);
         player.animations.add('idle', [13, 14], 2, true);
-        attackAnim = player.animations.add('attack', [6, 7, 8, 9], 12, false);
-        attackAnim.onComplete.add(function () {
+        player.attackAnimation = player.animations.add('attack', [6, 7, 8, 9], 12, false);
+        player.attackAnimation.onComplete.add(function () {
             player.frame = 0;
             player.isAttacking = false;
         });
         player.animations.add('climb', [10, 11, 12, 11], 5, true);
-        player.body.setSize(20, 44, 15, 20);
-        player.scale.setTo(1, 1);
 
         // GAME CAMERA
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
@@ -175,7 +176,7 @@ var gameState = {
 
         healthBar = game.add.sprite(5, 5, 'healthBar');
         healthBar.fixedToCamera = true;
-        healthBar.frame = health;
+        healthBar.frame = player.health;
 
         // SOUND FX
         leverSound = game.add.audio('leverSound');
@@ -213,7 +214,7 @@ var gameState = {
     update: function () {
         // for that ladder physics when gravity = 0
         player.body.gravity.y = PLAYER_GRAVITY;
-        playerClimbing = false;
+        player.climbing = false;
 
         snakes.callAll('animations.play', 'animations', 'move');
 
@@ -291,18 +292,18 @@ var gameState = {
         // make player walk
         if (cursors.left.isDown) {
             player.scale.setTo(-1, 1);
-            if (!playerClimbing && !player.isAttacking) {
+            if (!player.climbing && !player.isAttacking) {
                 player.animations.play('walk');
             }
             player.body.velocity.x = -PLAYER_RUN_SPEED;
         } else if (cursors.right.isDown) {
             player.scale.setTo(1, 1);
-            if (!playerClimbing && !player.isAttacking) {
+            if (!player.climbing && !player.isAttacking) {
                 player.animations.play('walk');
             }
             player.body.velocity.x = PLAYER_RUN_SPEED;
         } else {
-            if (!playerClimbing && !player.isAttacking) {
+            if (!player.climbing && !player.isAttacking) {
                 player.frame = 0;
             }
             player.body.velocity.x = 0;
@@ -315,7 +316,7 @@ var gameState = {
         }
         
         // jump animations
-        if (player.body.velocity.y < -5 && !playerClimbing && !player.isAttacking) {
+        if (player.body.velocity.y < -5 && !player.climbing && !player.isAttacking) {
             player.frame = 3;
         }
         
@@ -326,7 +327,7 @@ var gameState = {
         
 
         // if health reaches 0, game over
-        if (health == 0) {
+        if (player.health == 0) {
             game.state.start('gameOverState');
         }
         
@@ -361,7 +362,7 @@ var gameState = {
                 hintText.text = 'A skull-shaped key! This might be useful to me.';
                 player.hintBubble.visible = true;
                 hintText.visible = true;
-            } else if (player.overlap(keyholes) && hasKey) {
+            } else if (player.overlap(keyholes) && player.hasKey) {
                 hintText.text = 'I should try to use the key I found!';
                 player.hintBubble.visible = true;
                 hintText.visible = true;
@@ -418,38 +419,38 @@ function shootDart(player, plate) {
 function climbLadder() {
     // guess intention
     // if (cursors.up.justDown || cursors.down.justDown) {
-    //     playerClimbing = true;
+    //     player.climbing = true;
     // }
 
     // kill gravity
-    if (playerClimbing) {
+    if (player.climbing) {
         player.body.gravity.y = 0;
     }
 
     // movement/climb
     if (cursors.up.isDown) {
         player.body.velocity.y = -100;
-        playerClimbing = true;
+        player.climbing = true;
         player.animations.play('climb');
     } else if (cursors.down.isDown) {
         player.body.velocity.y = 100;
-        playerClimbing = true;
+        player.climbing = true;
         player.animations.play('climb');
     } else if (cursors.left.isDown || cursors.right.isDown) {
-        playerClimbing = false;
+        player.climbing = false;
     } else { // stops player on ladder
         player.body.velocity.y = 0;
-        playerClimbing = true;
+        player.climbing = true;
         player.animations.stop('climb', 12);
     }
 }
 
 function attack() {
-    if (game.time.now > nextAttackPlayer) {
+    if (game.time.now > player.nextAttack) {
         player.isAttacking = true;
         // random for heart drop chance
 
-        nextAttackPlayer = game.time.now + PLAYER_ATTACK_RATE;
+        player.nextAttack = game.time.now + PLAYER_ATTACK_RATE;
         player.animations.play('attack');
         console.log('Attacking');
 
@@ -485,8 +486,6 @@ function attack() {
 function loadLevel(levelNum) {
     templeMusic.play();
     keyCreated = false;
-    hasKey = false;
-    holdingTorch = false;
     blowdartCreated = false;
 
     map = game.add.tilemap('level' + levelNum);
@@ -649,24 +648,24 @@ function pushLever(player, lever) {
 }
 
 function takeKey(player, key) {
-    if (useKey.isDown && hasKey == false) {
+    if (useKey.isDown && player.hasKey == false) {
         key.kill();
         keyInventory = game.add.sprite(game.width / 2, 0, 'key');
         keyInventory.anchor.setTo(0.5, 0);
         keyInventory.fixedToCamera = true;
-        hasKey = true;
+        player.hasKey = true;
     }
 }
 
 function insertKey(player, keyhole) {
     var keyholeID = parseInt(keyhole.name.charAt(7)) - 1; // to match with doorID
-    if (hasKey == true && useKey.isDown) {
+    if (player.hasKey == true && useKey.isDown) {
         // open door that matches specific keyhole
         unlockSound.play().onStop.add(function () {
             doors.children[keyholeID].body.gravity.y = -20;
             doorSound.play();
             keyInventory.kill();
-            hasKey = false;
+            player.hasKey = false;
             keyCreated = false;
         }, this);
     }
@@ -712,8 +711,8 @@ function initializeSnakes() {
 function dmgPlayer(player, enemy) {
     if (game.time.now > nextAttackEnemy) {
         nextAttackEnemy = game.time.now + ENEMY_ATTACK_RATE;
-        health -= 1;
-        healthBar.frame = health;
+        player.damage(1);
+        healthBar.frame = player.health;
         loseHealthSound.play();
         if (player.body.touching.left) {
             player.body.velocity.x = 10000;
@@ -733,9 +732,9 @@ function dmgPlayer(player, enemy) {
 }
 
 function healPlayer(player, heart) {
-    if (health < 5) {
-        health += 1;
-        healthBar.frame = health;
+    if (player.health < 5) {
+        player.heal(1);
+        healthBar.frame = player.health;
         heart.kill();
         heart.destroy();
     }
@@ -755,8 +754,8 @@ function healPlayer(player, heart) {
 function boulderDmgPlayer(player, boulder) {
     if (boulder.hurtPlayer != true) {
         boulder.hurtPlayer = true;
-        health -= 1;
-        healthBar.frame = health;
+        player.damage(1);
+        healthBar.frame = player.health;
         loseHealthSound.play();
         
         killBoulder(boulder);
@@ -766,8 +765,8 @@ function boulderDmgPlayer(player, boulder) {
 function dartDmgPlayer(player, dart) {
     if (game.time.now > nextAttackEnemy) {
         nextAttackEnemy = game.time.now + ENEMY_ATTACK_RATE;
-        health -= 1;
-        healthBar.frame = health;
+        player.damage(1);
+        healthBar.frame = player.health;
         loseHealthSound.play();
 
         killDart(dart);
