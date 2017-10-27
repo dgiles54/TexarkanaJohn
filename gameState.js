@@ -112,7 +112,7 @@ var gameState = {
         endPoint.visible = false;
 
         // SNAKES
-        initializeSnakes();
+        
 
         // PLAYER
         player = game.add.sprite(startPointX, startPointY, 'player');
@@ -221,7 +221,7 @@ var gameState = {
         player.body.gravity.y = PLAYER_GRAVITY;
         player.climbing = false;
 
-        snakes.callAll('animations.play', 'animations', 'move');
+        
 
         // spears.forEach(function(spear) {
         //     if (!spear.activated) {
@@ -338,20 +338,28 @@ var gameState = {
         
         // snake collision
         snakes.forEach(function (snake) {
-            if (snake.body.velocity.x >= 0) {
+            if (snake.body.velocity.x > 0) {
                 snake.scale.setTo(0.5, 0.5);
-            } else if (snake.body.velocity.x < 0) {
+                snake.goingRight = true;
+                snake.goingLeft = false;
+            } 
+            if (snake.body.velocity.x < 0) {
                 snake.scale.setTo(-0.5, 0.5);
+                snake.goingLeft = true;
+                snake.goingRight = false;
             }
         });
                        
         // spider collision
-        spiders.forEach(function (spider) {
-           
-            if (spider.body.velocity.x >= 0) {
+        spiders.forEach(function (spider) {  
+            if (spider.body.velocity.x > 0) {
                 spider.scale.setTo(0.5, 0.5);
+                spider.goingRight = true;
+                spider.goingLeft = false;
             } else if (spider.body.velocity.x < 0) {
                 spider.scale.setTo(-0.5, 0.5);
+                spider.goingLeft = true;
+                spider.goingRight = false;
             }
         });
         
@@ -459,11 +467,17 @@ function attack() {
         snakes.forEach(function (snake) {
             if (player.overlap(snake) && player.isAttacking) {
                 var chance = Math.random();
+                snake.lives -= 1;
+                dmgEnemy(snake);
                 if (chance < 0.25) {
                     dropHeart(snake.x, snake.y);
                 }
-                snake.kill();
-                snake.destroy();
+                if (snake.lives <= 0) {
+                    snake.body.velocity.x = 0;
+                    anim = snake.animations.play('die');
+                    snake.body.enable = false;
+                    anim.killOnComplete = true;
+                }
             }
         });
 
@@ -471,21 +485,40 @@ function attack() {
         spiders.forEach(function (spider) {
             if (player.overlap(spider) && player.isAttacking) {
                 spider.body.velocity.x = 0;
-                anim = spider.animations.play('die');
+                spider.lives -= 1;
+                dmgEnemy(spider);
                 var chance = Math.random();
                 if (chance < 0.25) {
                     dropHeart(spider.x, spider.y);
                 }
-                spider.body.enable = false;
-                anim.killOnComplete = true;
-                spider.destroy();
+                if (spider.lives <= 0) {
+                    anim = spider.animations.play('die');
+                    spider.body.enable = false;
+                    anim.killOnComplete = true;
+                }
             }
         });
     }
+    
+}
+
+function dmgEnemy(enemy) {
+            enemy.body.velocity.x = 0;
+            enemy.body.velocity.y = -100;
+            anim = enemy.animations.play('dmg');
+            anim.onComplete.add(function (){
+                if (enemy.goingRight == true){
+                enemy.body.velocity.x = 100;
+                } else if (enemy.goingLeft == true){
+                    enemy.body.velocity.x = -100;
+                }        
+                enemy.animations.play('move');
+            });
+
 }
 
 function loadLevel(levelNum) {
-    templeMusic.play();
+    //templeMusic.play();
     keyCreated = false;
     blowdartCreated = false;
 
@@ -621,6 +654,9 @@ function loadLevel(levelNum) {
 
     hearts = game.add.group();
     hearts.enableBody = true;
+    
+    initializeSnakes();
+    snakes.callAll('animations.play', 'animations', 'move');
 }
 
 function pushLever(player, lever) {
@@ -681,6 +717,7 @@ function initializeSpider(player, spiderSpawner) {
     spiders.create(spiderSpawner.x, spiderSpawner.y - 90, 'spider', 0, true);
     spiders.callAll('animations.add', 'animations', 'move', [3, 4, 5], 5, true);
     spiders.callAll('animations.add', 'animations', 'die', [0, 1, 2], 5, false);
+    spiders.callAll('animations.add', 'animations', 'dmg', [4], 2, false);
     spiders.callAll('animations.play', 'animations', 'move');
 
     spiders.callAll('anchor.setTo', 'anchor', 0.5, 0);
@@ -692,6 +729,7 @@ function initializeSpider(player, spiderSpawner) {
         game.physics.arcade.collide(spider,layerPlatforms,spider.body.velocity.x = 100);
         spider.scale.setTo(0.5, 0.5);
         spider.body.bounce.x = 1;
+        spider.lives = 3;
     });
 }
 
@@ -705,12 +743,17 @@ function initializeSnakes() {
         snake.anchor.setTo(0.5, 0);
         snake.body.immovable = true;
         snake.body.bounce.x = 1;
+        snake.lives = 3;
+        snake.goingRight = true;
     });
     map.setCollision(19);
     map.setCollision(20);
-    snakes.callAll('animations.add', 'animations', 'move', null, 5, true);
+    snakes.callAll('animations.add', 'animations', 'move', [0,1,2], 5, true);
+    snakes.callAll('animations.add', 'animations', 'dmg', [3], 2, false);
+    snakes.callAll('animations.add', 'animations', 'die', [3,4], 5, false);
     snakes.setAll('body.collideWorldBounds', true);
     snakes.setAll('body.gravity.y', 500);
+    
 }
 
 function dmgPlayer(player, enemy) {
