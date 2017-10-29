@@ -25,7 +25,7 @@ var nextAttackEnemy = 0;
 var shadowTexture;
 var smokeEmitter;
 var hearts;
-var levelNum = 1,
+var levelNum = 5,
     maxLevels = 7;
 
 WebFontConfig = {
@@ -148,6 +148,7 @@ var gameState = {
         // CONTROLS
         cursors = game.input.keyboard.createCursorKeys();
         useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
+        dropKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
         attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         attackKey.onDown.add(function () {
             attack();
@@ -214,13 +215,14 @@ var gameState = {
 
         //spider group
         spiders = game.add.group();
+        player.holdingBox = false;
     },
 
     update: function () {
         // for that ladder physics when gravity = 0
         player.body.gravity.y = PLAYER_GRAVITY;
         player.climbing = false;
-
+        
         
 
         // spears.forEach(function(spear) {
@@ -393,7 +395,14 @@ var gameState = {
         boxes.forEach( function(box) {
             box.body.velocity.x = 0;
         });
-
+        
+        if (player.holdingBox == true && dropKey.isDown) {
+            player.children[0].destroy();
+            box = boxes.create(player.body.x-55, player.body.y-25, 'box');
+            box.body.gravity.y = 100;
+            player.holdingBox = false;
+        }
+        
     },
 
     // DEBUG
@@ -518,7 +527,7 @@ function dmgEnemy(enemy) {
 }
 
 function loadLevel(levelNum) {
-    //templeMusic.play();
+    templeMusic.play();
     keyCreated = false;
     blowdartCreated = false;
 
@@ -1003,13 +1012,18 @@ function dartLoopSpawn() {
     });
 }
 
-function killDart(dart) {
+function killDart(dart,box) {
     dart.kill();
     dart.destroy();
 }
 
 function moveBox(player, box) {
-    if (useKey.isDown && player.body.onFloor()) {
-            box.body.velocity.x = player.body.velocity.x;
-        }
+    if (useKey.isDown) {
+        player.holdingBox = true;
+        playerBox = player.addChild(box);
+        playerBox.body.gravity.y = 0;
+        playerBox.body.velocity.x = 0;
+        player.children[0].body.x = 25;
+        player.children[0].body.y = -25;
+    }
 }
