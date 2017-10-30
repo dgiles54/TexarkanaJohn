@@ -407,6 +407,9 @@ var gameState = {
 
     // DEBUG
     render: function() {
+        snakes.forEach(function(snake) {
+            game.debug.spriteBounds(snake);
+        });
     }
 };
 
@@ -486,6 +489,7 @@ function attack() {
                     if (chance < 0.25) {
                         dropHeart(snake.x, snake.y);
                     }
+                    snake.destroy();
                 }
             }
         });
@@ -504,6 +508,7 @@ function attack() {
                     if (chance < 0.25) {
                         dropHeart(spider.x, spider.y);
                     }
+                    spider.destroy();
                 }
             }
         });
@@ -516,9 +521,9 @@ function dmgEnemy(enemy) {
             enemy.body.velocity.y = -100;
             anim = enemy.animations.play('dmg');
             anim.onComplete.add(function (){
-                if (enemy.goingRight == true){
+                if (enemy.goingRight){
                 enemy.body.velocity.x = 100;
-                } else if (enemy.goingLeft == true){
+                } else if (enemy.goingLeft){
                     enemy.body.velocity.x = -100;
                 }        
                 enemy.animations.play('move');
