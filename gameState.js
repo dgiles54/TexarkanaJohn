@@ -543,13 +543,13 @@ function loadLevel(levelNum) {
         torch.anchor.setTo(0.5, 0.05);
         torch.animations.add('fire', [0, 1, 2, 3, 2, 1], 2, true);
         torch.animations.play('fire');
-        smokeEmitter = game.add.emitter(torch.x, torch.y, 500);
+        smokeEmitter = game.add.emitter(torch.x, torch.y, 250);
         smokeEmitter.makeParticles('smokeParticles', [0, 1, 2, 3]);
-        smokeEmitter.maxParticleSpeed.set(10, -5);
-        smokeEmitter.minParticleSpeed.set(-10, 5);
+        smokeEmitter.maxParticleSpeed.set(5, -5);
+        smokeEmitter.minParticleSpeed.set(-5, 5);
         smokeEmitter.gravity = -30;
         smokeEmitter.setAlpha(0.1, 1, 200);
-        smokeEmitter.flow(2000, 100, 3);
+        smokeEmitter.flow(1000, 150, 1);
     });
 
     darts = game.add.group();
