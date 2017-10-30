@@ -311,7 +311,7 @@ var gameState = {
             player.body.velocity.x = PLAYER_RUN_SPEED;
         } else {
             if (!player.climbing && !player.isAttacking) {
-                player.frame = 0;
+                player.frame = 5;
             }
             player.body.velocity.x = 0;
         }
@@ -323,7 +323,7 @@ var gameState = {
         }
         
         // jump animations
-        if (player.body.velocity.y < -5 && !player.climbing && !player.isAttacking) {
+        if (player.body.velocity.y < -1 && !player.climbing && !player.isAttacking) {
             player.frame = 3;
         }
         
@@ -916,7 +916,7 @@ function updateShadowTexture() {
         shadowTexture.context.createRadialGradient(
             player.x, player.y, LIGHT_RADIUS * 0.1,
             player.x, player.y, radius);
-    gradient.addColorStop(0, 'rgba(250, 250, 120, 1.0)');
+    gradient.addColorStop(0, 'rgba(255, 255, 140, 1.0)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
 
     shadowTexture.context.beginPath();
@@ -934,7 +934,7 @@ function updateShadowTexture() {
             shadowTexture.context.createRadialGradient(
                 torch.x, torch.y, LIGHT_RADIUS * 0.05,
                 torch.x, torch.y, radius);
-        gradient.addColorStop(0, 'rgba(250, 250, 120, 1.0)');
+        gradient.addColorStop(0, 'rgba(255, 255, 140, 1.0)');
         gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
 
         shadowTexture.context.beginPath();
