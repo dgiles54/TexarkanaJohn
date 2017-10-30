@@ -407,9 +407,9 @@ var gameState = {
 
     // DEBUG
     render: function() {
-        snakes.forEach(function(snake) {
-            game.debug.spriteBounds(snake);
-        });
+//        snakes.forEach(function(snake) {
+//            game.debug.spriteBounds(snake);
+//        });
     }
 };
 
