@@ -478,14 +478,14 @@ function attack() {
                 var chance = Math.random();
                 snake.lives -= 1;
                 dmgEnemy(snake);
-                if (chance < 0.25) {
-                    dropHeart(snake.x, snake.y);
-                }
                 if (snake.lives <= 0) {
                     snake.body.velocity.x = 0;
                     anim = snake.animations.play('die');
                     snake.body.enable = false;
                     anim.killOnComplete = true;
+                    if (chance < 0.25) {
+                        dropHeart(snake.x, snake.y);
+                    }
                 }
             }
         });
@@ -497,13 +497,13 @@ function attack() {
                 spider.lives -= 1;
                 dmgEnemy(spider);
                 var chance = Math.random();
-                if (chance < 0.25) {
-                    dropHeart(spider.x, spider.y);
-                }
                 if (spider.lives <= 0) {
                     anim = spider.animations.play('die');
                     spider.body.enable = false;
                     anim.killOnComplete = true;
+                    if (chance < 0.25) {
+                        dropHeart(spider.x, spider.y);
+                    }
                 }
             }
         });
