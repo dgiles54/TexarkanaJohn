@@ -28,6 +28,7 @@ var smokeEmitter;
 var hearts;
 var levelNum = 1,
     maxLevels = 7;
+var health = 5;
 
 WebFontConfig = {
 
@@ -120,15 +121,12 @@ var gameState = {
         layerCollisions.visible = false;
         endPoint.visible = false;
 
-        // SNAKES
-        
-
         // PLAYER
         player = game.add.sprite(startPointX, startPointY, 'player');
         player.scale.setTo(1, 1);
         player.anchor.setTo(0.33, 0.5);
         // Attributes
-        player.health = 5;
+        player.health = health;
         player.isAttacking = false;
         player.nextAttack = 0;
         player.hasKey = false;
@@ -892,8 +890,8 @@ function crumbleBlock(f_block) {
 }
 
 function resetLevel() {
-    
     templeMusic.stop();
+    health = player.health;
     game.state.start(game.state.current);
 }
 
@@ -901,12 +899,14 @@ function resetLevelSpikes() {
     spikeDeath.play();
     spikeDeathGrunt.play();
     templeMusic.stop();
+    health = player.health;
     game.state.start(game.state.current);
 }
 
 function resetLevelLava() {
     lavaSound.play();
     templeMusic.stop();
+    health = player.health;
     game.state.start(game.state.current);
 }
 
