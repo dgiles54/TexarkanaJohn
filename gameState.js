@@ -20,7 +20,7 @@ var switchTriggered = false,
     keyCreated = false;
 var leverSound, plateSound, loseHealthSound, doorSound, keySound, unlockSound, templeMusic;
 var player;
-var cursors, useKey, attackKey;
+var cursors, useKey, attackKey, cursors2, jumpKey;
 var hintText, healthBar, keyInventory;
 var nextAttackEnemy = 0;
 var shadowTexture;
@@ -158,10 +158,18 @@ var gameState = {
         cursors = game.input.keyboard.createCursorKeys();
         useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
         dropKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
-        attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        attackKey = game.input.keyboard.addKey(Phaser.Keyboard.CONTROL);
         attackKey.onDown.add(function () {
             attack();
         }, this);
+        jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        cursors2 = {
+            up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+            down: game.input.keyboard.addKey(Phaser.Keyboard.S),
+            left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+            right: game.input.keyboard.addKey(Phaser.Keyboard.D),
+        }
+        
 
         // LIGHTING
 
@@ -240,8 +248,6 @@ var gameState = {
         player.body.gravity.y = PLAYER_GRAVITY;
         player.climbing = false;
         
-        
-
         // spears.forEach(function(spear) {
         //     if (!spear.activated) {
         //         spear.body.enable = false;
@@ -314,13 +320,13 @@ var gameState = {
         });
 
         // make player walk
-        if (cursors.left.isDown) {
+        if (cursors.left.isDown || cursors2.left.isDown) {
             player.scale.setTo(-1, 1);
             if (!player.climbing && !player.isAttacking) {
                 player.animations.play('walk');
             }
             player.body.velocity.x = -PLAYER_RUN_SPEED;
-        } else if (cursors.right.isDown) {
+        } else if (cursors.right.isDown || cursors2.right.isDown) {
             player.scale.setTo(1, 1);
             if (!player.climbing && !player.isAttacking) {
                 player.animations.play('walk');
@@ -334,7 +340,7 @@ var gameState = {
         }
 
         // make player jump
-        if (cursors.up.justDown && (player.body.onFloor() || player.body.touching.down)) {
+        if (jumpKey.justDown && (player.body.onFloor() || player.body.touching.down)) {
             player.body.velocity.y = -PLAYER_JUMP_SPEED;
             jumpSound.play();
         }
@@ -456,26 +462,23 @@ function shootDart(player, plate) {
 }
 
 function climbLadder() {
-    // guess intention
-    // if (cursors.up.justDown || cursors.down.justDown) {
-    //     player.climbing = true;
-    // }
 
     // kill gravity
     if (player.climbing) {
+        player.animations.stop('walk', 0);
         player.body.gravity.y = 0;
     }
 
     // movement/climb
-    if (cursors.up.isDown) {
+    if (cursors.up.isDown || cursors2.up.isDown) {
         player.body.velocity.y = -100;
         player.climbing = true;
         player.animations.play('climb');
-    } else if (cursors.down.isDown) {
+    } else if (cursors.down.isDown || cursors2.down.isDown) {
         player.body.velocity.y = 100;
         player.climbing = true;
         player.animations.play('climb');
-    } else if (cursors.left.isDown || cursors.right.isDown) {
+    } else if (cursors.left.isDown || cursors.right.isDown || cursors2.right.isDown || cursors2.left.isDown) {
         player.climbing = false;
     } else { // stops player on ladder
         player.body.velocity.y = 0;
@@ -504,7 +507,7 @@ function attack() {
                     anim = snake.animations.play('die');
                     snake.body.enable = false;
                     anim.killOnComplete = true;
-                    if (chance < 0.25) {
+                    if (chance < 0.35) {
                         dropHeart(snake.x, snake.y);
                     }
                     snake.destroy();
@@ -523,7 +526,7 @@ function attack() {
                     anim = spider.animations.play('die');
                     spider.body.enable = false;
                     anim.killOnComplete = true;
-                    if (chance < 0.25) {
+                    if (chance < 0.35) {
                         dropHeart(spider.x, spider.y);
                     }
                     spider.destroy();
