@@ -16,6 +16,7 @@ var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockS
 var snake, snakes, spider, spiderSpawners, spiderWebs, spiderWeb;
 var switchTriggered = false,
     blowdartCreated = false,
+    spiderSoundPlayed = false,
     keyCreated = false;
 var leverSound, plateSound, loseHealthSound, doorSound, keySound, unlockSound, templeMusic;
 var player;
@@ -85,6 +86,14 @@ var gameState = {
         game.load.audio('whipSound', 'assets/audio/whip.wav');
         game.load.audio('jumpSound', 'assets/audio/jump.wav');
         game.load.audio('templeMusic', 'assets/audio/temple_theme.wav');
+        game.load.audio('spiderChatter', 'assets/audio/spider_chattering2.wav');
+        game.load.audio('spiderDmg', 'assets/audio/spiderDmg.wav');
+        game.load.audio('snakeDmg', 'assets/audio/snakeDmg.wav');
+        game.load.audio('spiderWebFire', 'assets/audio/spiderWebFire.wav');
+        game.load.audio('lava', 'assets/audio/lava.wav');
+        game.load.audio('dartSound', 'assets/audio/dartSound.wav');
+        game.load.audio('spikeDeathGrunt', 'assets/audio/spikeDeathGrunt.wav');
+        game.load.audio('spikeDeath', 'assets/audio/spikeDeath.wav');
         game.load.bitmapFont('blocktopia', 'assets/fonts/blocktopia.png', 'assets/fonts/blocktopia.xml');
         game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js');
     },
@@ -193,6 +202,14 @@ var gameState = {
         unlockSound = game.add.audio('unlockSound');
         whipSound = game.add.audio('whipSound');
         jumpSound = game.add.audio('jumpSound');
+        spiderSound = game.add.audio('spiderChatter');
+        spiderDmg = game.add.audio('spiderDmg');
+        snakeDmg = game.add.audio('snakeDmg');
+        spiderWebFire = game.add.audio('spiderWebFire');
+        lavaSound = game.add.audio('lava');
+        dartSound = game.add.audio('dartSound');
+        spikeDeath = game.add.audio('spikeDeath');
+        spikeDeathGrunt = game.add.audio('spikeDeathGrunt');
 
         //timer for boulder spawns
         timer = game.time.create(false);
@@ -277,8 +294,8 @@ var gameState = {
         
         
         // kill players with insta-death things
-        map.setTileIndexCallback(21, resetLevel, null, layerSpikes);
-        map.setTileIndexCallback([22, 23], resetLevel, null, layerLava);
+        map.setTileIndexCallback(21, resetLevelSpikes, null, layerSpikes);
+        map.setTileIndexCallback([22, 23], resetLevelLava, null, layerLava);
 
         // allow player to climb ladders
         map.setTileIndexCallback(14, climbLadder, null, layerLadders);
@@ -416,6 +433,7 @@ var gameState = {
 function shootDart(player, plate) {
     var plateID = parseInt(plate.name.charAt(5)) - 1;
     if (map.objects['Plates'][plateID].type == 'active') {
+        dartSound.play();
         darts.children[plateID].visible = true;
         darts.children[plateID].body.gravity.x = -200;
         plateSound.play();
@@ -517,6 +535,12 @@ function attack() {
 }
 
 function dmgEnemy(enemy) {
+            if(enemy.key == 'spider') {
+                spiderDmg.play();
+            }
+            if(enemy.key == 'snake') {
+                snakeDmg.play();
+            }
             enemy.body.velocity.x = 0;
             enemy.body.velocity.y = -100;
             anim = enemy.animations.play('dmg');
@@ -633,9 +657,10 @@ function loadLevel(levelNum) {
 
     spiderWebs = game.add.group();
     spiderWebs.enableBody = true;
-    map.createFromObjects('spiderWebs', 32, 'spiderWeb', 0, true, false, spiderWebs);
+    map.createFromObjects('spiderWebs', 32, 'spiderWeb', 3, true, false, spiderWebs);
     spiderWebs.forEach(function (web) {
-        web.animations.add('burn', [0, 1, 2], 9, false);
+        web.animations.add('burn', [6,7,8], 9, false);
+        web.animations.add('spiderScuttle', [0,1,2,3,5,4], 3, true);
     });
     spiderWebs.setAll('body.immovable', true);
     game.physics.enable(spiderWebs);
@@ -671,6 +696,7 @@ function loadLevel(levelNum) {
     
     initializeSnakes();
     snakes.callAll('animations.play', 'animations', 'move');
+    spiderWebs.callAll('animations.play', 'animations', 'spiderScuttle');
 }
 
 function pushLever(player, lever) {
@@ -733,18 +759,24 @@ function initializeSpider(player, spiderSpawner) {
     spiders.callAll('animations.add', 'animations', 'die', [0, 1, 2], 5, false);
     spiders.callAll('animations.add', 'animations', 'dmg', [4], 2, false);
     spiders.callAll('animations.play', 'animations', 'move');
-
     spiders.callAll('anchor.setTo', 'anchor', 0.5, 0);
     spiders.setAll('body.collideWorldBounds', true);
     spiders.setAll('body.gravity.y', 500);
     spiders.setAll('body.immovable', true);
+    game.physics.arcade.overlap(spiderSpawner,spiderWebs,resetWeb);
+    spiderSound.play();
     spiderSpawner.kill();
-    spiders.forEach(function (spider){
+    spiders.forEach(function (spider) {
         game.physics.arcade.collide(spider,layerPlatforms,spider.body.velocity.x = 100);
         spider.scale.setTo(0.5, 0.5);
         spider.body.bounce.x = 1;
         spider.lives = 3;
     });
+}
+
+function resetWeb(spiderSpawner, spiderWeb) {
+    spiderWeb.frame = 6;
+    spiderWeb.animations.stop('spiderScuttle');
 }
 
 function initializeSnakes() {
@@ -857,6 +889,20 @@ function crumbleBlock(f_block) {
 }
 
 function resetLevel() {
+    
+    templeMusic.stop();
+    game.state.start(game.state.current);
+}
+
+function resetLevelSpikes() {
+    spikeDeath.play();
+    spikeDeathGrunt.play();
+    templeMusic.stop();
+    game.state.start(game.state.current);
+}
+
+function resetLevelLava() {
+    lavaSound.play();
     templeMusic.stop();
     game.state.start(game.state.current);
 }
@@ -964,12 +1010,13 @@ function updateShadowTexture() {
 
 function burnWeb(player, spiderWeb) {
     hintText.text = 'Burn the web by pressing "e"';
+    spiderWebFire.play();
     if (spiderWeb.name != "") {
         if (useKey.isDown) {
             anim = spiderWeb.animations.play('burn');
             game.physics.arcade.overlap(spiderWeb, spiderSpawners, initializeSpider);
             var webID = parseInt(spiderWeb.name.charAt(9)) - 1;
-            hintText.text = webID;
+            //hintText.text = webID;
             if (keyCreated == false) {
                 keys.children[webID].visible = true;
                 keyCreated = true;
@@ -997,10 +1044,11 @@ function dropHeart(x, y) {
 }
 
 function dartLoopSpawn() {
+    
     dartLoopGroup.forEach(function(dartLoop) {
         dartLoopID = dartLoopGroup.getChildIndex(dartLoop);
         dart = darts.create(dartLoop.x, dartLoop.y, 'blowdart');
-
+        dartSound.play();
         // LEFT
         if (map.objects['dartLoop'][dartLoopID].type == "right") {
             dart.body.velocity.x = -300;
