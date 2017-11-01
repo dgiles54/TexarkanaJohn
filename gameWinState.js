@@ -1,5 +1,9 @@
+var TexarkanaJohn = TexarkanaJohn || {};
+
 var win, retry, button;
-var gameWinState = {
+
+TexarkanaJohn.gameWinState = function () {};
+TexarkanaJohn.gameWinState.prototype = {
     preload: function () {
         // game.load.image('gameWin', 'assets/sprites/winScreen.png');
         // game.load.spritesheet('button', 'assets/sprites/retryButton.png', 320, 168);

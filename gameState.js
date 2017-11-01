@@ -1,3 +1,5 @@
+var TexarkanaJohn = TexarkanaJohn || {};
+
 var PLAYER_ATTACK_RATE = 200;
 var PLAYER_RUN_SPEED = 200;
 var PLAYER_JUMP_SPEED = 305;
@@ -43,7 +45,8 @@ WebFontConfig = {
     }
 };
 
-var gameState = {
+TexarkanaJohn.gameState = function () {};
+TexarkanaJohn.gameState.prototype = {
 
     preload: function () {
 

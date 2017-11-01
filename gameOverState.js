@@ -1,5 +1,9 @@
+var TexarkanaJohn = TexarkanaJohn || {};
+
 var gameOver, retry, button;
-var gameOverState = {
+
+TexarkanaJohn.gameOverState = function () {};
+TexarkanaJohn.gameOverState.prototype = {
     preload: function () {
         // game.load.image('gameOver', 'assets/sprites/GameOverScreen.png');
         // game.load.spritesheet('button', 'assets/sprites/retryButton.png', 320, 168);

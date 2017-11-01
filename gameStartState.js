@@ -1,5 +1,9 @@
+var TexarkanaJohn = TexarkanaJohn || {};
+
 var moc, rev, button;
-var gameStartState = {
+
+TexarkanaJohn.gameStartState = function () {};
+TexarkanaJohn.gameStartState.prototype = {
     preload: function () {
         // game.load.image('title', 'assets/sprites/titleScreen.png');
         game.load.bitmapFont('blocktopia', 'assets/fonts/blocktopia.png', 'assets/fonts/blocktopia.xml');
