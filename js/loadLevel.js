@@ -2,7 +2,6 @@ var map;
 var startPointX, startPointY, endPoint;
 var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, layerSpikes, layerLava;
 var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, dartLoopGroup, spears, boxes;
-var snake, snakes, spider, spiderSpawners, spiderWebs, spiderWeb;
 
 function loadLevel(levelNum) {
     templeMusic.play();
