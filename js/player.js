@@ -9,32 +9,46 @@ var player;
 var health = 5;
 
 function createPlayer() {
-        player = game.add.sprite(startPointX, startPointY, 'player');
-        player.scale.setTo(1, 1);
-        player.anchor.setTo(0.33, 0.5);
-        // Attributes
-        player.health = health;
+    player = game.add.sprite(startPointX, startPointY, 'player');
+    player.scale.setTo(1, 1);
+    player.anchor.setTo(0.33, 0.5);
+    // Attributes
+    player.health = health;
+    player.isAttacking = false;
+    player.nextAttack = 0;
+    player.hasKey = false;
+    player.numberOfKeys = 0;
+    player.climbing = false;
+    player.isDead = false;
+    // Physics
+    game.physics.enable(player);
+    player.body.setSize(20, 44, 15, 20);
+    player.body.gravity.y = PLAYER_GRAVITY;
+    player.body.bounce.y = PLAYER_BOUNCE;
+    player.body.drag.x = PLAYER_DRAG;
+    player.body.collideWorldBounds = true;
+    // Animation
+    player.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
+    player.animations.add('idle', [13, 14], 2, true);
+    player.attackAnimation = player.animations.add('attack', [6, 7, 8, 9], 12, false);
+    player.attackAnimation.onComplete.add(function () {
+        player.frame = 0;
         player.isAttacking = false;
-        player.nextAttack = 0;
-        player.hasKey = false;
-        player.numberOfKeys = 0;
-        player.climbing = false;
-        // Physics
-        game.physics.enable(player);
-        player.body.setSize(20, 44, 15, 20);
-        player.body.gravity.y = PLAYER_GRAVITY;
-        player.body.bounce.y = PLAYER_BOUNCE;
-        player.body.drag.x = PLAYER_DRAG;
-        player.body.collideWorldBounds = true;
-        // Animation
-        player.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
-        player.animations.add('idle', [13, 14], 2, true);
-        player.attackAnimation = player.animations.add('attack', [6, 7, 8, 9], 12, false);
-        player.attackAnimation.onComplete.add(function () {
-            player.frame = 0;
-            player.isAttacking = false;
-        });
-        player.animations.add('climb', [10, 11, 12, 11], 5, true);
+    });
+    player.animations.add('climb', [10, 11, 12, 11], 5, true);
+    player.deathAnimation = player.animations.add('death', [13, 14, 15, 16], 10, false);
+    player.deathAnimation.onComplete.add(function () {
+        templeMusic.stop();
+        game.state.start(game.state.current);
+    });
+    // Emitter
+    player.bloodEmitter = game.add.emitter(player.x - 5, player.y + 30, 50);
+    player.bloodEmitter.makeParticles('bloodParticles', [0, 1, 2]);
+    player.bloodEmitter.gravity = PLAYER_GRAVITY * 0.5;
+    player.bloodEmitter.setAlpha(0.8, 1);
+    player.bloodEmitter.setAngle(-50, -130, 50, 200);
+    player.bloodEmitter.setScale(1, 2, 1, 2);
+    player.bloodEmitter.setSize(30, 10);
 }
 
 function attack() {

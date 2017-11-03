@@ -5,7 +5,6 @@ var switchTriggered = false,
     spiderSoundPlayed = false,
     keyCreated = false;
 var leverSound, plateSound, loseHealthSound, doorSound, keySound, unlockSound, templeMusic;
-var cursors, useKey, attackKey, cursors2, jumpKey;
 var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
@@ -36,6 +35,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.script('enemies.js', 'js/enemies.js');
         game.load.script('darts.js', 'js/darts.js');
         game.load.script('boulders.js', 'js/boulders.js');
+        game.load.script('input.js', 'js/input.js');
         game.load.tilemap('level1', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level2', 'assets/tilemaps/Level2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level3', 'assets/tilemaps/Level3.json', null, Phaser.Tilemap.TILED_JSON);
@@ -53,6 +53,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.spritesheet('rockSpawner', 'assets/sprites/snakehead4-sheet.png', 64, 64);
         game.load.spritesheet('boulderBroken', 'assets/sprites/boulderBroken.png', 64, 64, 3);
         game.load.spritesheet('smokeParticles', 'assets/sprites/smokeParticles.png', 1, 1);
+        game.load.spritesheet('bloodParticles', 'assets/sprites/bloodParticle.png', 1, 1);
         game.load.spritesheet('torch', 'assets/sprites/torch.png', 10, 23);
         game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 44,6);
         game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128);
@@ -67,6 +68,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.image('thoughtBubble', 'assets/sprites/thoughtBubble.png');
         game.load.image('spear', 'assets/sprites/spear.png');
         game.load.image('box', 'assets/sprites/Box.png');
+        game.load.image('bloodParticle', 'assets/sprites/bloodParticle.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
         game.load.audio('ouch', 'assets/audio/ouch.wav');
@@ -114,23 +116,9 @@ TexarkanaJohn.gameState.prototype = {
 
         // GAME CAMERA
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
-
-        // CONTROLS
-        cursors = game.input.keyboard.createCursorKeys();
-        useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
-        dropKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
-        attackKey = game.input.keyboard.addKey(Phaser.Keyboard.CONTROL);
-        attackKey.onDown.add(function () {
-            attack();
-        }, this);
-        jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        cursors2 = {
-            up: game.input.keyboard.addKey(Phaser.Keyboard.W),
-            down: game.input.keyboard.addKey(Phaser.Keyboard.S),
-            left: game.input.keyboard.addKey(Phaser.Keyboard.A),
-            right: game.input.keyboard.addKey(Phaser.Keyboard.D),
-        }
         
+        // CONTROLS
+        initializeControls();
 
         // LIGHTING
 
@@ -261,7 +249,7 @@ TexarkanaJohn.gameState.prototype = {
         
         
         // kill players with insta-death things
-        map.setTileIndexCallback(21, resetLevelSpikes, null, layerSpikes);
+        map.setTileIndexCallback(21, playerDeath, null, layerSpikes);
         map.setTileIndexCallback([22, 23], resetLevelLava, null, layerLava);
 
         // allow player to climb ladders
@@ -294,7 +282,7 @@ TexarkanaJohn.gameState.prototype = {
             }
             player.body.velocity.x = PLAYER_RUN_SPEED;
         } else {
-            if (!player.climbing && !player.isAttacking) {
+            if (!player.climbing && !player.isAttacking && !player.isDead) {
                 player.frame = 5;
             }
             player.body.velocity.x = 0;
@@ -307,7 +295,7 @@ TexarkanaJohn.gameState.prototype = {
         }
         
         // jump animations
-        if (player.body.velocity.y < -1 && !player.climbing && !player.isAttacking) {
+        if (player.body.velocity.y < -1 && !player.climbing && !player.isAttacking && !player.isDead) {
             player.frame = 3;
         }
         
@@ -321,6 +309,8 @@ TexarkanaJohn.gameState.prototype = {
         if (player.health == 0) {
             game.state.start('gameOverState');
         }
+        
+        // if player dead, play death animation and restart level
         
         // snake collision
         snakes.forEach(function (snake) {
@@ -387,6 +377,8 @@ TexarkanaJohn.gameState.prototype = {
             player.holdingBox = false;
         }
         
+        player.bloodEmitter.x = player.x;
+        player.bloodEmitter.y = player.y + 60;
     },
 
     // DEBUG
@@ -394,6 +386,7 @@ TexarkanaJohn.gameState.prototype = {
 //        snakes.forEach(function(snake) {
 //            game.debug.spriteBounds(snake);
 //        });
+//        game.debug.rectangle(player.bloodEmitter);
     }
 };
 
@@ -492,4 +485,14 @@ function dmgEnemy(enemy) {
         }        
         enemy.animations.play('move');
     });
+}
+
+function playerDeath() {
+    if (!player.isDead) {
+        player.isDead = true;
+        spikeDeath.play();
+        spikeDeathGrunt.play();
+        player.deathAnimation.play();
+        player.bloodEmitter.explode(1000);
+    }
 }
