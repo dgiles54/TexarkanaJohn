@@ -11,6 +11,8 @@ TexarkanaJohn.gameStartState.prototype = {
 
     create: function () {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        game.scale.pageAlignVertically = true;
+        game.scale.pageAlignHorizontally = true;
         game.stage.backgroundColor = '#000';
 
         // var title = game.add.image(game.width/2, game.height/2, 'title');

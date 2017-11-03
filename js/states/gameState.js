@@ -46,7 +46,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
-        game.load.spritesheet('snake', 'assets/sprites/snake2.png', 96, 48);
+        game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48);
         game.load.spritesheet('f_block', 'assets/sprites/fall_block.png', 32, 32, 3, 0, 1);
         game.load.spritesheet('leverL', 'assets/sprites/lever_left.png', 32, 32);
         game.load.spritesheet('leverR', 'assets/sprites/lever_right.png', 32, 32);
@@ -90,7 +90,6 @@ TexarkanaJohn.gameState.prototype = {
 
 
     create: function () {
-        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#787878';
         
@@ -114,7 +113,7 @@ TexarkanaJohn.gameState.prototype = {
         createPlayer();
 
         // GAME CAMERA
-        game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+        game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
 
         // CONTROLS
         cursors = game.input.keyboard.createCursorKeys();
