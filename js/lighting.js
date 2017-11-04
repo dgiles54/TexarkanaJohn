@@ -2,6 +2,17 @@ var LIGHT_RADIUS = 100;
 var GLOW_RADIUS = 75;
 var shadowTexture;
 
+function loadShadowTexture() {
+    // Create shadow texture
+    shadowTexture = game.add.bitmapData(map.widthInPixels, map.heightInPixels);
+
+    // Create object that uses bitmap as texture
+    var lightSprite = game.add.image(0, 0, shadowTexture);
+
+    // Set blend mode to multiply
+    lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
+}
+
 // Create light sources
 function updateShadowTexture() {
     // Draw shadow
