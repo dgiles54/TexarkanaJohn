@@ -364,6 +364,7 @@ TexarkanaJohn.gameState.prototype = {
 //        snakes.forEach(function(snake) {
 //            game.debug.spriteBounds(snake);
 //        });
+//        game.debug.body(player);
 //        game.debug.rectangle(player.bloodEmitter);
     }
 };
@@ -452,7 +453,11 @@ function dmgEnemy(enemy) {
     if (enemy.key == 'snake') {
         snakeDmg.play();
     }
-    enemy.body.velocity.x = 0;
+    if (player.x < enemy.x) {
+        enemy.body.velocity.x = 100;
+    } else {
+        enemy.body.velocity.x = -100;
+    }
     enemy.body.velocity.y = -100;
     anim = enemy.animations.play('dmg');
     anim.onComplete.add(function (){
