@@ -374,7 +374,7 @@
          "name":"Lever",
          "objects":[
                 {
-                 "gid":32,
+                 "gid":33,
                  "height":32,
                  "id":165,
                  "name":"lever1",
