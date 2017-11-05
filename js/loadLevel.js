@@ -7,13 +7,13 @@ function loadLevel(levelNum) {
     templeMusic.play();
     keyCreated = false;
     blowdartCreated = false;
-
+    
     map = game.add.tilemap('level' + levelNum);
     map.addTilesetImage('tileset');
-
+    
     layerWall = map.createLayer('Wall');
-
-    torches = game.add.group();
+    
+    torches = game.add.group(); 
     map.createFromObjects('Torches', 33, 'torch', 0, true, false, torches);
 
     torches.forEach(function (torch) {
