@@ -59,6 +59,7 @@ function dmgPlayer(player, enemy) {
     if (game.time.now > nextAttackEnemy) {
         nextAttackEnemy = game.time.now + ENEMY_ATTACK_RATE;
         player.damage(1);
+        health -= 1;
         healthBar.frame = player.health;
         loseHealthSound.play();
         if (player.body.touching.left) {

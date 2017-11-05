@@ -6,14 +6,14 @@ var PLAYER_BOUNCE = 0.02;
 var PLAYER_DRAG = 0;
 
 var player;
-var health = 5;
+// var health = 5;
 
 function createPlayer() {
     player = game.add.sprite(startPointX, startPointY, 'player');
     player.scale.setTo(1, 1);
     player.anchor.setTo(0.33, 0.5);
     // Attributes
-    player.health = health;
+    player.health;
     player.isAttacking = false;
     player.nextAttack = 0;
     player.hasKey = false;
@@ -39,6 +39,7 @@ function createPlayer() {
     player.deathAnimation = player.animations.add('death', [13, 14, 15, 16], 12, false);
     player.deathAnimation.onComplete.add(function () {
         templeMusic.stop();
+        // health = player.health;
         game.state.start(game.state.current);
     });
     // Emitter

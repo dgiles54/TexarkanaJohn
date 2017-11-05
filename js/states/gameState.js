@@ -7,6 +7,7 @@ var switchTriggered = false,
 var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
+var health = 5;
 var levelNum = 1,
     maxLevels = 7;
 
@@ -114,6 +115,7 @@ TexarkanaJohn.gameState.prototype = {
 
         // Player
         createPlayer();
+        player.health = health;
 
         // Game Camera
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
@@ -249,13 +251,13 @@ TexarkanaJohn.gameState.prototype = {
         // make player walk
         if (cursors.left.isDown || cursors2.left.isDown) {
             player.scale.setTo(-1, 1);
-            if (!player.climbing && !player.isAttacking) {
+            if (!player.climbing && !player.isAttacking && !player.isDead) {
                 player.animations.play('walk');
             }
             player.body.velocity.x = -PLAYER_RUN_SPEED;
         } else if (cursors.right.isDown || cursors2.right.isDown) {
             player.scale.setTo(1, 1);
-            if (!player.climbing && !player.isAttacking) {
+            if (!player.climbing && !player.isAttacking && !player.isDead) {
                 player.animations.play('walk');
             }
             player.body.velocity.x = PLAYER_RUN_SPEED;
@@ -416,6 +418,7 @@ function resetLevelLava() {
 
 function nextLevel() {
     levelNum++;
+    health = 5
 
     if (levelNum <= maxLevels) {
         templeMusic.stop();
@@ -444,6 +447,7 @@ function dropHeart(x, y) {
 function healPlayer(player, heart) {
     if (player.health < 5) {
         player.heal(1);
+        health += 1;
         healthBar.frame = player.health;
         heart.kill();
         heart.destroy();
