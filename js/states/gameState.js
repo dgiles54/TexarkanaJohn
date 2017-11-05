@@ -62,7 +62,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.image('keyEmpty', 'assets/sprites/keyEmpty.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
         game.load.image('door', 'assets/sprites/door.png');
-        game.load.image('boulder', 'assets/sprites/boulder.png');
+        // game.load.image('boulder', 'assets/sprites/boulder.png');
         game.load.image('blowdart', 'assets/sprites/blowdart.png');
         game.load.image('heart', 'assets/sprites/heart.png');
         game.load.image('thoughtBubble', 'assets/sprites/thoughtBubble.png');
@@ -227,7 +227,7 @@ TexarkanaJohn.gameState.prototype = {
         
         
         // kill players with insta-death things
-        map.setTileIndexCallback(21, playerDeath, null, layerSpikes);
+        map.setTileIndexCallback(21, resetLevelSpikes, null, layerSpikes);
         map.setTileIndexCallback([22, 23], resetLevelLava, null, layerLava);
 
         // allow player to climb ladders
@@ -396,18 +396,22 @@ function resetLevel() {
 }
 
 function resetLevelSpikes() {
+    playerDeath();
+
     spikeDeath.play();
     spikeDeathGrunt.play();
-    templeMusic.stop();
-    health = player.health;
-    game.state.start(game.state.current);
+    // templeMusic.stop();
+    // health = player.health;
+    // game.state.start(game.state.current);
+    // resetLevel();
 }
 
 function resetLevelLava() {
     lavaSound.play();
-    templeMusic.stop();
-    health = player.health;
-    game.state.start(game.state.current);
+    resetLevel();
+    // templeMusic.stop();
+    // health = player.health;
+    // game.state.start(game.state.current);
 }
 
 function nextLevel() {
@@ -418,7 +422,7 @@ function nextLevel() {
         game.state.start(game.state.current);
     } else {
         templeMusic.stop();
-        game.state.start('gameWinState');
+        game.state.start('bossState');
     }
 }
 
