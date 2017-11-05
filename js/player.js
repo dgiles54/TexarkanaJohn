@@ -182,9 +182,10 @@ function insertKey(player, keyhole) {
 
 function burnWeb(player, spiderWeb) {
     hintText.text = 'Burn the web by pressing "e"';
-    spiderWebFire.play();
+    
     if (spiderWeb.name != "") {
         if (useKey.isDown) {
+            spiderWebFire.play();
             anim = spiderWeb.animations.play('burn');
             game.physics.arcade.overlap(spiderWeb, spiderSpawners, initializeSpider);
             var webID = parseInt(spiderWeb.name.charAt(9)) - 1;
@@ -197,6 +198,7 @@ function burnWeb(player, spiderWeb) {
         }
     } else {
         if (useKey.isDown) {
+            spiderWebFire.play();
             game.physics.arcade.overlap(spiderWeb, spiderSpawners, initializeSpider);
             anim = spiderWeb.animations.play('burn');
             anim.killOnComplete = true;

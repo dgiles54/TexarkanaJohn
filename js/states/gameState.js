@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 8,
+var levelNum = 5,
     maxLevels = 8;
 
 WebFontConfig = {
@@ -87,6 +87,8 @@ TexarkanaJohn.gameState.prototype = {
         game.load.audio('dartSound', 'assets/audio/dartSound.wav');
         game.load.audio('spikeDeathGrunt', 'assets/audio/spikeDeathGrunt.wav');
         game.load.audio('spikeDeath', 'assets/audio/spikeDeath.wav');
+        game.load.audio('boxDragging', 'assets/audio/dragging3.wav');
+        game.load.audio('boxDrop', 'assets/audio/boxDrop.wav');
         game.load.bitmapFont('blocktopia', 'assets/fonts/blocktopia.png', 'assets/fonts/blocktopia.xml');
         game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js');
     },
@@ -251,14 +253,22 @@ TexarkanaJohn.gameState.prototype = {
         // make player walk
         if (cursors.left.isDown || cursors2.left.isDown) {
             player.scale.setTo(-1, 1);
+            if (player.holdingBox == true) {
+                    boxDrag.play();
+                }
             if (!player.climbing && !player.isAttacking && !player.isDead) {
                 player.animations.play('walk');
+                
             }
             player.body.velocity.x = -PLAYER_RUN_SPEED;
         } else if (cursors.right.isDown || cursors2.right.isDown) {
             player.scale.setTo(1, 1);
+            if (player.holdingBox == true) {
+                    boxDrag.play();
+                }
             if (!player.climbing && !player.isAttacking && !player.isDead) {
                 player.animations.play('walk');
+                
             }
             player.body.velocity.x = PLAYER_RUN_SPEED;
         } else {
@@ -351,9 +361,10 @@ TexarkanaJohn.gameState.prototype = {
         });
         
         if (player.holdingBox == true && dropKey.isDown) {
+            boxDrop.play();
             player.children[0].destroy();
             box = boxes.create(player.body.x-55, player.body.y-25, 'box');
-            box.body.gravity.y = 100;
+            box.body.gravity.y = 500;
             player.holdingBox = false;
         }
         

@@ -1,4 +1,4 @@
-var leverSound, plateSound, doorSound, keySound, unlockSound, lavaSound, templeMusic, dartSound;
+var leverSound, plateSound, doorSound, keySound, unlockSound, lavaSound, templeMusic, dartSound, boxDrag, boxDrop;
 var loseHealthSound, whipSound, jumpSound, spikeDeath, spikeDeathGrunt;
 var spiderSound, spiderDmg, spiderWebFire, snakeDmg;
 
@@ -17,7 +17,9 @@ function loadAudio() {
     snakeDmg = game.add.audio('snakeDmg');
     spiderWebFire = game.add.audio('spiderWebFire');
     lavaSound = game.add.audio('lava');
-    dartSound = game.add.audio('dartSound');
+    dartSound = game.add.audio('dartSound',0.75);
     spikeDeath = game.add.audio('spikeDeath');
     spikeDeathGrunt = game.add.audio('spikeDeathGrunt');
+    boxDrag = game.add.audio('boxDragging');
+    boxDrop = game.add.audio('boxDrop');
 }
