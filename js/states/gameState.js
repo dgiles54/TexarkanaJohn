@@ -4,7 +4,6 @@ var switchTriggered = false,
     blowdartCreated = false,
     spiderSoundPlayed = false,
     keyCreated = false;
-var leverSound, plateSound, loseHealthSound, doorSound, keySound, unlockSound, templeMusic;
 var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
@@ -30,6 +29,7 @@ TexarkanaJohn.gameState.prototype = {
     preload: function () {
 
         game.load.script('loadLevel.js', 'js/loadLevel.js');
+        game.load.script('loadAudio.js', 'js/loadAudio.js');
         game.load.script('lighting.js', 'js/lighting.js');
         game.load.script('player.js', 'js/player.js');
         game.load.script('enemies.js', 'js/enemies.js');
@@ -95,12 +95,13 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#787878';
         
-        templeMusic = game.add.audio('templeMusic', 0.15, true);
+        // Load audio
+        loadAudio();
 
-        // map level loader      
+        // Load level      
         loadLevel(levelNum);
 
-        // set map collisions
+        // Set map collisions
         map.setCollisionBetween(1, 10, true, 'Wall');
         map.setCollisionBetween(1, 15, true, 'Platforms');
         map.setCollisionBetween(19, 20, true, 'Collisions');
@@ -111,26 +112,18 @@ TexarkanaJohn.gameState.prototype = {
         layerCollisions.visible = false;
         endPoint.visible = false;
 
-        // PLAYER
+        // Player
         createPlayer();
 
-        // GAME CAMERA
+        // Game Camera
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
         
-        // CONTROLS
+        // Controls
         initializeControls();
 
         // LIGHTING
-
-        // Create shadow texture
-        shadowTexture = game.add.bitmapData(map.widthInPixels, map.heightInPixels);
-
-        // Create object that uses bitmap as texture
-        var lightSprite = game.add.image(0, 0, shadowTexture);
-
-        // Set blend mode to multiply
-        lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
-
+        loadShadowTexture();
+        
         // HUD
         player.hintBubble = game.add.sprite(player.x, player.y - 100, 'thoughtBubble');
         player.hintBubble.visible = false;
@@ -151,22 +144,7 @@ TexarkanaJohn.gameState.prototype = {
         healthBar.frame = player.health;
 
         // SOUND FX
-        leverSound = game.add.audio('leverSound');
-        plateSound = game.add.audio('plateSound');
-        loseHealthSound = game.add.audio('ouch', 0.5);
-        doorSound = game.add.audio('doorSound', 0.75);
-        keySound = game.add.audio('keySound');
-        unlockSound = game.add.audio('unlockSound');
-        whipSound = game.add.audio('whipSound');
-        jumpSound = game.add.audio('jumpSound');
-        spiderSound = game.add.audio('spiderChatter');
-        spiderDmg = game.add.audio('spiderDmg');
-        snakeDmg = game.add.audio('snakeDmg');
-        spiderWebFire = game.add.audio('spiderWebFire');
-        lavaSound = game.add.audio('lava');
-        dartSound = game.add.audio('dartSound');
-        spikeDeath = game.add.audio('spikeDeath');
-        spikeDeathGrunt = game.add.audio('spikeDeathGrunt');
+        
 
         //timer for boulder spawns
         timer = game.time.create(false);
@@ -386,6 +364,7 @@ TexarkanaJohn.gameState.prototype = {
 //        snakes.forEach(function(snake) {
 //            game.debug.spriteBounds(snake);
 //        });
+//        game.debug.body(player);
 //        game.debug.rectangle(player.bloodEmitter);
     }
 };
@@ -474,7 +453,11 @@ function dmgEnemy(enemy) {
     if (enemy.key == 'snake') {
         snakeDmg.play();
     }
-    enemy.body.velocity.x = 0;
+    if (player.x < enemy.x) {
+        enemy.body.velocity.x = 100;
+    } else {
+        enemy.body.velocity.x = -100;
+    }
     enemy.body.velocity.y = -100;
     anim = enemy.animations.play('dmg');
     anim.onComplete.add(function (){

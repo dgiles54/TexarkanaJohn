@@ -36,7 +36,7 @@ function createPlayer() {
         player.isAttacking = false;
     });
     player.animations.add('climb', [10, 11, 12, 11], 5, true);
-    player.deathAnimation = player.animations.add('death', [13, 14, 15, 16], 10, false);
+    player.deathAnimation = player.animations.add('death', [13, 14, 15, 16], 12, false);
     player.deathAnimation.onComplete.add(function () {
         templeMusic.stop();
         game.state.start(game.state.current);
