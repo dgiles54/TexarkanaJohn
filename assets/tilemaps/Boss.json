@@ -379,7 +379,7 @@
                  "id":165,
                  "name":"lever1",
                  "rotation":0,
-                 "type":"unlock_key",
+                 "type":"open_boss",
                  "visible":true,
                  "width":32,
                  "x":96,
@@ -421,6 +421,40 @@
                 }],
          "offsetx":-6.33333333333337,
          "offsety":0.666666666666686,
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"Boss_Hands",
+         "objects":[
+                {
+                 "gid":32,
+                 "height":96,
+                 "id":213,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":96,
+                 "x":192,
+                 "y":448
+                }, 
+                {
+                 "gid":32,
+                 "height":96,
+                 "id":214,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":96,
+                 "x":320,
+                 "y":448
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -539,15 +573,15 @@
          "objects":[
                 {
                  "gid":32,
-                 "height":32,
+                 "height":410,
                  "id":195,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":32,
-                 "x":642,
-                 "y":546
+                 "width":332,
+                 "x":448,
+                 "y":544
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -677,7 +711,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":213,
+ "nextobjectid":215,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 1,
+var levelNum = 8,
     maxLevels = 8;
 
 WebFontConfig = {
@@ -58,7 +58,9 @@ TexarkanaJohn.gameState.prototype = {
         game.load.spritesheet('torch', 'assets/sprites/torch.png', 10, 23);
         game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 44,6);
         game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128);
+        game.load.spritesheet('boss', 'assets/sprites/boss_spritesheet.png', 332, 410);
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
+        game.load.image('bossHand', 'assets/sprites/boss_hand.png');
         game.load.image('key', 'assets/sprites/key.png');
         game.load.image('keyEmpty', 'assets/sprites/keyEmpty.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');

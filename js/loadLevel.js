@@ -2,6 +2,7 @@ var map;
 var startPointX, startPointY, endPoint;
 var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, layerSpikes, layerLava;
 var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, dartLoopGroup, spears, boxes;
+var boss, bossHands;
 
 function loadLevel(levelNum) {
     templeMusic.play();
@@ -138,6 +139,18 @@ function loadLevel(levelNum) {
     
     startPointX = map.objects['StartPoint'][0].x;
     startPointY = map.objects['StartPoint'][0].y;
+    
+    
+    bossHands = game.add.group();
+    bossHands.enableBody = true;
+    map.createFromObjects('Boss_Hands', 32, 'bossHand', 0, true, false, bossHands); 
+    
+    boss = game.add.group();
+    boss.enableBody = true;
+    map.createFromObjects('Boss', 32, 'boss', 0, true, false, boss);
+    boss.forEach(function (bos) {
+        bos.animations.add('open', [0 ,1 ,2 ,3 ,3, 2, 1, 0], 5, false);
+    });
 
     hearts = game.add.group();
     hearts.enableBody = true;

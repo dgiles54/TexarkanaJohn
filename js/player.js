@@ -150,6 +150,14 @@ function pushLever(player, lever) {
             }, this);
         }
     }
+    if (map.objects['Lever'][leverID].type == "open_boss") {
+        if (useKey.isDown) {
+            lever.frame = 1;
+            leverSound.play().onStop.addOnce(function () {
+                boss.children[0].animations.play('open');
+            }, this);
+        }    
+    }
 }
 
 function takeKey(player, key) {
