@@ -120,7 +120,7 @@ TexarkanaJohn.gameState.prototype = {
         player.health = health;
 
         // Game Camera
-        game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
+        game.camera.follow(player);
         
         // Controls
         initializeControls();
