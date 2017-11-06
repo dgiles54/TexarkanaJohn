@@ -57,6 +57,10 @@ TexarkanaJohn.gameStartState.prototype = {
         var controls3 = game.add.bitmapText(game.width*0.5, game.height*0.88, 'messe', 'E to use', 20);
         controls3.anchor.setTo(0.5);
         controls3.tint = 0x000000;
+        
+        var controls4 = game.add.bitmapText(game.width*0.5, game.height*0.93, 'messe', 'SPACE to use', 20);
+        controls4.anchor.setTo(0.5);
+        controls4.tint = 0x000000;
     },
     
     over: function () {
