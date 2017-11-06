@@ -1,6 +1,7 @@
 var TexarkanaJohn = TexarkanaJohn || {};
 
-var startText, button;
+var button;
+var menuMusic;
 
 TexarkanaJohn.gameStartState = function () {};
 TexarkanaJohn.gameStartState.prototype = {
@@ -10,6 +11,7 @@ TexarkanaJohn.gameStartState.prototype = {
         game.load.bitmapFont('messeTitle', 'assets/fonts/messeTitle.png', 'assets/fonts/messeTitle.xml');
         game.load.image('background', 'assets/sprites/background.png');
         game.load.image('startButton', 'assets/sprites/startButton.png');
+        game.load.audio('menuMusic', 'assets/audio/Escape_from_the_Temple.mp3');
     },
 
     create: function () {
@@ -17,6 +19,9 @@ TexarkanaJohn.gameStartState.prototype = {
         game.scale.pageAlignVertically = true;
         game.scale.pageAlignHorizontally = true;
         game.stage.backgroundColor = '#000';
+        
+        menuMusic = game.add.audio('menuMusic');
+        menuMusic.play();
         
         var bg = game.add.image(0, 0, 'background');
 
@@ -67,6 +72,7 @@ TexarkanaJohn.gameStartState.prototype = {
     },
 
     actionOnClick: function () {
+        menuMusic.stop();
         game.state.start('gameState');
     }
 };
