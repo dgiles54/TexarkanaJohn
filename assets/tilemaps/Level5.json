@@ -469,14 +469,14 @@
          "objects":[
                 {
                  "gid":32,
-                 "height":24.75,
+                 "height":33,
                  "id":63,
                  "name":"",
                  "rotation":0,
                  "type":"key1",
                  "visible":true,
-                 "width":54,
-                 "x":583,
+                 "width":72,
+                 "x":572,
                  "y":382
                 }],
          "opacity":1,

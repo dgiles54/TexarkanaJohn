@@ -113,15 +113,15 @@
          "objects":[
                 {
                  "gid":32,
-                 "height":24.75,
+                 "height":33,
                  "id":157,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":54,
-                 "x":645,
-                 "y":160
+                 "width":72,
+                 "x":635,
+                 "y":159.5
                 }],
          "opacity":1,
          "type":"objectgroup",

@@ -245,15 +245,15 @@
          "objects":[
                 {
                  "gid":32,
-                 "height":24.75,
+                 "height":33,
                  "id":183,
                  "name":"key1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":54,
-                 "x":453.5,
-                 "y":572
+                 "width":72,
+                 "x":448,
+                 "y":576
                 }],
          "opacity":1,
          "type":"objectgroup",

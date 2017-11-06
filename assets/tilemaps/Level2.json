@@ -257,13 +257,13 @@
          "objects":[
                 {
                  "gid":32,
-                 "height":24.75,
+                 "height":33,
                  "id":24,
                  "name":"key1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":54,
+                 "width":72,
                  "x":907.5,
                  "y":160
                 }],

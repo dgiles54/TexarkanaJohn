@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 5,
+var levelNum = 1,
     maxLevels = 8;
 
 WebFontConfig = {
@@ -120,7 +120,7 @@ TexarkanaJohn.gameState.prototype = {
         player.health = health;
 
         // Game Camera
-        game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
+        game.camera.follow(player);
         
         // Controls
         initializeControls();
