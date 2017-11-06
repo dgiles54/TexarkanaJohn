@@ -125,13 +125,13 @@
          "objects":[
                 {
                  "gid":32,
-                 "height":24.75,
+                 "height":33,
                  "id":3,
                  "name":"key1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":54,
+                 "width":72,
                  "x":962,
                  "y":478
                 }],

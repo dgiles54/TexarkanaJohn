@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 5,
+var levelNum = 1,
     maxLevels = 8;
 
 WebFontConfig = {
