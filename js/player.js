@@ -30,7 +30,7 @@ function createPlayer() {
     // Animation
     player.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
     player.animations.add('idle', [13, 14], 2, true);
-    player.attackAnimation = player.animations.add('attack', [6, 7, 8, 9], 12, false);
+    player.attackAnimation = player.animations.add('attack', [6, 7, 8, 9], 15, false);
     player.attackAnimation.onComplete.add(function () {
         player.frame = 0;
         player.isAttacking = false;
