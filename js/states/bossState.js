@@ -32,7 +32,7 @@ TexarkanaJohn.bossState.prototype = {
         game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 44,6);
         game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128);
         game.load.spritesheet('boss', 'assets/sprites/boss_spritesheet.png', 332, 410, 4);
-        game.load.spritesheet('boss_soul', 'assets/sprites/boss_soul_spritesheet.png', 32, 32, 5);
+        game.load.spritesheet('boss_soul', 'assets/sprites/boss_soul.png', 32, 32, 5);
         game.load.image('boss_hand','assets/sprites/boss_hand.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
@@ -69,8 +69,7 @@ TexarkanaJohn.bossState.prototype = {
 	},
 
 	create: function() {
-		//Base
-		game.physics.startSystem(Phaser.Physics.ARCADE);
+        game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#787878';
 
         //Load level
