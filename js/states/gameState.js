@@ -225,6 +225,7 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.collide(hearts, layerPlatforms);
         game.physics.arcade.overlap(player, spears, dmgPlayer);
         game.physics.arcade.collide(boxes, darts, killDart);
+        game.physics.arcade.collide(bossHands, player);
         // if (heartDropped) {
         //     game.physics.arcade.overlap(player, hearts, healPlayer);
         // }

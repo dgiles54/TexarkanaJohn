@@ -143,7 +143,8 @@ function loadLevel(levelNum) {
     
     bossHands = game.add.group();
     bossHands.enableBody = true;
-    map.createFromObjects('Boss_Hands', 32, 'bossHand', 0, true, false, bossHands); 
+    map.createFromObjects('Boss_Hands', 32, 'bossHand', 0, true, false, bossHands);
+    bossHands.setAll('body.immovable', true);
     
     boss = game.add.group();
     boss.enableBody = true;
