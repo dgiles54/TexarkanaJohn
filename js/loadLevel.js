@@ -79,6 +79,9 @@ function loadLevel(levelNum) {
     levers.enableBody = true;
     map.createFromObjects('Lever', 32, 'leverR', 0, true, false, levers);
     map.createFromObjects('Lever', 33, 'leverL', 0, true, false, levers);
+    levers.forEach(function(lever) {
+        lever.animations.add('flip', [0, 1, 2, 3, 4], 10, false);
+    })
 
     plates = game.add.group();
     plates.enableBody = true;

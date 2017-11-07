@@ -136,7 +136,7 @@ function pushLever(player, lever) {
     var leverID = parseInt(lever.name.charAt(5)) - 1;
     if (map.objects['Lever'][leverID].type == "unlock_key") {
         if (useKey.isDown) {
-            lever.frame = 1;
+            lever.animations.play('flip');
             leverSound.play().onStop.addOnce(function () {
                 if (keyCreated == false) {
                     keys.children[leverID].visible = true;
@@ -148,7 +148,7 @@ function pushLever(player, lever) {
     }
     if (map.objects['Lever'][leverID].type == "unlock_door") {
         if (useKey.isDown) {
-            lever.frame = 1;
+            lever.animations.play('flip');
             leverSound.play().onStop.addOnce(function () {
                 doors.children[leverID].body.gravity.y = -20;
                 doorSound.play();
@@ -157,7 +157,7 @@ function pushLever(player, lever) {
     }
     if (map.objects['Lever'][leverID].type == "open_boss") {
         if (useKey.isDown) {
-            lever.frame = 1;
+            lever.animations.play('flip');
             leverSound.play().onStop.addOnce(function () {
                 boss.children[0].animations.play('open');
             }, this);
