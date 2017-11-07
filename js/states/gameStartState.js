@@ -25,7 +25,10 @@ TexarkanaJohn.gameStartState.prototype = {
         game.stage.backgroundColor = '#000';
         
         menuMusic = game.add.audio('menuMusic');
-        menuMusic.play();
+        menuMusic.allowMultiple = false;
+        if (!menuMusic.isPlaying) {
+            menuMusic.play();
+        }
         
         var bg = game.add.image(0, 0, 'background');
 
@@ -93,6 +96,7 @@ TexarkanaJohn.gameStartState.prototype = {
     },
     
     goToHelp: function () {
+        menuMusic.stop();
         game.state.start('helpState');
     },
     
