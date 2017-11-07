@@ -46,20 +46,20 @@ TexarkanaJohn.gameStartState.prototype = {
         game.add.tween(text2).from({ alpha: 0}, 2000, Phaser.Easing.Quartic.In, true, 1000);
         
         ui_player = game.add.sprite(-80, game.height*0.54, 'ui_player');
-        ui_player.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
+        ui_player.animations.add('walk', [0, 1, 2, 3, 4, 5], 9, true);
         var whip = ui_player.animations.add('attack', [6, 7, 8, 9], 12, false);
         whip.onComplete.addOnce(function() {
             startButton.visible = true;
             var whipSound = game.add.audio('whipSound');
             whipSound.play();
-            ui_player.kill();
-            helpButton.visible = true;
-            game.add.tween(helpButton).to({alpha: 1}, 4000, null, true, 1000);
+            game.add.tween(startButton).to({x: game.width*0.5}, 500, Phaser.Easing.Elastic.Out, true);
+            game.add.tween(helpButton).to({y: game.height*0.85}, 1000, Phaser.Easing.Bounce.Out, true, 250);
+            game.add.tween(ui_player).to({alpha: 0}, 5000, null, true, 1000);
         });
         ui_player.animations.play('walk');
         this.playerAnimation();
         
-        startButton = game.add.button(game.width*0.5, game.height*0.64, 'startButton', this.goToGame);
+        startButton = game.add.button(game.width*0.4, game.height*0.63, 'startButton', this.goToGame);
         startButton.visible = false;
         startButton.anchor.setTo(0.5);
         startButton.tint = 0x000000;
@@ -67,9 +67,7 @@ TexarkanaJohn.gameStartState.prototype = {
         startButton.onInputDown.add(this.down, startButton);
         startButton.onInputOut.add(this.out, startButton);
         
-        helpButton = game.add.button(game.width*0.5, game.height*0.85, 'helpButton', this.goToHelp);
-        helpButton.visible = false;
-        helpButton.alpha = 0;
+        helpButton = game.add.button(game.width*0.5, game.height + 100, 'helpButton', this.goToHelp);
         helpButton.anchor.setTo(0.5);
         helpButton.tint = 0x000000;
         helpButton.onInputOver.add(this.over, helpButton);
@@ -100,8 +98,8 @@ TexarkanaJohn.gameStartState.prototype = {
     
     playerAnimation: function () {
         game.add.tween(ui_player).to({ 
-            x: game.width*0.3
-        }, 2600, null, true, 1000).onComplete.addOnce(function() {
+            x: game.width*0.2
+        }, 2000, null, true).onComplete.addOnce(function() {
             ui_player.animations.stop('walk');
             ui_player.animations.play('attack');
         });
