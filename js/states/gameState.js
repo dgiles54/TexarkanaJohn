@@ -282,7 +282,7 @@ TexarkanaJohn.gameState.prototype = {
         }
 
         // make player jump
-        if (jumpKey.justDown && (player.body.onFloor() || player.body.touching.down)) {
+        if ((cursors.up.isDown || cursors2.up.isDown) && (player.body.onFloor() || player.body.touching.down)) {
             player.body.velocity.y = -PLAYER_JUMP_SPEED;
             jumpSound.play();
         }

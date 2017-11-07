@@ -1,14 +1,13 @@
-var cursors, useKey, attackKey, cursors2, jumpKey, debugKey;
+var cursors, useKey, attackKey, cursors2, debugKey;
 
 function initializeControls() {
     cursors = game.input.keyboard.createCursorKeys();
     useKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
     dropKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
-    attackKey = game.input.keyboard.addKey(Phaser.Keyboard.CONTROL);
+    attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     attackKey.onDown.add(function () {
         attack();
     }, this);
-    jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     cursors2 = {
         up: game.input.keyboard.addKey(Phaser.Keyboard.W),
         down: game.input.keyboard.addKey(Phaser.Keyboard.S),

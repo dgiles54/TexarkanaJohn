@@ -102,7 +102,12 @@ function attack() {
 }
 
 function climbLadder() {
-
+    // If player on floor, automatically set to first frame of ladder climb animation
+    if (player.body.onFloor()) {
+        player.animations.stop('walk', 0);
+        player.frame = 10;
+    }
+    
     // kill gravity
     if (player.climbing) {
         player.animations.stop('walk', 0);
