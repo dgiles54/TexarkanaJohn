@@ -1,7 +1,8 @@
 var TexarkanaJohn = TexarkanaJohn || {};
 
-var button;
+var startButton, helpButton;
 var menuMusic;
+var player2;
 
 TexarkanaJohn.gameStartState = function () {};
 TexarkanaJohn.gameStartState.prototype = {
@@ -11,7 +12,10 @@ TexarkanaJohn.gameStartState.prototype = {
         game.load.bitmapFont('messeTitle', 'assets/fonts/messeTitle.png', 'assets/fonts/messeTitle.xml');
         game.load.image('background', 'assets/sprites/background.png');
         game.load.image('startButton', 'assets/sprites/startButton.png');
+        game.load.image('helpButton', 'assets/sprites/helpButton.png');
+        game.load.spritesheet('player2', 'assets/sprites/player2.png', 78, 68);
         game.load.audio('menuMusic', 'assets/audio/Escape_from_the_Temple.mp3');
+        game.load.audio('whipSound', 'assets/audio/whip.wav');
     },
 
     create: function () {
@@ -40,43 +44,62 @@ TexarkanaJohn.gameStartState.prototype = {
         text2.anchor.setTo(0.5);
         text2.tint = 0x000000;
         game.add.tween(text2).from({ alpha: 0}, 2000, Phaser.Easing.Quartic.In, true, 1000);
-
-        button = game.add.button(game.width*0.5, game.height*0.64, 'startButton', this.actionOnClick);
-        button.anchor.setTo(0.5);
-        button.tint = 0x000000;
-        button.onInputOver.add(this.over);
-        button.onInputDown.add(this.down);
-        button.onInputOut.add(this.out);
         
-        var controls1 = game.add.bitmapText(game.width*0.5, game.height*0.78, 'messe', 'Arrow keys to move', 20);
-        controls1.anchor.setTo(0.5);
-        controls1.tint = 0x000000;
-        var controls2 = game.add.bitmapText(game.width*0.5, game.height*0.83, 'messe', 'Space to attack', 20);
-        controls2.anchor.setTo(0.5);
-        controls2.tint = 0x000000;
-        var controls3 = game.add.bitmapText(game.width*0.5, game.height*0.88, 'messe', 'E to use', 20);
-        controls3.anchor.setTo(0.5);
-        controls3.tint = 0x000000;
+        player2 = game.add.sprite(-80, game.height*0.54, 'player2');
+        player2.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
+        var whip = player2.animations.add('attack', [6, 7, 8, 9], 12, false);
+        whip.onComplete.addOnce(function() {
+            startButton.visible = true;
+            var whipSound = game.add.audio('whipSound');
+            whipSound.play();
+            game.add.tween(player2).to({alpha: 0}, 2000, null, true);
+        });
+        player2.animations.play('walk');
+        this.playerAnimation();
         
-        var controls4 = game.add.bitmapText(game.width*0.5, game.height*0.93, 'messe', 'SPACE to use', 20);
-        controls4.anchor.setTo(0.5);
-        controls4.tint = 0x000000;
+        startButton = game.add.button(game.width*0.5, game.height*0.64, 'startButton', this.goToGame);
+        startButton.visible = false;
+        startButton.anchor.setTo(0.5);
+        startButton.tint = 0x000000;
+        startButton.onInputOver.add(this.over, startButton);
+        startButton.onInputDown.add(this.down, startButton);
+        startButton.onInputOut.add(this.out, startButton);
+        
+        helpButton = game.add.button(game.width*0.5, game.height*0.85, 'helpButton', this.goToHelp);
+        helpButton.anchor.setTo(0.5);
+        helpButton.tint = 0x000000;
+        helpButton.onInputOver.add(this.over, helpButton);
+        helpButton.onInputDown.add(this.down, helpButton);
+        helpButton.onInputOut.add(this.out, helpButton);
     },
     
     over: function () {
-        button.scale.setTo(1.2);
+        this.scale.setTo(1.2);
     },
     
     down: function(){
-        button.tint = 0x333333;
+        this.tint = 0x333333;
     },
     
     out: function(){
-        button.scale.setTo(1);
+        this.scale.setTo(1);
     },
 
-    actionOnClick: function () {
+    goToGame: function () {
         menuMusic.stop();
         game.state.start('gameState');
+    },
+    
+    goToHelp: function () {
+        game.state.start('helpState');
+    },
+    
+    playerAnimation: function () {
+        game.add.tween(player2).to({ 
+            x: game.width*0.3
+        }, 2600, null, true, 1000).onComplete.addOnce(function() {
+            player2.animations.stop('walk');
+            player2.animations.play('attack');
+        });
     }
 };
