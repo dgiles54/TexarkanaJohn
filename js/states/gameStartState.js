@@ -2,7 +2,7 @@ var TexarkanaJohn = TexarkanaJohn || {};
 
 var startButton, helpButton;
 var menuMusic;
-var player2;
+var ui_player;
 
 TexarkanaJohn.gameStartState = function () {};
 TexarkanaJohn.gameStartState.prototype = {
@@ -10,10 +10,10 @@ TexarkanaJohn.gameStartState.prototype = {
         game.load.bitmapFont('raineyhearts', 'assets/fonts/raineyhearts.png', 'assets/fonts/raineyhearts.xml');
         game.load.bitmapFont('messe', 'assets/fonts/messe.png', 'assets/fonts/messe.xml');
         game.load.bitmapFont('messeTitle', 'assets/fonts/messeTitle.png', 'assets/fonts/messeTitle.xml');
-        game.load.image('background', 'assets/sprites/background.png');
-        game.load.image('startButton', 'assets/sprites/startButton.png');
-        game.load.image('helpButton', 'assets/sprites/helpButton.png');
-        game.load.spritesheet('player2', 'assets/sprites/player2.png', 78, 68);
+        game.load.image('background', 'assets/sprites/ui/background.png');
+        game.load.image('startButton', 'assets/sprites/ui/startButton.png');
+        game.load.image('helpButton', 'assets/sprites/ui/helpButton.png');
+        game.load.spritesheet('ui_player', 'assets/sprites/ui/ui_player.png', 78, 68);
         game.load.audio('menuMusic', 'assets/audio/Escape_from_the_Temple.mp3');
         game.load.audio('whipSound', 'assets/audio/whip.wav');
     },
@@ -45,16 +45,18 @@ TexarkanaJohn.gameStartState.prototype = {
         text2.tint = 0x000000;
         game.add.tween(text2).from({ alpha: 0}, 2000, Phaser.Easing.Quartic.In, true, 1000);
         
-        player2 = game.add.sprite(-80, game.height*0.54, 'player2');
-        player2.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
-        var whip = player2.animations.add('attack', [6, 7, 8, 9], 12, false);
+        ui_player = game.add.sprite(-80, game.height*0.54, 'ui_player');
+        ui_player.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
+        var whip = ui_player.animations.add('attack', [6, 7, 8, 9], 12, false);
         whip.onComplete.addOnce(function() {
             startButton.visible = true;
             var whipSound = game.add.audio('whipSound');
             whipSound.play();
-            game.add.tween(player2).to({alpha: 0}, 2000, null, true);
+            ui_player.kill();
+            helpButton.visible = true;
+            game.add.tween(helpButton).to({alpha: 1}, 4000, null, true, 1000);
         });
-        player2.animations.play('walk');
+        ui_player.animations.play('walk');
         this.playerAnimation();
         
         startButton = game.add.button(game.width*0.5, game.height*0.64, 'startButton', this.goToGame);
@@ -66,6 +68,8 @@ TexarkanaJohn.gameStartState.prototype = {
         startButton.onInputOut.add(this.out, startButton);
         
         helpButton = game.add.button(game.width*0.5, game.height*0.85, 'helpButton', this.goToHelp);
+        helpButton.visible = false;
+        helpButton.alpha = 0;
         helpButton.anchor.setTo(0.5);
         helpButton.tint = 0x000000;
         helpButton.onInputOver.add(this.over, helpButton);
@@ -95,11 +99,11 @@ TexarkanaJohn.gameStartState.prototype = {
     },
     
     playerAnimation: function () {
-        game.add.tween(player2).to({ 
+        game.add.tween(ui_player).to({ 
             x: game.width*0.3
         }, 2600, null, true, 1000).onComplete.addOnce(function() {
-            player2.animations.stop('walk');
-            player2.animations.play('attack');
+            ui_player.animations.stop('walk');
+            ui_player.animations.play('attack');
         });
     }
 };
