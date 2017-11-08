@@ -6,7 +6,7 @@ var PLAYER_BOUNCE = 0.02;
 var PLAYER_DRAG = 0;
 
 var player;
-// var health = 5;
+var hitboxes, whipHitbox;
 
 function createPlayer() {
     player = game.add.sprite(startPointX, startPointY, 'player');
@@ -34,6 +34,9 @@ function createPlayer() {
     player.attackAnimation.onComplete.add(function () {
         player.frame = 0;
         player.isAttacking = false;
+        if (whipHitbox) {
+            whipHitbox.destroy();
+        }
     });
     player.animations.add('climb', [10, 11, 12, 11], 5, true);
     player.deathAnimation = player.animations.add('death', [13, 14, 15, 16], 12, false);
@@ -50,55 +53,68 @@ function createPlayer() {
     player.bloodEmitter.setAngle(-50, -130, 50, 200);
     player.bloodEmitter.setScale(1, 2, 1, 2);
     player.bloodEmitter.setSize(30, 10);
+    // Hitboxes
+    hitboxes = game.add.group();
+    hitboxes.enableBody = true;
+    player.addChild(hitboxes);
 }
 
 function attack() {
     if (game.time.now > player.nextAttack) {
-        player.isAttacking = true;
-        // random for heart drop chance
-
-        player.nextAttack = game.time.now + PLAYER_ATTACK_RATE;
-        player.animations.play('attack');
         console.log('Attacking');
-
-        // kill snake
-        snakes.forEach(function (snake) {
-            if (player.overlap(snake) && player.isAttacking) {
-                var chance = Math.random();
-                snake.lives -= 1;
-                dmgEnemy(snake);
-                if (snake.lives <= 0) {
-                    snake.body.velocity.x = 0;
-                    anim = snake.animations.play('die');
-                    snake.body.enable = false;
-                    anim.killOnComplete = true;
-                    if (chance < 0.35) {
-                        dropHeart(snake.x, snake.y);
-                    }
-                    snake.destroy();
-                }
-            }
-        });
-
-        // kill spider
-        spiders.forEach(function (spider) {
-            if (player.overlap(spider) && player.isAttacking) {
-                spider.body.velocity.x = 0;
-                spider.lives -= 1;
-                dmgEnemy(spider);
-                var chance = Math.random();
-                if (spider.lives <= 0) {
-                    anim = spider.animations.play('die');
-                    spider.body.enable = false;
-                    anim.killOnComplete = true;
-                    if (chance < 0.35) {
-                        dropHeart(spider.x, spider.y);
-                    }
-                    spider.destroy();
-                }
-            }
-        });
+        player.nextAttack = game.time.now + PLAYER_ATTACK_RATE;
+        player.isAttacking = true;
+        player.animations.play('attack');
+        whipHitbox = hitboxes.create(40, 4, 'whipHitbox');
+        whipHitbox.alpha = 0;
     }   
+}
+
+function hitEnemy(hitbox, enemy) {
+    if (player.frame == 9) {
+        console.log('Hit enemy');
+        hitbox.kill();
+        // Decrease hp of enemy
+        enemy.hp -= 1;
+        // If hp <= 0, kill enemy
+        if (enemy.hp <= 0) {
+            enemy.body.velocity.x = 0;
+            enemy.body.enable = false;
+            var anim = enemy.animations.play('die');
+            anim.onComplete.addOnce(function () {
+                var chance = Math.random();
+                if (chance < 0.35) {
+                    dropHeart(enemy.x, enemy.y);
+                }
+                enemy.destroy();
+            });
+        } else {
+            // Play enemy hit sound
+            if (enemy.key == 'spider') {
+                spiderDmg.play();
+            }
+            if (enemy.key == 'snake') {
+                snakeDmg.play();
+            }
+            // Enemy knockback
+            if (player.x < enemy.x) {
+                enemy.body.velocity.x = 100;
+            } else {
+                enemy.body.velocity.x = -100;
+            }
+            enemy.body.velocity.y = -100;
+            // Enemy hit animation
+            var anim = enemy.animations.play('dmg');
+            anim.onComplete.add(function (){
+                if (enemy.goingRight) {
+                    enemy.body.velocity.x = 100;
+                } else if (enemy.goingLeft) {
+                    enemy.body.velocity.x = -100;
+                }        
+                enemy.animations.play('move');
+            });
+        }
+    }
 }
 
 function climbLadder() {

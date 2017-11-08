@@ -15,7 +15,7 @@ function initializeSnakes() {
         snake.anchor.setTo(0.5, 0);
         snake.body.immovable = true;
         snake.body.bounce.x = 1;
-        snake.lives = 3;
+        snake.hp = 3;
         snake.goingRight = true;
     });
     map.setCollision(19);
@@ -46,7 +46,7 @@ function initializeSpider(player, spiderSpawner) {
         game.physics.arcade.collide(spider,layerPlatforms,spider.body.velocity.x = 100);
         spider.scale.setTo(0.5, 0.5);
         spider.body.bounce.x = 1;
-        spider.lives = 3;
+        spider.hp = 2;
     });
 }
 

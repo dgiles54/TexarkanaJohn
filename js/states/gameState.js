@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 8,
+var levelNum = 1,
     maxLevels = 8;
 
 WebFontConfig = {
@@ -72,6 +72,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.image('spear', 'assets/sprites/spear.png');
         game.load.image('box', 'assets/sprites/Box.png');
         game.load.image('bloodParticle', 'assets/sprites/bloodParticle.png');
+        game.load.image('whipHitbox', 'assets/sprites/whipHitbox.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
         game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
         game.load.audio('ouch', 'assets/audio/ouch.wav');
@@ -230,6 +231,8 @@ TexarkanaJohn.gameState.prototype = {
         //     game.physics.arcade.overlap(player, hearts, healPlayer);
         // }
         game.physics.arcade.overlap(player, hearts, healPlayer);
+        game.physics.arcade.overlap(whipHitbox, snakes, hitEnemy);
+        game.physics.arcade.overlap(whipHitbox, spiders, hitEnemy);
         
         
         
@@ -296,7 +299,6 @@ TexarkanaJohn.gameState.prototype = {
         if (player.frame == 9) {
             whipSound.play();
         }
-        
 
         // if health reaches 0, game over
         if (player.health == 0) {
@@ -382,6 +384,9 @@ TexarkanaJohn.gameState.prototype = {
 //        });
 //        game.debug.body(player);
 //        game.debug.rectangle(player.bloodEmitter);
+//        hitboxes.forEach(function(hb) {
+//            game.debug.spriteBounds(hb);
+//        });
     }
 };
 
@@ -466,30 +471,6 @@ function healPlayer(player, heart) {
         heart.kill();
         heart.destroy();
     }
-}
-
-function dmgEnemy(enemy) {
-    if (enemy.key == 'spider') {
-        spiderDmg.play();
-    }
-    if (enemy.key == 'snake') {
-        snakeDmg.play();
-    }
-    if (player.x < enemy.x) {
-        enemy.body.velocity.x = 100;
-    } else {
-        enemy.body.velocity.x = -100;
-    }
-    enemy.body.velocity.y = -100;
-    anim = enemy.animations.play('dmg');
-    anim.onComplete.add(function (){
-        if (enemy.goingRight){
-        enemy.body.velocity.x = 100;
-        } else if (enemy.goingLeft){
-            enemy.body.velocity.x = -100;
-        }        
-        enemy.animations.play('move');
-    });
 }
 
 function playerDeath() {
