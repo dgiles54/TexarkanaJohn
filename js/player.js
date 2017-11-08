@@ -65,8 +65,8 @@ function attack() {
         player.nextAttack = game.time.now + PLAYER_ATTACK_RATE;
         player.isAttacking = true;
         player.animations.play('attack');
-        whipHitbox = hitboxes.create(40, 4, 'whipHitbox');
-        whipHitbox.alpha = 0;
+        whipHitbox = hitboxes.create(22, 4, 'whipHitbox');
+        whipHitbox.alpha = 0; // set to 0.5 for debugging
     }   
 }
 
