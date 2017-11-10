@@ -241,7 +241,7 @@ function moveBox(player, box) {
         playerBox = player.addChild(box);
         playerBox.body.gravity.y = 0;
         playerBox.body.velocity.x = 0;
-        player.children[0].body.x = 25;
-        player.children[0].body.y = -25;
+        playerBox.body.x = 25;
+        playerBox.body.y = -25;
     }
 }
