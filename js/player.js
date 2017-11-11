@@ -175,7 +175,7 @@ function pushLever(player, lever) {
         if (useKey.isDown) {
             lever.animations.play('flip');
             leverSound.play().onStop.addOnce(function () {
-                boss.children[0].animations.play('open');
+                boss.animations.play('open');
             }, this);
         }    
     }

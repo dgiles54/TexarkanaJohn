@@ -37,13 +37,15 @@ TexarkanaJohn.gameState.prototype = {
         game.load.script('darts.js', 'js/darts.js');
         game.load.script('boulders.js', 'js/boulders.js');
         game.load.script('input.js', 'js/input.js');
+        game.load.script('boss.js', 'js/boss.js');
         game.load.tilemap('level1', 'assets/tilemaps/Level1.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level2', 'assets/tilemaps/Level2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level3', 'assets/tilemaps/Level3.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level4', 'assets/tilemaps/Level4.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level5', 'assets/tilemaps/Level5.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('level6', 'assets/tilemaps/Level6.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.tilemap('level7', 'assets/tilemaps/Level7.json', null, Phaser.Tilemap.TILED_JSON); game.load.tilemap('level8', 'assets/tilemaps/Boss.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('level7', 'assets/tilemaps/Level7.json', null, Phaser.Tilemap.TILED_JSON); 
+        game.load.tilemap('level8', 'assets/tilemaps/Boss.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
         game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
@@ -58,9 +60,10 @@ TexarkanaJohn.gameState.prototype = {
         game.load.spritesheet('torch', 'assets/sprites/torch.png', 10, 23);
         game.load.spritesheet('spider', 'assets/sprites/spider.png', 72, 44,6);
         game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128);
-        game.load.spritesheet('boss', 'assets/sprites/boss_spritesheet.png', 332, 410);
+        game.load.spritesheet('boss', 'assets/sprites/boss_body.png', 332, 410, 8);
+        game.load.spritesheet('boss_soul', 'assets/sprites/boss_soul.png', 32, 32, 5);
+        game.load.image('boss_hand', 'assets/sprites/boss_hand.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
-        game.load.image('bossHand', 'assets/sprites/boss_hand.png');
         game.load.image('key', 'assets/sprites/key.png');
         game.load.image('keyEmpty', 'assets/sprites/keyEmpty.png');
         game.load.image('keyHole', 'assets/sprites/keyHole.png');
@@ -106,6 +109,9 @@ TexarkanaJohn.gameState.prototype = {
 
         // Load level      
         loadLevel(levelNum);
+        if (levelNum == 8) {
+            createBoss();
+        }
 
         // Set map collisions
         map.setCollisionBetween(1, 10, true, 'Wall');
