@@ -120,7 +120,7 @@ function climbLadder() {
     // If player on floor, automatically set to first frame of ladder climb animation
     if (player.body.onFloor()) {
         player.animations.stop('walk', 0);
-        player.frame = 10;
+        player.frame = 11;
     }
     
     // kill gravity
