@@ -11,7 +11,7 @@ var hitboxes, whipHitbox;
 function createPlayer() {
     player = game.add.sprite(startPointX, startPointY, 'player');
     player.scale.setTo(1, 1);
-    player.anchor.setTo(0.33, 0.5);
+    player.anchor.setTo(0.25, 0.5);
     // Attributes
     player.health;
     player.isAttacking = false;
@@ -29,8 +29,7 @@ function createPlayer() {
     player.body.collideWorldBounds = true;
     // Animation
     player.animations.add('walk', [0, 1, 2, 3, 4, 5], 8, true);
-    player.animations.add('idle', [13, 14], 2, true);
-    player.attackAnimation = player.animations.add('attack', [6, 7, 8, 9], 15, false);
+    player.attackAnimation = player.animations.add('attack', [6, 7, 8, 9, 10], 15, false);
     player.attackAnimation.onComplete.add(function () {
         player.frame = 0;
         player.isAttacking = false;
@@ -38,8 +37,8 @@ function createPlayer() {
             whipHitbox.destroy();
         }
     });
-    player.animations.add('climb', [10, 11, 12, 11], 5, true);
-    player.deathAnimation = player.animations.add('death', [13, 14, 15, 16], 12, false);
+    player.animations.add('climb', [11, 12, 13, 12], 5, true);
+    player.deathAnimation = player.animations.add('death', [14, 15, 16, 17], 12, false);
     player.deathAnimation.onComplete.add(function () {
         templeMusic.stop();
         // health = player.health;
@@ -65,13 +64,13 @@ function attack() {
         player.nextAttack = game.time.now + PLAYER_ATTACK_RATE;
         player.isAttacking = true;
         player.animations.play('attack');
-        whipHitbox = hitboxes.create(22, 4, 'whipHitbox');
+        whipHitbox = hitboxes.create(18, 6, 'whipHitbox');
         whipHitbox.alpha = 0; // set to 0.5 for debugging
     }   
 }
 
 function hitEnemy(hitbox, enemy) {
-    if (player.frame == 9) {
+    if (player.frame == 10) {
         console.log('Hit enemy');
         hitbox.kill();
         // Decrease hp of enemy

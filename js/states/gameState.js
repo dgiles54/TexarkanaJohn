@@ -48,7 +48,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.tilemap('level8', 'assets/tilemaps/Boss.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tileset', 'assets/tilesets/tileset.png');
         game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
-        game.load.spritesheet('player', 'assets/sprites/player.png', 78, 66);
+        game.load.spritesheet('player', 'assets/sprites/player.png', 97, 66);
         game.load.spritesheet('snake', 'assets/sprites/snake.png', 96, 48);
         game.load.spritesheet('f_block', 'assets/sprites/fall_block.png', 32, 32, 3, 0, 1);
         game.load.spritesheet('leverL', 'assets/sprites/lever_left.png', 32, 32);
