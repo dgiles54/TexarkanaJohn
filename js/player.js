@@ -191,6 +191,8 @@ function pushLever(player, lever) {
             lever.animations.play('flip');
             leverSound.play().onStop.addOnce(function () {
                 boss.animations.play('open');
+                fireballLoop = game.time.events.loop(5000, fireballReset); // shoot fireballs every n seconds
+                bossDarts();
             }, this);
         }    
     }

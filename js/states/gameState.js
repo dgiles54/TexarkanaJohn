@@ -240,8 +240,6 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.overlap(player, hearts, healPlayer);
         game.physics.arcade.overlap(whipHitbox, snakes, hitEnemy);
         game.physics.arcade.overlap(whipHitbox, spiders, hitEnemy);
-        game.physics.arcade.overlap(whipHitbox, boss.soul, hitEnemy);
-        game.physics.arcade.overlap(player, fireball.bullets, fireballDmgPlayer);
         
         
         
@@ -385,10 +383,21 @@ TexarkanaJohn.gameState.prototype = {
         player.bloodEmitter.x = player.x;
         player.bloodEmitter.y = player.y + 60;
         
-        // Boss
-        // If activated, shoot fireballs at player
-        if (boss.activated) {
-            fireball.fireAtXY(player.x, player.y);
+        // Check for boss
+        if (boss) {
+            // If activated, shoot fireballs at player
+            if (boss.activated) {             
+                game.physics.arcade.overlap(whipHitbox, boss.soul, hitEnemy);
+                game.physics.arcade.overlap(player, fireball.bullets, fireballDmgPlayer);
+                game.physics.arcade.overlap(player, bDart1.bullets, dartDmgPlayer);
+                game.physics.arcade.overlap(player, bDart2.bullets, dartDmgPlayer);
+                game.physics.arcade.overlap(player, bDart3.bullets, dartDmgPlayer);
+                game.physics.arcade.overlap(player, bDart4.bullets, dartDmgPlayer);
+
+                if (fireball.shots < 3) {
+                    fireball.fireAtXY(player.x, player.y);
+                }
+            }
         }
     },
 
@@ -403,6 +412,7 @@ TexarkanaJohn.gameState.prototype = {
 //            game.debug.spriteBounds(hb);
 //        });
 //        game.debug.body(boss.soul);
+//        fireball.debug();
     }
 };
 

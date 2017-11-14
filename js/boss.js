@@ -1,4 +1,4 @@
-var boss, fireball;
+var boss;
 
 function createBoss() {
 	//Inputs
@@ -43,12 +43,9 @@ function createBoss() {
     // Fireballs
     fireball = game.add.weapon(10, 'boss_fireball');
     fireball.addBulletAnimation('fireball', [0, 1, 2, 3, 2, 1], 10, true);
-    fireball.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-    fireball.bulletSpeed = 225;
-    fireball.bulletSpeedVariance = 25;          // fireballs have velocity between 200 and 250
-    fireball.fireRate = 4000;
-    fireball.fireRateVariance = 1000;           // sets fire rate to between 3 and 5 seconds
-    fireball.trackSprite(boss.soul, 0, -6);     // shoot fireball from soul
+    fireball.trackSprite(boss, 165, -20);
+    fireball.bulletSpeed = 200;
+    fireball.fireRate = 500;
 }
 
 function fireballDmgPlayer(player, fireball) {
@@ -71,4 +68,37 @@ function fireballDmgPlayer(player, fireball) {
     player.body.velocity.x = 0;
     player.body.acceleration.x = 0;
     fireball.kill();
+}
+
+function fireballReset() {
+    if (fireball.shots > 1) {
+        fireball.shots = 0;
+        console.log('reset shots');
+    }
+}
+
+function bossDarts() {
+    bDart1 = game.add.weapon(1, 'blowdart');
+    bDart1.fireFrom.setTo(game.world.width, 0, 1, 1);
+    bDart2 = game.add.weapon(1, 'blowdart');
+    bDart2.fireFrom.setTo(game.world.width, game.world.height*0.33, 1, 1);
+    bDart3 = game.add.weapon(1, 'blowdart');
+    bDart3.fireFrom.setTo(game.world.width, game.world.height*0.66, 1, 1);
+    bDart4 = game.add.weapon(1, 'blowdart');
+    bDart4.fireFrom.setTo(game.world.width, game.world.height, 1, 1);
+    
+    bDart1.bulletAngleOffset = 180;
+    bDart2.bulletAngleOffset = 180;
+    bDart3.bulletAngleOffset = 180;
+    bDart4.bulletAngleOffset = 180;
+    
+    bDart1.bulletSpeed = 450;
+    bDart2.bulletSpeed = 450;
+    bDart3.bulletSpeed = 450;
+    bDart4.bulletSpeed = 450;
+    
+    bDart1.fireAtXY(player.x, player.y - 10);
+    bDart2.fireAtXY(player.x, player.y - 5);
+    bDart3.fireAtXY(player.x, player.y + 5);
+    bDart4.fireAtXY(player.x, player.y + 10);
 }

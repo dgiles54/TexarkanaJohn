@@ -3,6 +3,8 @@ var startPointX, startPointY, endPoint;
 var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, layerSpikes, layerLava;
 var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, dartLoopGroup, spears, boxes;
 var bossHands, bossObj;
+var fireball, fireballLoop;
+var bDart1, bDart2, bDart3, bDart4;
 
 function loadLevel(levelNum) {
     templeMusic.play();
