@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 1,
+var levelNum = 8,
     maxLevels = 8;
 
 WebFontConfig = {
@@ -62,6 +62,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.spritesheet('spiderWeb', 'assets/sprites/spiderWeb.png', 128, 128);
         game.load.spritesheet('boss', 'assets/sprites/boss_body.png', 332, 410, 8);
         game.load.spritesheet('boss_soul', 'assets/sprites/boss_soul.png', 32, 32, 5);
+        game.load.spritesheet('boss_fireball', 'assets/sprites/boss_fireball.png', 32, 17);
         game.load.image('boss_hand', 'assets/sprites/boss_hand.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
@@ -239,6 +240,8 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.overlap(player, hearts, healPlayer);
         game.physics.arcade.overlap(whipHitbox, snakes, hitEnemy);
         game.physics.arcade.overlap(whipHitbox, spiders, hitEnemy);
+        game.physics.arcade.overlap(whipHitbox, boss.soul, hitEnemy);
+        game.physics.arcade.overlap(player, fireball.bullets, fireballDmgPlayer);
         
         
         
@@ -381,6 +384,12 @@ TexarkanaJohn.gameState.prototype = {
         
         player.bloodEmitter.x = player.x;
         player.bloodEmitter.y = player.y + 60;
+        
+        // Boss
+        // If activated, shoot fireballs at player
+        if (boss.activated) {
+            fireball.fireAtXY(player.x, player.y);
+        }
     },
 
     // DEBUG
@@ -393,6 +402,7 @@ TexarkanaJohn.gameState.prototype = {
 //        hitboxes.forEach(function(hb) {
 //            game.debug.spriteBounds(hb);
 //        });
+//        game.debug.body(boss.soul);
     }
 };
 

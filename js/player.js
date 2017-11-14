@@ -1,4 +1,4 @@
-var PLAYER_ATTACK_RATE = 200;
+var PLAYER_ATTACK_RATE = 400;
 var PLAYER_RUN_SPEED = 200;
 var PLAYER_JUMP_SPEED = 305;
 var PLAYER_GRAVITY = 800;
@@ -75,43 +75,54 @@ function hitEnemy(hitbox, enemy) {
         hitbox.kill();
         // Decrease hp of enemy
         enemy.hp -= 1;
-        // If hp <= 0, kill enemy
-        if (enemy.hp <= 0) {
-            enemy.body.velocity.x = 0;
-            enemy.body.enable = false;
-            var anim = enemy.animations.play('die');
-            anim.onComplete.addOnce(function () {
-                var chance = Math.random();
-                if (chance < 0.35) {
-                    dropHeart(enemy.x, enemy.y);
-                }
-                enemy.destroy();
-            });
+        
+        if (enemy.key == 'boss_soul') {
+            // Code for hitting boss
+            
+            boss.soul.animations.play('hit');
+            game.add.tween(enemy).to({tint: 0xFF0000, alpha: 0.8}, 100, null, true);
+            game.add.tween(enemy).to({tint: 0xFFFFFF, alpha: 1}, 200, null, true, 100);
         } else {
-            // Play enemy hit sound
-            if (enemy.key == 'spider') {
-                spiderDmg.play();
-            }
-            if (enemy.key == 'snake') {
-                snakeDmg.play();
-            }
-            // Enemy knockback
-            if (player.x < enemy.x) {
-                enemy.body.velocity.x = 100;
+            // Code for hitting all other enemies
+            
+            // If hp <= 0, kill enemy
+            if (enemy.hp <= 0) {
+                enemy.body.velocity.x = 0;
+                enemy.body.enable = false;
+                var anim = enemy.animations.play('die');
+                anim.onComplete.addOnce(function () {
+                    var chance = Math.random();
+                    if (chance < 0.35) {
+                        dropHeart(enemy.x, enemy.y);
+                    }
+                    enemy.destroy();
+                });
             } else {
-                enemy.body.velocity.x = -100;
-            }
-            enemy.body.velocity.y = -100;
-            // Enemy hit animation
-            var anim = enemy.animations.play('dmg');
-            anim.onComplete.add(function (){
-                if (enemy.goingRight) {
+                // Play enemy hit sound
+                if (enemy.key == 'spider') {
+                    spiderDmg.play();
+                }
+                if (enemy.key == 'snake') {
+                    snakeDmg.play();
+                }
+                // Enemy knockback
+                if (player.x < enemy.x) {
                     enemy.body.velocity.x = 100;
-                } else if (enemy.goingLeft) {
+                } else {
                     enemy.body.velocity.x = -100;
-                }        
-                enemy.animations.play('move');
-            });
+                }
+                enemy.body.velocity.y = -100;
+                // Enemy hit animation
+                var anim = enemy.animations.play('dmg');
+                anim.onComplete.add(function (){
+                    if (enemy.goingRight) {
+                        enemy.body.velocity.x = 100;
+                    } else if (enemy.goingLeft) {
+                        enemy.body.velocity.x = -100;
+                    }        
+                    enemy.animations.play('move');
+                });
+            }
         }
     }
 }
@@ -123,10 +134,15 @@ function climbLadder() {
         player.frame = 11;
     }
     
-    // kill gravity
+    // kill gravity, kill any hitboxes
     if (player.climbing) {
         player.animations.stop('walk', 0);
         player.body.gravity.y = 0;
+        
+        if (whipHitbox) {
+            whipHitbox.destroy();
+        }
+        player.isAttacking = false; // fixes ladder climb animation bug
     }
 
     // movement/climb

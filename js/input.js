@@ -6,7 +6,9 @@ function initializeControls() {
     dropKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
     attackKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     attackKey.onDown.add(function () {
-        attack();
+        if (!player.climbing) {
+            attack();
+        }
     }, this);
     cursors2 = {
         up: game.input.keyboard.addKey(Phaser.Keyboard.W),
