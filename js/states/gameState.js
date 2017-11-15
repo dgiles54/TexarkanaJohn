@@ -75,6 +75,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.image('thoughtBubble', 'assets/sprites/thoughtBubble.png');
         game.load.image('spear', 'assets/sprites/spear.png');
         game.load.image('box', 'assets/sprites/Box.png');
+        game.load.image('boxStopper', 'assets/sprites/blockStop.png');
         game.load.image('bloodParticle', 'assets/sprites/bloodParticle.png');
         game.load.image('whipHitbox', 'assets/sprites/whipHitbox.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
@@ -208,7 +209,7 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.collide(boxes, layerPlatforms);
         game.physics.arcade.collide(player, layerLadders);
         game.physics.arcade.collide(player, doors);
-        game.physics.arcade.collide(player, boxes, moveBox);
+        game.physics.arcade.collide(player, boxes);
         game.physics.arcade.collide(player, endPoint, nextLevel);
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
@@ -220,6 +221,7 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.overlap(player, spiders, dmgPlayer);
         game.physics.arcade.overlap(player, darts, dartDmgPlayer);
         game.physics.arcade.collide(player, layerLava);
+        game.physics.arcade.collide(boxes, boxStoppers);
         game.physics.arcade.collide(player, layerSpikes);
         game.physics.arcade.collide(snakes, layerCollisions);
         game.physics.arcade.collide(snakes, layerPlatforms);
@@ -372,13 +374,13 @@ TexarkanaJohn.gameState.prototype = {
             box.body.velocity.x = 0;
         });
         
-        if (player.holdingBox == true && dropKey.isDown) {
-            boxDrop.play();
-            player.children[0].destroy();
-            box = boxes.create(player.body.x-55, player.body.y-25, 'box');
-            box.body.gravity.y = 500;
-            player.holdingBox = false;
-        }
+//        if (player.holdingBox == true && dropKey.isDown) {
+//            boxDrop.play();
+//            player.children[0].destroy();
+//            box = boxes.create(player.body.x-55, player.body.y-25, 'box');
+//            box.body.gravity.y = 500;
+//            player.holdingBox = false;
+//        }
         
         player.bloodEmitter.x = player.x;
         player.bloodEmitter.y = player.y + 60;

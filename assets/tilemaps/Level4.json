@@ -13,6 +13,40 @@
         }, 
         {
          "draworder":"topdown",
+         "name":"BoxStoppers",
+         "objects":[
+                {
+                 "gid":32,
+                 "height":32,
+                 "id":132,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":192,
+                 "y":512
+                }, 
+                {
+                 "gid":32,
+                 "height":32,
+                 "id":133,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":0,
+                 "y":512
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "name":"spiderWebs",
          "objects":[],
          "opacity":1,
@@ -603,7 +637,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":132,
+ "nextobjectid":134,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

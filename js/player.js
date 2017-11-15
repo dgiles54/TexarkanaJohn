@@ -252,13 +252,13 @@ function burnWeb(player, spiderWeb) {
     }
 }
 
-function moveBox(player, box) {
-    if (useKey.isDown) {
-        player.holdingBox = true;
-        playerBox = player.addChild(box);
-        playerBox.body.gravity.y = 0;
-        playerBox.body.velocity.x = 0;
-        playerBox.body.x = 25;
-        playerBox.body.y = -25;
-    }
-}
+//function moveBox(player, box) {
+//    if (useKey.isDown) {
+//        player.holdingBox = true;
+//        playerBox = player.addChild(box);
+//        playerBox.body.gravity.y = 0;
+//        playerBox.body.velocity.x = 0;
+//        playerBox.body.x = 25;
+//        playerBox.body.y = -25;
+//    }
+//}
