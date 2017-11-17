@@ -49,23 +49,45 @@ function createBoss() {
     
     
     bossHands = game.add.group();
-    
-    map.createFromObjects('Bos_Hands', 32, 'boss_hand', 0, true, false, bossHands);
     bossHands.enableBody = true;
+    map.createFromObjects('Bos_Hands', 32, 'boss_hand', 0, true, false, bossHands);
+    
     bossHands.setAll('body.immovable', true);
-    bossHand1 = bossHands[0];
+    //bossHand1 = bossHands.children[0];
 //    console.log('# of bossHand children  '+bossHands.children.length);
     //bossHands.setAll('body.gravity.y', 900);
     
      //if(levelNum == 8) {
-            bossHandLoop1 = game.time.create(true);
-            bossHandLoop1.loop(2000, slamHands, this);
-            bossHandLoop1.start();
+    bossHandLoop1 = game.time.create(true);
+    bossHandLoop1.loop(2000, slamHands, this, bossHands.children[1]);
+    bossHandLoop1.start();
             
-            bossHandLoop2 = game.time.create(true);
-            bossHandLoop2.loop(2000, slamHands2, this);
-            bossHandLoop2.start();
-           
+   // bossHandLoop2 = game.time.create(true);
+//            bossHandLoop2.loop(2000, slamHands, this, bossHands.children[1]);
+//            bossHandLoop2.start();
+    
+//    boss.tween1 = game.add.tween(bossHands.children[0]).to({y: bossHands.children[0].body.y + 100 }, bossHands.children[0].body.x);
+//    boss.tween2 = game.add.tween(bossHands.children[0]).to({y: bossHands.children[0].body.y - 100 }, bossHands.children[0].body.x);
+//    boss.tween1.chain(boss.tween2);
+//    boss.tween2.chain(boss.tween1);
+//    boss.tween1.start();
+//    
+//    boss.tween1 = game.add.tween(bossHands.children[1]).to({y: bossHands.children[1].body.y + 100 }, bossHands.children[1].body.x);
+//    boss.tween2 = game.add.tween(bossHands.children[1]).to({y: bossHands.children[1].body.y - 100 }, bossHands.children[1].body.x);
+//    boss.tween1.chain(boss.tween2);
+//    boss.tween2.chain(boss.tween1);
+//    boss.tween1.start();
+    
+    bossHands.forEach(function(hand) {
+        hand.tween1 = game.add.tween(hand).to({y: hand.body.y + 100 }, hand.body.x);
+        hand.tween1.timeScale = 0.35;
+        hand.tween2 = game.add.tween(hand).to({y: hand.body.y }, hand.body.x);
+        hand.tween2.timeScale = 0.35;
+        hand.tween1.chain(hand.tween2);
+        hand.tween2.chain(hand.tween1);
+    })
+
+     bossHands.children[0].tween1.start();      
       //  }
 }
 
@@ -124,15 +146,17 @@ function bossDarts() {
     bDart4.fireAtXY(player.x, player.y + 10);
 }
 
-function slamHands() {
+function slamHands(bossHand) {
     
     console.log('got this far');
     console.log('# of bossHand children  '+bossHands.children.length);
-    bossHand1.body.velocity.y = 100;
-    
+    bossHand.tween1.start();
+    bossHandLoop1.pause();
+   // bossHand.body.gravity.y = 900;
+//    boss.tween1 = game.add.tween(bossHands.children[0]).to({y: bossHands.children[0].body.y + 50 }, bossHands.children[0].body.x);
+//}
 }
-
-function slamHands2() {
-    
-    bossHands[1].body.velocity.y = 100;
-}
+//function slamHands2() {
+//    
+//    bossHands.children[1].body.velocity.y = 100;
+//}

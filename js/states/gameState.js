@@ -271,7 +271,9 @@ TexarkanaJohn.gameState.prototype = {
         // LIGHTING
         updateShadowTexture();
 
-
+        if(bossHands.children[0].body.touching.down) {
+            game.physics.arcade.overlap(bossHands, player, resetLevelSpikes);
+        }
 
         // falling blocks happen
         f_platforms.forEach(function (f_block) {
