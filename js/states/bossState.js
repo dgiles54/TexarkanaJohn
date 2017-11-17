@@ -8,6 +8,7 @@ TexarkanaJohn.bossState = function () {};
 TexarkanaJohn.bossState.prototype = {
 
 	preload: function() {
+        console.log('bossState');
 		game.load.script('loadLevel.js', 'js/loadLevel.js');
         game.load.script('loadAudio.js', 'js/loadAudio.js');
         game.load.script('lighting.js', 'js/lighting.js');
@@ -69,6 +70,7 @@ TexarkanaJohn.bossState.prototype = {
 	},
 
 	create: function() {
+        console.log('bossState');
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#787878';
 

@@ -1,4 +1,4 @@
-var boss;
+var boss, bossHands, bossHand1;
 
 function createBoss() {
 	//Inputs
@@ -46,6 +46,27 @@ function createBoss() {
     fireball.trackSprite(boss, 165, -20);
     fireball.bulletSpeed = 200;
     fireball.fireRate = 500;
+    
+    
+    bossHands = game.add.group();
+    
+    map.createFromObjects('Bos_Hands', 32, 'boss_hand', 0, true, false, bossHands);
+    bossHands.enableBody = true;
+    bossHands.setAll('body.immovable', true);
+    bossHand1 = bossHands[0];
+//    console.log('# of bossHand children  '+bossHands.children.length);
+    //bossHands.setAll('body.gravity.y', 900);
+    
+     //if(levelNum == 8) {
+            bossHandLoop1 = game.time.create(true);
+            bossHandLoop1.loop(2000, slamHands, this);
+            bossHandLoop1.start();
+            
+            bossHandLoop2 = game.time.create(true);
+            bossHandLoop2.loop(2000, slamHands2, this);
+            bossHandLoop2.start();
+           
+      //  }
 }
 
 function fireballDmgPlayer(player, fireball) {
@@ -101,4 +122,17 @@ function bossDarts() {
     bDart2.fireAtXY(player.x, player.y - 5);
     bDart3.fireAtXY(player.x, player.y + 5);
     bDart4.fireAtXY(player.x, player.y + 10);
+}
+
+function slamHands() {
+    
+    console.log('got this far');
+    console.log('# of bossHand children  '+bossHands.children.length);
+    bossHand1.body.velocity.y = 100;
+    
+}
+
+function slamHands2() {
+    
+    bossHands[1].body.velocity.y = 100;
 }

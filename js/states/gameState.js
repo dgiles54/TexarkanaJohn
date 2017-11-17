@@ -112,6 +112,7 @@ TexarkanaJohn.gameState.prototype = {
         // Load level      
         loadLevel(levelNum);
         if (levelNum == 8) {
+            console.log('boss load working');
             createBoss();
         }
 
@@ -183,6 +184,17 @@ TexarkanaJohn.gameState.prototype = {
         //spider group
         spiders = game.add.group();
         player.holdingBox = false;
+        
+//        if(levelNum == 8) {
+//            bossHandLoop1 = game.time.create(true);
+//            bossHandLoop1.loop(2000, slamHands, bossHands);
+//            bossHandLoop1.start();
+//            
+//            bossHandLoop2 = game.time.create(true);
+//            //bossHandLoop2.loop(2000, slamHands, null, bossHands[1]);
+//            bossHandLoop2.start();
+//           
+//        }
     },
 
     update: function () {
@@ -229,6 +241,7 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.collide(spiders, layerCollisions);
         game.physics.arcade.collide(spiders, layerPlatforms);
         game.physics.arcade.collide(player, f_platforms, startCrumbleTimer);
+        game.physics.arcade.collide(bossHands, layerPlatforms);
         game.physics.arcade.collide(player, spiderSpawners, initializeSpider);
         game.physics.arcade.collide(boulders, layerPlatforms, killBoulder);
         game.physics.arcade.overlap(boulders, player, boulderDmgPlayer);

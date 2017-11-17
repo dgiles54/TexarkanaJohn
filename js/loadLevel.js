@@ -2,7 +2,7 @@ var map;
 var startPointX, startPointY, endPoint;
 var layerWall, layerPlatforms, layerLadders, layerDetails, layerFaces, layerCollisions, endingLayer, layerSpikes, layerLava;
 var levers, plates, keys, keyholes, doors, dart, darts, door, f_platforms, rockSpawners, boulders, torches, dartLoopGroup, spears, boxes, boxStoppers;
-var bossHands, bossObj;
+var  bossObj;
 var fireball, fireballLoop;
 var bDart1, bDart2, bDart3, bDart4;
 
@@ -150,11 +150,13 @@ function loadLevel(levelNum) {
     startPointY = map.objects['StartPoint'][0].y;
     
     bossObj = map.objects['Boss'];
+    console.log('Boss Objs length    '+map.objects['Boss'].length);
     
-    bossHands = game.add.group();
-    bossHands.enableBody = true;
-    map.createFromObjects('Boss_Hands', 32, 'boss_hand', 0, true, false, bossHands);
-    bossHands.setAll('body.immovable', true);
+//    bossHands = game.add.group();
+//    bossHands.enableBody = true;
+//    map.createFromObjects('Boss_Hands', 32, 'boss_hand', 0, true, false, bossHands);
+//    bossHands.setAll('body.immovable', true);
+//    bossHands.setAll('body.gravity.y', 900);
     
     // boss = game.add.group();
     // boss.enableBody = true;

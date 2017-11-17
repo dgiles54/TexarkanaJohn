@@ -429,7 +429,7 @@
         }, 
         {
          "draworder":"topdown",
-         "name":"Boss_Hands",
+         "name":"Bos_Hands",
          "objects":[
                 {
                  "gid":32,
