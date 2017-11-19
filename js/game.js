@@ -7,4 +7,4 @@ game.state.add('gameStartState', TexarkanaJohn.gameStartState);
 game.state.add('helpState', TexarkanaJohn.helpState);
 game.state.add('bossState', TexarkanaJohn.bossState);
 game.state.add('campState', TexarkanaJohn.campState);
-game.state.start('campState');
+game.state.start('gameStartState');

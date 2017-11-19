@@ -12,7 +12,7 @@ function initializeSnakes() {
     snakes.forEach(function (snake) {
         snake.scale.setTo(0.5, 0.5);
         snake.body.velocity.x = 100;
-        snake.anchor.setTo(0.5, 0);
+        snake.anchor.setTo(0.5, 0.5);
         snake.body.immovable = true;
         snake.body.bounce.x = 1;
         snake.hp = 3;

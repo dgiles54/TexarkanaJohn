@@ -70,7 +70,8 @@ function attack() {
 }
 
 function hitEnemy(hitbox, enemy) {
-    if (player.frame == 10) {
+    // if (player.frame == 10 || player.frame ) {
+    if ([8, 9, 10].indexOf(player.frame) > -1) {
         console.log('Hit enemy');
         hitbox.kill();
         // Decrease hp of enemy

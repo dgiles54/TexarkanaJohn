@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 8,
+var levelNum = 1,
     maxLevels = 8;
 
 WebFontConfig = {
@@ -210,7 +210,7 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.collide(player, layerLadders);
         game.physics.arcade.collide(player, doors);
         game.physics.arcade.collide(player, boxes);
-        game.physics.arcade.collide(player, endPoint, nextLevel);
+        game.physics.arcade.collide(player, endPoint, gameSave);
         game.physics.arcade.overlap(player, levers, pushLever);
         game.physics.arcade.overlap(player, keys, takeKey);
         game.physics.arcade.overlap(player, keyholes, insertKey);
@@ -405,9 +405,9 @@ TexarkanaJohn.gameState.prototype = {
 
     // DEBUG
     render: function() {
-//        snakes.forEach(function(snake) {
-//            game.debug.spriteBounds(snake);
-//        });
+       snakes.forEach(function(snake) {
+           game.debug.body(snake);
+       });
 //        game.debug.body(player);
 //        game.debug.rectangle(player.bloodEmitter);
 //        hitboxes.forEach(function(hb) {
@@ -463,17 +463,18 @@ function resetLevelLava() {
     // game.state.start(game.state.current);
 }
 
-function nextLevel() {
-    levelNum++;
-    health = 5
-
-    if (levelNum <= maxLevels) {
-        templeMusic.stop();
-        game.state.start(game.state.current);
-    } else {
-        templeMusic.stop();
-        game.state.start('bossState');
-    }
+function gameSave() {
+    // levelNum++;
+    // health = 5
+    // if (levelNum <= maxLevels) {
+    //     templeMusic.stop();
+    //     game.state.start('campState');
+    // } else {
+    //     templeMusic.stop();
+    //     game.state.start('bossState');
+    // }
+    templeMusic.stop();
+    game.state.start('campState');
 }
 
 function gameWin() {

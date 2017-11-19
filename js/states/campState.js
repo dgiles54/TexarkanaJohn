@@ -4,6 +4,7 @@ var scene;
 var layerWall, layerPlatforms, layerDetails;
 var endPoint, startPointX, startPoint;
 var campfire, tent;
+var rested;
 
 WebFontConfig = {
     google: {
@@ -13,11 +14,12 @@ WebFontConfig = {
 
 TexarkanaJohn.campState = function () {};
 TexarkanaJohn.campState.prototype = {
+
 	preload: function() {
 		game.load.script('loadAudio.js', 'js/loadAudio.js');
 		game.load.script('player.js', 'js/player.js');
 		game.load.script('input.js', 'js/input.js');
-		// game.load.script('lighting.js', 'js/lighting.js');
+		// game.load.script('gameState.js', 'js/states/gameState.js');
 		game.load.tilemap('cutscene', 'assets/tilemaps/cutscene.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.image('tileset', 'assets/tilesets/tileset.png');
 		game.load.spritesheet('player', 'assets/sprites/player.png', 97, 66);
@@ -89,7 +91,7 @@ TexarkanaJohn.campState.prototype = {
 
     	// Create player
     	createPlayer();
-    	player.health = 5;
+    	player.health = health;
     	// Camera follows player
     	game.camera.follow(player);
 
@@ -106,6 +108,27 @@ TexarkanaJohn.campState.prototype = {
         var lightSprite = game.add.image(0, 0, shadowTexture);
         lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
 
+        // HUD
+        player.hintBubble = game.add.sprite(player.x, player.y - 100, 'thoughtBubble');
+        player.hintBubble.visible = false;
+        
+        hintText = game.add.text(player.x + 7, player.y - 95, '', {
+            font: 'VT323',
+            fontSize: 12,
+            wordWrap: true,
+            wordWrapWidth: 95
+        });
+        hintText.visible = false;
+        
+        keyInventory = game.add.sprite(5, 42, 'keyEmpty');
+        keyInventory.fixedToCamera = true;
+
+        healthBar = game.add.sprite(5, 5, 'healthBar');
+        healthBar.fixedToCamera = true;
+        healthBar.frame = player.health;
+
+        // Resting display
+        game.camera.onFadeComplete.add(resetRest, this);
 	},
 
 	update: function() {
@@ -116,7 +139,8 @@ TexarkanaJohn.campState.prototype = {
 		//------------//
 		game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
-        // game.physics.arcade.collide(player, endPoint, nextLevel);
+        game.physics.arcade.collide(player, endPoint, nextLevel);
+        game.physics.arcade.overlap(player, tent, rest);
 
         //----------//
         // CONTROLS //
@@ -202,4 +226,33 @@ TexarkanaJohn.campState.prototype = {
 
 	},
 
+}
+
+function nextLevel() {
+    levelNum++;
+    if (levelNum <= maxLevels) {
+        templeMusic.stop();
+        game.state.start('gameState');
+    } else {
+        templeMusic.stop();
+        game.state.start('bossState');
+    }
+}
+
+function rest() {
+    if (useKey.isDown && !rested) {
+        player.body.immovable = true;
+        player.body.moves = false;
+        game.camera.fade(0x000000, 1000);
+        rested = true;
+        health = 5;
+        player.health = health;
+        healthBar.frame = player.health;
+    }
+}
+
+function resetRest() {
+    player.body.immovable = false;
+    player.body.moves = true;
+    game.camera.resetFX();
 }
