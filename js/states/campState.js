@@ -63,6 +63,7 @@ TexarkanaJohn.campState.prototype = {
         layerPlatforms = scene.createLayer('Platforms');
         layerDetails = scene.createLayer('Details');
         endPoint = scene.createLayer('EndPoint');
+        endPoint.visible = false;
         layerWall.resizeWorld();
 
 		campfire = game.add.group();
@@ -99,6 +100,11 @@ TexarkanaJohn.campState.prototype = {
     	scene.setCollisionBetween(1, 10, true, 'Wall');
         scene.setCollisionBetween(1, 15, true, 'Platforms');
         scene.setCollision(24, true, 'EndPoint');
+
+        // Lighting textures
+        shadowTexture = game.add.bitmapData(scene.widthInPixels, scene.heightInPixels);
+        var lightSprite = game.add.image(0, 0, shadowTexture);
+        lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
 
 	},
 
@@ -154,6 +160,42 @@ TexarkanaJohn.campState.prototype = {
         if (player.frame == 9) {
             whipSound.play();
         }
+
+        //----------------//
+        // Lighting f(x)s //
+        //----------------//
+        shadowTexture.context.fillStyle = 'rgb(35, 35, 35)';
+        shadowTexture.context.fillRect(0, 0, scene.widthInPixels, scene.heightInPixels);
+        var radius = 150 + game.rnd.integerInRange(1, 10);
+        var gradient =
+        shadowTexture.context.createRadialGradient(
+            player.x, player.y, 150 * 0.1,
+            player.x, player.y, radius);
+        gradient.addColorStop(0, 'rgba(255, 255, 140, 1.0)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
+        shadowTexture.context.beginPath();
+        shadowTexture.context.fillStyle = gradient;
+        shadowTexture.context.arc(player.x, player.y, radius, 0, Math.PI * 2);
+        shadowTexture.context.fill();
+
+        campfire.forEach(function(campfire) {
+            var gradient =
+            shadowTexture.context.createRadialGradient(
+                campfire.x + 16, campfire.y, 90 * 0.05,
+                campfire.x + 16, campfire.y, 90);
+
+            gradient.addColorStop(0, 'rgba(250, 255, 140, 1.0)');
+            gradient.addColorStop(1, 'rgba(250, 255, 255, 0.0)');
+
+            shadowTexture.context.beginPath();
+            shadowTexture.context.fillStyle = gradient;
+            shadowTexture.context.arc(campfire.x + 16, campfire.y, 90, 0, Math.PI * 2);
+            shadowTexture.context.fill();
+        })
+
+        shadowTexture.dirty = true;
+
+
 	},
 
 	render: function() {
