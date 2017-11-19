@@ -27,6 +27,7 @@ TexarkanaJohn.campState.prototype = {
 		game.load.spritesheet('healthBar', 'assets/sprites/health.png', 160, 32);
 		game.load.spritesheet('campfire', 'assets/sprites/cutscene/campfire.png', 48, 32, 4);
 		game.load.spritesheet('tent', 'assets/sprites/cutscene/tent.png', 96, 64, 3);
+        game.load.image('thoughtBubble', 'assets/sprites/thoughtBubble.png');
 		game.load.audio('leverSound', 'assets/audio/lever.wav');
 		game.load.audio('plateSound', 'assets/audio/pressure_plate.wav');
 		game.load.audio('ouch', 'assets/audio/ouch.wav');
@@ -219,6 +220,13 @@ TexarkanaJohn.campState.prototype = {
 
         shadowTexture.dirty = true;
 
+        //-------//
+        // HINTS //
+        //-------//
+        player.hintBubble.x = player.x;
+        player.hintBubble.y = player.y - 100;
+        hintText.x = player.x + 7;
+        hintText.y = player.y - 95;
 
 	},
 
@@ -240,7 +248,12 @@ function nextLevel() {
 }
 
 function rest() {
-    if (useKey.isDown && !rested) {
+    if (!rested) {
+        hintText.text = 'I should rest here. I\'ll feel better.'
+        player.hintBubble.visible = true;
+        hintText.visible = true;
+
+        if (useKey.isDown) {
         player.body.immovable = true;
         player.body.moves = false;
         game.camera.fade(0x000000, 1000);
@@ -248,6 +261,10 @@ function rest() {
         health = 5;
         player.health = health;
         healthBar.frame = player.health;
+        }
+    } else {
+        player.hintBubble.visible = false;
+        hintText.visible = false;
     }
 }
 
