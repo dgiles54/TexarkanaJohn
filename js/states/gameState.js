@@ -405,10 +405,13 @@ TexarkanaJohn.gameState.prototype = {
 
     // DEBUG
     render: function() {
-       snakes.forEach(function(snake) {
-           game.debug.body(snake);
-       });
-//        game.debug.body(player);
+        snakes.forEach(function(snake) {
+            game.debug.body(snake);
+        });
+        game.debug.body(player);
+        if (player.isAttacking) {
+            game.debug.body(whipHitbox);
+        }
 //        game.debug.rectangle(player.bloodEmitter);
 //        hitboxes.forEach(function(hb) {
 //            game.debug.spriteBounds(hb);

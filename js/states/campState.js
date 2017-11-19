@@ -254,13 +254,10 @@ function rest() {
         hintText.visible = true;
 
         if (useKey.isDown) {
-        player.body.immovable = true;
-        player.body.moves = false;
-        game.camera.fade(0x000000, 1000);
-        rested = true;
-        health = 5;
-        player.health = health;
-        healthBar.frame = player.health;
+            player.body.immovable = true;
+            player.body.moves = false;
+            game.camera.fade(0x000000, 1000);
+            rested = true;
         }
     } else {
         player.hintBubble.visible = false;
@@ -269,6 +266,9 @@ function rest() {
 }
 
 function resetRest() {
+    health = 5;
+    player.health = health;
+    healthBar.frame = player.health;
     player.body.immovable = false;
     player.body.moves = true;
     game.camera.resetFX();
