@@ -311,7 +311,7 @@ TexarkanaJohn.gameState.prototype = {
 
         // if health reaches 0, game over
         if (player.health == 0) {
-            game.state.start('gameOverState');
+            game.state.start('campState', true, false, 'died');
         }
         
         // if player dead, play death animation and restart level
@@ -477,7 +477,7 @@ function gameSave() {
     //     game.state.start('bossState');
     // }
     templeMusic.stop();
-    game.state.start('campState');
+    game.state.start('campState', true, false,'next');
 }
 
 function gameWin() {

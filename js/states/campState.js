@@ -5,6 +5,7 @@ var layerWall, layerPlatforms, layerDetails;
 var endPoint, startPointX, startPoint;
 var campfire, tent;
 var rested;
+var reason;
 
 WebFontConfig = {
     google: {
@@ -14,6 +15,9 @@ WebFontConfig = {
 
 TexarkanaJohn.campState = function () {};
 TexarkanaJohn.campState.prototype = {
+    init: function(reason) { 
+        reason = reason 
+    },
 
 	preload: function() {
 		game.load.script('loadAudio.js', 'js/loadAudio.js');
@@ -237,13 +241,21 @@ TexarkanaJohn.campState.prototype = {
 }
 
 function nextLevel() {
-    levelNum++;
-    if (levelNum <= maxLevels) {
+    if (reason == 'next') {
+        levelNum++;
+        if (levelNum <= maxLevels) {
+            rested = false;
+            templeMusic.stop();
+            game.state.start('gameState');
+        } else {
+            rested = false;
+            templeMusic.stop();
+            game.state.start('bossState');
+        }
+    } else {
+        rested = false;
         templeMusic.stop();
         game.state.start('gameState');
-    } else {
-        templeMusic.stop();
-        game.state.start('bossState');
     }
 }
 
