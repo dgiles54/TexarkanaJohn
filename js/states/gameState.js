@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 1,
+var levelNum = 8,
     maxLevels = 8;
 
 WebFontConfig = {
@@ -63,6 +63,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.spritesheet('boss', 'assets/sprites/boss_body.png', 332, 410, 8);
         game.load.spritesheet('boss_soul', 'assets/sprites/boss_soul.png', 32, 32, 5);
         game.load.spritesheet('boss_fireball', 'assets/sprites/boss_fireball.png', 32, 17);
+        game.load.spritesheet('bossHealthBar', 'assets/sprites/bossHealthBar.png', 320, 16, 6);
         game.load.image('boss_hand', 'assets/sprites/boss_hand.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
@@ -235,7 +236,7 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.collide(hearts, layerPlatforms);
         game.physics.arcade.overlap(player, spears, dmgPlayer);
         game.physics.arcade.collide(boxes, darts, killDart);
-        game.physics.arcade.collide(bossHands, player);
+        game.physics.arcade.collide(bossHands, player, checkPlayerDeath);
         // if (heartDropped) {
         //     game.physics.arcade.overlap(player, hearts, healPlayer);
         // }
@@ -513,4 +514,11 @@ function playerDeath() {
         player.deathAnimation.play();
         player.bloodEmitter.explode(1000);
     }
+}
+
+function checkPlayerDeath() {
+    if(player.body.touching.up) {
+            console.log('ifStatementWorking');
+            resetLevelSpikes()
+        }
 }
