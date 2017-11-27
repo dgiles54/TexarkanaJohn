@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 1,
+var levelNum = 5,
     maxLevels = 8;
 var reason;
 
@@ -357,15 +357,20 @@ TexarkanaJohn.gameState.prototype = {
         // Hint text
         if (levelNum == 1) {
             if (player.overlap(keys)) {
-                hintText.text = 'A skull-shaped key! This might be useful to me.';
+                hintText.text = 'A skull-shaped key! This might be useful to me. (PRESS "E")';
                 player.hintBubble.visible = true;
                 hintText.visible = true;
             } else if (player.overlap(keyholes) && player.hasKey) {
-                hintText.text = 'I should try to use the key I found!';
+                hintText.text = 'I should try to use the key I found! (PRESS "E")';
                 player.hintBubble.visible = true;
                 hintText.visible = true;
             } else if (player.overlap(levers)) {
-                hintText.text = 'An oddly placed lever. I wonder what it does?';
+                hintText.text = 'An oddly placed lever. I wonder what it does? (PRESS "E")';
+                player.hintBubble.visible = true;
+                hintText.visible = true;
+                
+            } else if (player.overlap(spiderWebs)) {
+                hintText.text = 'UGH a spiderweb! I should burn it!! (PRESS "E")'
                 player.hintBubble.visible = true;
                 hintText.visible = true;
             } else {
@@ -378,6 +383,14 @@ TexarkanaJohn.gameState.prototype = {
             box.body.velocity.x = 0;
         });
         
+        if (player.overlap(spiderWebs)) {
+                hintText.text = 'UGH a spiderweb! I should burn it!! (PRESS "E")'
+                player.hintBubble.visible = true;
+                hintText.visible = true;
+        } else {
+                player.hintBubble.visible = false;
+                hintText.visible = false;
+        }
 //        if (player.holdingBox == true && dropKey.isDown) {
 //            boxDrop.play();
 //            player.children[0].destroy();
@@ -409,13 +422,13 @@ TexarkanaJohn.gameState.prototype = {
 
     // DEBUG
     render: function() {
-        snakes.forEach(function(snake) {
-            game.debug.body(snake);
-        });
-        game.debug.body(player);
-        if (player.isAttacking) {
-            game.debug.body(whipHitbox);
-        }
+//        snakes.forEach(function(snake) {
+//            game.debug.body(snake);
+//        });
+//        game.debug.body(player);
+//        if (player.isAttacking) {
+//            game.debug.body(whipHitbox);
+//        }
 //        game.debug.rectangle(player.bloodEmitter);
 //        hitboxes.forEach(function(hb) {
 //            game.debug.spriteBounds(hb);

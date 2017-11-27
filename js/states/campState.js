@@ -261,7 +261,7 @@ function nextLevel() {
 
 function rest() {
     if (!rested) {
-        hintText.text = 'I should rest here. I\'ll feel better.'
+        hintText.text = 'I should rest here. I\'ll feel better. (PRESS "E")'
         player.hintBubble.visible = true;
         hintText.visible = true;
 

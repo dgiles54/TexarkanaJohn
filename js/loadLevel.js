@@ -7,7 +7,7 @@ var fireball, fireballLoop;
 var bDart1, bDart2, bDart3, bDart4;
 
 function loadLevel(levelNum) {
-    templeMusic.play();
+    //templeMusic.play();
     keyCreated = false;
     blowdartCreated = false;
     
