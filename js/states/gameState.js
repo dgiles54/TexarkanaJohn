@@ -10,6 +10,7 @@ var hearts;
 var health = 5;
 var levelNum = 1,
     maxLevels = 8;
+var reason;
 
 WebFontConfig = {
 
@@ -313,7 +314,8 @@ TexarkanaJohn.gameState.prototype = {
 
         // if health reaches 0, game over
         if (player.health == 0) {
-            game.state.start('campState', true, false, 'died');
+            reason = 'died';
+            game.state.start('campState');
         }
         
         // if player dead, play death animation and restart level
@@ -479,7 +481,8 @@ function gameSave() {
     //     game.state.start('bossState');
     // }
     templeMusic.stop();
-    game.state.start('campState', true, false,'next');
+    reason = 'next';
+    game.state.start('campState');
 }
 
 function gameWin() {

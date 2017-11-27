@@ -5,7 +5,7 @@ var layerWall, layerPlatforms, layerDetails;
 var endPoint, startPointX, startPoint;
 var campfire, tent;
 var rested;
-var reason;
+// var reason;
 
 WebFontConfig = {
     google: {
@@ -15,9 +15,9 @@ WebFontConfig = {
 
 TexarkanaJohn.campState = function () {};
 TexarkanaJohn.campState.prototype = {
-    init: function(reason) { 
-        reason = reason 
-    },
+    // init: function(reason) { 
+    //     reason = reason 
+    // },
 
 	preload: function() {
 		game.load.script('loadAudio.js', 'js/loadAudio.js');
