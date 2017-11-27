@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 8,
+var levelNum = 7,
     maxLevels = 8;
 
 WebFontConfig = {
@@ -516,9 +516,9 @@ function playerDeath() {
     }
 }
 
-function checkPlayerDeath() {
-    if(player.body.touching.up) {
+function checkPlayerDeath(player, hand) {
+    if(player.body.touching.up && hand.goingUp = false) {
             console.log('ifStatementWorking');
-            resetLevelSpikes()
+            resetLevelSpikes();
         }
 }

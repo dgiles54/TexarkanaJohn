@@ -66,6 +66,7 @@ function createBoss() {
     bossHands.enableBody = true;
     map.createFromObjects('Boss_Hands', 32, 'boss_hand', 0, true, false, bossHands);
     bossHands.setAll('body.immovable', true);
+    bossHands.setAll('goingUp', false);
     
 //    bossHandLoop1 = game.time.create(true);
 //    bossHandLoop1.loop(2000)
@@ -80,10 +81,14 @@ function createBoss() {
         hand.tween1.delay(500);
         hand.tween1.chain(hand.tween2);
         hand.tween2.chain(hand.tween1);
+        hand.tween2.add(handGoesUp, this);
+        hand.tween1.add(handGoesDown, this);
     });
     
     bossHands.children[0].tween1.start();
     bossHands.children[1].tween1.start();
+    
+    
     
     // bossSoul tweens
     boss.soul.tween1 = game.add.tween(boss.soul).to({y:boss.y-182}, boss.x+0.5*boss.width);
@@ -157,4 +162,14 @@ function bossSoulRise() {
 
 function closeBoss() {
     boss.animations.play('close');
+}
+
+function handGoesUp(hand) {
+    hand.goingUp = true;
+    hand.goingDown = false;
+}
+
+function handGoesDown(hand) {
+    hand.goingDown = true;
+    hand.goingUp = false;
 }
