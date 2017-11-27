@@ -20,6 +20,7 @@ function createPlayer() {
     player.numberOfKeys = 0;
     player.climbing = false;
     player.isDead = false;
+    player.facingLeft = false;
     // Physics
     game.physics.enable(player);
     player.body.setSize(20, 44, 15, 20);
@@ -64,7 +65,11 @@ function attack() {
         player.nextAttack = game.time.now + PLAYER_ATTACK_RATE;
         player.isAttacking = true;
         player.animations.play('attack');
-        whipHitbox = hitboxes.create(18, 6, 'whipHitbox');
+        if (player.facingLeft) {
+            whipHitbox = hitboxes.create(68, 6, 'whipHitbox');
+        } else {
+            whipHitbox = hitboxes.create(18, 6, 'whipHitbox');
+        }
         whipHitbox.alpha = 0; // set to 0.5 for debugging
     }   
 }

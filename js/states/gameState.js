@@ -268,6 +268,7 @@ TexarkanaJohn.gameState.prototype = {
         // make player walk
         if (cursors.left.isDown || cursors2.left.isDown) {
             player.scale.setTo(-1, 1);
+            player.facingLeft = true;
             if (player.holdingBox == true) {
                     boxDrag.play();
                 }
@@ -278,6 +279,7 @@ TexarkanaJohn.gameState.prototype = {
             player.body.velocity.x = -PLAYER_RUN_SPEED;
         } else if (cursors.right.isDown || cursors2.right.isDown) {
             player.scale.setTo(1, 1);
+            player.facingLeft = false;
             if (player.holdingBox == true) {
                     boxDrag.play();
                 }
