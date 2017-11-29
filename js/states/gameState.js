@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 7,
+var levelNum = 4,
     maxLevels = 8;
 
 WebFontConfig = {
@@ -76,7 +76,8 @@ TexarkanaJohn.gameState.prototype = {
         game.load.image('thoughtBubble', 'assets/sprites/thoughtBubble.png');
         game.load.image('spear', 'assets/sprites/spear.png');
         game.load.image('box', 'assets/sprites/Box.png');
-        game.load.image('boxStopper', 'assets/sprites/blockStop.png');
+        game.load.image('boxStopper_LEFT', 'assets/sprites/block_stop_left.png');
+        game.load.image('boxStopper_RIGHT', 'assets/sprites/block_stop_right.png');
         game.load.image('bloodParticle', 'assets/sprites/bloodParticle.png');
         game.load.image('whipHitbox', 'assets/sprites/whipHitbox.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
@@ -517,7 +518,7 @@ function playerDeath() {
 }
 
 function checkPlayerDeath(player, hand) {
-    if(player.body.touching.up && hand.goingUp = false) {
+    if(player.body.touching.up && hand.goingUp == false) {
             console.log('ifStatementWorking');
             resetLevelSpikes();
         }

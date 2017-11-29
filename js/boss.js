@@ -81,8 +81,8 @@ function createBoss() {
         hand.tween1.delay(500);
         hand.tween1.chain(hand.tween2);
         hand.tween2.chain(hand.tween1);
-        hand.tween2.add(handGoesUp, this);
-        hand.tween1.add(handGoesDown, this);
+        hand.tween2.onStart.add(handGoesUp, this);
+        hand.tween1.onStart.add(handGoesDown, this);
     });
     
     bossHands.children[0].tween1.start();

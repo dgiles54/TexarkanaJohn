@@ -143,7 +143,8 @@ function loadLevel(levelNum) {
     
     boxStoppers = game.add.group();
     boxStoppers.enableBody = true;
-    map.createFromObjects('BoxStoppers', 32, 'boxStopper', 0, true, false, boxStoppers);
+    map.createFromObjects('BoxStoppers_RIGHT', 32, 'boxStopper_RIGHT', 0, true, false, boxStoppers);
+    map.createFromObjects('BoxStoppers_LEFT', 32, 'boxStopper_LEFT', 0, true, false, boxStoppers);
     boxStoppers.setAll('body.immovable', true);
     
     startPointX = map.objects['StartPoint'][0].x;
