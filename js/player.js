@@ -84,7 +84,7 @@ function hitEnemy(hitbox, enemy) {
         
         if (enemy.key == 'boss_soul') {
             // Code for hitting boss
-            boss.HealthBar.frame += 1;
+            
             boss.soul.animations.play('hit');
             game.add.tween(enemy).to({tint: 0xFF0000, alpha: 0.8}, 100, null, true);
             game.add.tween(enemy).to({tint: 0xFFFFFF, alpha: 1}, 200, null, true, 100);
@@ -197,7 +197,7 @@ function pushLever(player, lever) {
             lever.animations.play('flip');
             leverSound.play().onStop.addOnce(function () {
                 boss.animations.play('open');
-                fireballLoop.resume();
+                fireballLoop = game.time.events.loop(5000, fireballReset); // shoot fireballs every n seconds
                 bossDarts();
             }, this);
         }    
