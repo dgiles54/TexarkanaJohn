@@ -1,9 +1,14 @@
-var boss;
+var boss, bossHands, fireballLoop, bossHealthBar;
 
 function createBoss() {
 	//Inputs
 	bossX = bossObj[0].x;
 	bossY = bossObj[0].y;
+    
+    fireballLoop = game.time.create(true);
+    fireballLoop.loop(5000, fireballReset, this);
+    fireballLoop.start();
+    fireballLoop.pause();
 
 	boss = game.add.sprite(bossX, bossY, 'boss');
 	boss.anchor.setTo(0, 1);
@@ -13,10 +18,14 @@ function createBoss() {
 	// boss.anchor.setTo(0.5, 1);
 	
 	// Attributes
-	boss.soul.hp = 25;
+	boss.soul.hp = 5;
 	boss.invulnerable = true;
 	boss.isDead = false;
     boss.activated = false;
+    
+    boss.HealthBar = game.add.sprite(270, game.height - 90, 'bossHealthBar');
+    boss.HealthBar.fixedToCamera = true;
+    boss.HealthBar.frame = 0;
 	// Physics
 	game.physics.enable(boss);
 	// Animation
@@ -33,12 +42,15 @@ function createBoss() {
 		boss.soul.animations.play('idle');
 		game.physics.enable(boss.soul);
         boss.activated = true;
+        fireballLoop.resume();
+        bossSoulRise();
 	});
 	boss.animations.add('close', [7, 6, 5, 4], 6, false).onStart.add(function() {
 		boss.animations.play('closed');
 		boss.soul.visible = false;
 		boss.soul.animations.stop();
 		boss.soul.enableBody = false;
+        fireballLoop.pause();
 	});
     // Fireballs
     fireball = game.add.weapon(10, 'boss_fireball');
@@ -46,6 +58,38 @@ function createBoss() {
     fireball.trackSprite(boss, 165, -20);
     fireball.bulletSpeed = 200;
     fireball.fireRate = 500;
+    
+    bossHands = game.add.group();
+    bossHands.enableBody = true;
+    map.createFromObjects('Boss_Hands', 32, 'boss_hand', 0, true, false, bossHands);
+    bossHands.setAll('body.immovable', true);
+    bossHands.setAll('goingUp', false);
+    bossHands.forEach(function(hand) {
+        hand.tween1 = game.add.tween(hand).to({y: hand.body.y + 100}, hand.body.x);
+        hand.tween1.timeScale = 1.25;
+        hand.tween2 = game.add.tween(hand).to({y: hand.body.y}, hand.body.x);
+        hand.tween2.timeScale = 0.25;
+        hand.tween1.delay(500);
+        hand.tween1.chain(hand.tween2);
+        hand.tween2.chain(hand.tween1);
+        hand.tween2.onStart.add(handGoesUp, this);
+        hand.tween1.onStart.add(handGoesDown, this);
+        //hand.tween1.start();
+    });
+    
+    bossHands.children[0].tween1.start();
+    bossHands.children[1].tween1.start();
+    
+    // boss soul tweens
+    boss.soul.tween1 = game.add.tween(boss.soul).to({y: boss.y - 182}, boss.x+0.5*boss.width);
+    boss.soul.tween2 = game.add.tween(boss.soul).to({y: boss.y - 12}, boss.x+0.5*boss.width);
+    boss.soul.tween2.delay(3000);
+    boss.soul.tween1.delay(1000);
+    boss.soul.tween1.chain(boss.soul.tween2);
+    boss.soul.tween2.onComplete.add(closeBoss, this);
+    
+    
+    
 }
 
 function fireballDmgPlayer(player, fireball) {
@@ -101,4 +145,22 @@ function bossDarts() {
     bDart2.fireAtXY(player.x, player.y - 5);
     bDart3.fireAtXY(player.x, player.y + 5);
     bDart4.fireAtXY(player.x, player.y + 10);
+}
+
+function bossSoulRise() {
+    boss.soul.tween1.start();
+}
+
+function closeBoss() {
+    boss.animations.play('close');
+}
+
+function handGoesUp(hand) {
+    hand.goingUp = true;
+    hand.goingDown = false;
+}
+
+function handGoesDown(hand) {
+    hand.goingUp = false;
+    hand.goingDown = true;
 }
