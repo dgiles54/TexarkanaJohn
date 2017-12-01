@@ -13,12 +13,12 @@
         }, 
         {
          "draworder":"topdown",
-         "name":"BoxStoppers",
+         "name":"BoxStoppers_RIGHT",
          "objects":[
                 {
                  "gid":32,
                  "height":32,
-                 "id":132,
+                 "id":135,
                  "name":"",
                  "rotation":0,
                  "type":"",
@@ -30,7 +30,29 @@
                 {
                  "gid":32,
                  "height":32,
-                 "id":133,
+                 "id":136,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":768,
+                 "y":96
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"BoxStoppers_LEFT",
+         "objects":[
+                {
+                 "gid":32,
+                 "height":32,
+                 "id":134,
                  "name":"",
                  "rotation":0,
                  "type":"",
@@ -198,8 +220,8 @@
                  "type":"",
                  "visible":true,
                  "width":55,
-                 "x":735.5,
-                 "y":96.5
+                 "x":704,
+                 "y":96
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -637,7 +659,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":134,
+ "nextobjectid":137,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.3",

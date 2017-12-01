@@ -8,7 +8,11 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
+<<<<<<< HEAD
 var levelNum = 5,
+=======
+var levelNum = 4,
+>>>>>>> tried-to-fix-hands
     maxLevels = 8;
 var reason;
 
@@ -64,6 +68,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.spritesheet('boss', 'assets/sprites/boss_body.png', 332, 410, 8);
         game.load.spritesheet('boss_soul', 'assets/sprites/boss_soul.png', 32, 32, 5);
         game.load.spritesheet('boss_fireball', 'assets/sprites/boss_fireball.png', 32, 17);
+        game.load.spritesheet('bossHealthBar', 'assets/sprites/bossHealthBar.png', 320, 16, 6);
         game.load.image('boss_hand', 'assets/sprites/boss_hand.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
@@ -76,7 +81,8 @@ TexarkanaJohn.gameState.prototype = {
         game.load.image('thoughtBubble', 'assets/sprites/thoughtBubble.png');
         game.load.image('spear', 'assets/sprites/spear.png');
         game.load.image('box', 'assets/sprites/Box.png');
-        game.load.image('boxStopper', 'assets/sprites/blockStop.png');
+        game.load.image('boxStopper_LEFT', 'assets/sprites/block_stop_left.png');
+        game.load.image('boxStopper_RIGHT', 'assets/sprites/block_stop_right.png');
         game.load.image('bloodParticle', 'assets/sprites/bloodParticle.png');
         game.load.image('whipHitbox', 'assets/sprites/whipHitbox.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
@@ -236,7 +242,7 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.collide(hearts, layerPlatforms);
         game.physics.arcade.overlap(player, spears, dmgPlayer);
         game.physics.arcade.collide(boxes, darts, killDart);
-        game.physics.arcade.collide(bossHands, player);
+        game.physics.arcade.collide(bossHands, player, checkPlayerDeath);
         // if (heartDropped) {
         //     game.physics.arcade.overlap(player, hearts, healPlayer);
         // }
@@ -531,4 +537,11 @@ function playerDeath() {
         player.deathAnimation.play();
         player.bloodEmitter.explode(1000);
     }
+}
+
+function checkPlayerDeath(player, hand) {
+    if(player.body.touching.up && hand.goingUp == false) {
+            console.log('ifStatementWorking');
+            resetLevelSpikes();
+        }
 }
