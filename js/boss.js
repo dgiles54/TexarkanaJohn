@@ -8,7 +8,7 @@ function createBoss() {
     fireballLoop = game.time.create(true);
     fireballLoop.loop(5000, fireballReset, this);
     fireballLoop.start();
-    fireballLoop.pause();
+    //fireballLoop.pause();
 
 	boss = game.add.sprite(bossX, bossY, 'boss');
 	boss.anchor.setTo(0, 1);
@@ -23,9 +23,9 @@ function createBoss() {
 	boss.isDead = false;
     boss.activated = false;
     
-    boss.HealthBar = game.add.sprite(270, game.height - 90, 'bossHealthBar');
+    boss.HealthBar = game.add.sprite(270, game.height - 90, 'bossHealthBar', 0);
     boss.HealthBar.fixedToCamera = true;
-    boss.HealthBar.frame = 0;
+    //boss.HealthBar.frame = 0;
 	// Physics
 	game.physics.enable(boss);
 	// Animation
@@ -35,14 +35,16 @@ function createBoss() {
     });
 	boss.animations.add('idle', [0, 1, 2, 3], 6, true);
 	boss.animations.add('opened', [7], 6, false);
-	boss.animations.add('closed', [0], 6, false);
+	boss.animations.add('closed', [0], 6, false).onStart.add(function() {
+        boss.activated = false;
+    });
 	boss.animations.add('open', [0, 4, 5, 6], 6, false).onComplete.add(function() {
 		boss.animations.play('opened');
 		boss.soul.visible = true;
 		boss.soul.animations.play('idle');
 		game.physics.enable(boss.soul);
         boss.activated = true;
-        fireballLoop.resume();
+        //fireballLoop.resume();
         bossSoulRise();
 	});
 	boss.animations.add('close', [7, 6, 5, 4], 6, false).onStart.add(function() {
@@ -50,12 +52,12 @@ function createBoss() {
 		boss.soul.visible = false;
 		boss.soul.animations.stop();
 		boss.soul.enableBody = false;
-        fireballLoop.pause();
+        //fireballLoop.pause();
 	});
     // Fireballs
     fireball = game.add.weapon(10, 'boss_fireball');
     fireball.addBulletAnimation('fireball', [0, 1, 2, 3, 2, 1], 10, true);
-    fireball.trackSprite(boss, 165, -20);
+    fireball.trackSprite(boss.soul, 0, 0);
     fireball.bulletSpeed = 200;
     fireball.fireRate = 500;
     

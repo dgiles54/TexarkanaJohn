@@ -64,7 +64,7 @@ TexarkanaJohn.gameState.prototype = {
         game.load.spritesheet('boss', 'assets/sprites/boss_body.png', 332, 410, 8);
         game.load.spritesheet('boss_soul', 'assets/sprites/boss_soul.png', 32, 32, 5);
         game.load.spritesheet('boss_fireball', 'assets/sprites/boss_fireball.png', 32, 17);
-        game.load.spritesheet('bossHealthBar', 'assets/sprites/bossHealthBar.png', 32, 17);
+        game.load.spritesheet('bossHealthBar', 'assets/sprites/bossHealthBar.png', 320, 16, 6);
         game.load.image('boss_hand', 'assets/sprites/boss_hand.png');
         game.load.image('pressurePlate', 'assets/sprites/pressurePlate.png');
         game.load.image('key', 'assets/sprites/key.png');
@@ -77,7 +77,8 @@ TexarkanaJohn.gameState.prototype = {
         game.load.image('thoughtBubble', 'assets/sprites/thoughtBubble.png');
         game.load.image('spear', 'assets/sprites/spear.png');
         game.load.image('box', 'assets/sprites/Box.png');
-        game.load.image('boxStopper', 'assets/sprites/blockStop.png');
+        game.load.image('boxStopper_left', 'assets/sprites/block_stop_left.png');
+        game.load.image('boxStopper_right', 'assets/sprites/block_stop_right.png');
         game.load.image('bloodParticle', 'assets/sprites/bloodParticle.png');
         game.load.image('whipHitbox', 'assets/sprites/whipHitbox.png');
         game.load.audio('leverSound', 'assets/audio/lever.wav');
@@ -207,7 +208,7 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.collide(player, layerWall);
         game.physics.arcade.collide(boxes, layerWall);
         game.physics.arcade.collide(player, layerPlatforms);
-        game.physics.arcade.collide(spiders, layerPlatforms);
+        game.physics.arcade.collide(spiders, layerPlatforms);-
         game.physics.arcade.collide(boxes, layerPlatforms);
         game.physics.arcade.collide(player, layerLadders);
         game.physics.arcade.collide(player, doors);
@@ -237,7 +238,8 @@ TexarkanaJohn.gameState.prototype = {
         game.physics.arcade.collide(hearts, layerPlatforms);
         game.physics.arcade.overlap(player, spears, dmgPlayer);
         game.physics.arcade.collide(boxes, darts, killDart);
-        game.physics.arcade.collide(bossHands, player, checkPlayerDeath);
+        game.physics.arcade.collide(bossHands, player);
+        game.physics.arcade.overlap(bossHands, player, checkPlayerDeath);
         // if (heartDropped) {
         //     game.physics.arcade.overlap(player, hearts, healPlayer);
         // }
@@ -408,11 +410,11 @@ TexarkanaJohn.gameState.prototype = {
             // If activated, shoot fireballs at player
             if (boss.activated) {             
                 game.physics.arcade.overlap(whipHitbox, boss.soul, hitEnemy);
-                game.physics.arcade.overlap(player, fireball.bullets, fireballDmgPlayer);
-                game.physics.arcade.overlap(player, bDart1.bullets, dartDmgPlayer);
-                game.physics.arcade.overlap(player, bDart2.bullets, dartDmgPlayer);
-                game.physics.arcade.overlap(player, bDart3.bullets, dartDmgPlayer);
-                game.physics.arcade.overlap(player, bDart4.bullets, dartDmgPlayer);
+                //game.physics.arcade.overlap(player, fireball.bullets, fireballDmgPlayer);
+//                game.physics.arcade.overlap(player, bDart1.bullets, dartDmgPlayer);
+//                game.physics.arcade.overlap(player, bDart2.bullets, dartDmgPlayer);
+//                game.physics.arcade.overlap(player, bDart3.bullets, dartDmgPlayer);
+//                game.physics.arcade.overlap(player, bDart4.bullets, dartDmgPlayer);
 
                 if (fireball.shots < 3) {
                     fireball.fireAtXY(player.x, player.y);
@@ -535,7 +537,9 @@ function playerDeath() {
 }
 
 function checkPlayerDeath(player, hand) {
-    if(player.body.touching.up && hand.goingUp == false) {
+    console.log('in the function');
+    if(hand.body.touching.down && hand.goingDown == true) {
+        console.log('ion the iof statement');
         resetLevelSpikes();
     }
 }
