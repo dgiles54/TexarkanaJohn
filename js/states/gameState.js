@@ -142,6 +142,9 @@ TexarkanaJohn.gameState.prototype = {
         // LIGHTING
         loadShadowTexture();
         
+        initializeSnakes();
+        snakes.callAll('animations.play', 'animations', 'move');
+        
         // HUD
         player.hintBubble = game.add.sprite(player.x, player.y - 100, 'thoughtBubble');
         player.hintBubble.visible = false;
