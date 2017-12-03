@@ -8,7 +8,7 @@ var hintText, healthBar, keyInventory;
 var smokeEmitter;
 var hearts;
 var health = 5;
-var levelNum = 8,
+var levelNum = 4,
     maxLevels = 8;
 var reason;
 
