@@ -415,10 +415,6 @@ TexarkanaJohn.gameState.prototype = {
             if (boss.activated) {             
                 game.physics.arcade.overlap(whipHitbox, boss.soul, hitEnemy);
                 game.physics.arcade.overlap(player, fireball.bullets, fireballDmgPlayer);
-//                game.physics.arcade.overlap(player, bDart1.bullets, dartDmgPlayer);
-//                game.physics.arcade.overlap(player, bDart2.bullets, dartDmgPlayer);
-//                game.physics.arcade.overlap(player, bDart3.bullets, dartDmgPlayer);
-//                game.physics.arcade.overlap(player, bDart4.bullets, dartDmgPlayer);
 
                 if (fireball.shots < 3) {
                     fireball.fireAtXY(player.x, player.y);

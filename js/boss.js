@@ -74,7 +74,7 @@ function createBoss() {
     fireball.addBulletAnimation('fireball', [0, 1, 2, 3, 2, 1], 10, true);
     fireball.trackSprite(boss.soul, 0, 0);
     fireball.bulletSpeed = 200;
-    fireball.fireRate = 500;
+    fireball.fireRate = 750;
     
     bossHands = game.add.group();
     bossHands.enableBody = true;
