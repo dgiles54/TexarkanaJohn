@@ -23,8 +23,8 @@ function createBoss() {
 	boss.isDead = false;
     boss.activated = false;
     
-    boss.HealthBar = game.add.sprite(270, game.height - 90, 'bossHealthBar', 0);
-    boss.HealthBar.fixedToCamera = true;
+    boss.HealthBar = game.add.sprite(game.width*0.55, game.height+110, 'bossHealthBar', 0);
+    boss.HealthBar.fixedToCamera = false;
     //boss.HealthBar.frame = 0;
 	// Physics
 	game.physics.enable(boss);
