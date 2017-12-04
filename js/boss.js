@@ -1,6 +1,14 @@
 var boss, bossHands, fireballLoop, bossHealthBar;
 
 function createBoss() {
+    healthBG = game.add.graphics();
+    healthBG.beginFill(0x353535);
+    healthBG.drawRect(0, 0, 350, 30);
+    healthBG.endFill();
+    healthBG.anchor.setTo(0, 0);
+    healthBG.x = 440;
+    healthBG.y = 555;
+
 	//Inputs
 	bossX = bossObj[0].x;
 	bossY = bossObj[0].y;
@@ -23,8 +31,15 @@ function createBoss() {
 	boss.isDead = false;
     boss.activated = false;
     
-    boss.HealthBar = game.add.sprite(game.width*0.55, game.height+110, 'bossHealthBar', 0);
-    boss.HealthBar.fixedToCamera = false;
+    boss.healthBar = game.add.graphics();
+    boss.healthBar.beginFill(0xff001a);
+    boss.healthBar.drawRect(0, 0, 330, 20);
+    boss.healthBar.endFill();
+    boss.healthBar.anchor.setTo(0, 0);
+    boss.healthBar.x = 450;
+    boss.healthBar.y = 560;
+    // boss.HealthBar = game.add.sprite(game.width*0.55, game.height+110, 'bossHealthBar', 0);
+    // boss.HealthBar.fixedToCamera = false;
     //boss.HealthBar.frame = 0;
 	// Physics
 	game.physics.enable(boss);

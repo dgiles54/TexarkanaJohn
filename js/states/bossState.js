@@ -3,12 +3,13 @@ var TexarkanaJohn = TexarkanaJohn || {};
 var keyCreated = false;
 var hintText, healthBar, keyInventory;
 var smokeEmitter;
+var healthBG;
 
 TexarkanaJohn.bossState = function () {};
 TexarkanaJohn.bossState.prototype = {
 
 	preload: function() {
-		game.load.script('loadLevel.js', 'js/loadLevel.js');
+	game.load.script('loadLevel.js', 'js/loadLevel.js');
         game.load.script('loadAudio.js', 'js/loadAudio.js');
         game.load.script('lighting.js', 'js/lighting.js');
         game.load.script('player.js', 'js/player.js');
@@ -77,7 +78,6 @@ TexarkanaJohn.bossState.prototype = {
         loadLevel('Boss');
 
         createPlayer();
-	},
 
 	update: function() {
 

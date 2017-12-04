@@ -11,6 +11,7 @@ var health = 5;
 var levelNum = 4,
     maxLevels = 8;
 var reason;
+var healthBG;
 
 WebFontConfig = {
 
@@ -423,6 +424,8 @@ TexarkanaJohn.gameState.prototype = {
                     fireball.fireAtXY(player.x, player.y);
                 }
             }
+            // keep healthbar up to date
+            boss.healthBar.scale.setTo(boss.soul.hp/5, 1)
         }
     },
 
