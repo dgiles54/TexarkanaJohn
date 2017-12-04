@@ -156,7 +156,7 @@ function loadLevel(levelNum) {
     hearts = game.add.group();
     hearts.enableBody = true;
     
-    initializeSnakes();
-    snakes.callAll('animations.play', 'animations', 'move');
+    //initializeSnakes();
+    //snakes.callAll('animations.play', 'animations', 'move');
     spiderWebs.callAll('animations.play', 'animations', 'spiderScuttle');
 }
