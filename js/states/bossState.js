@@ -78,6 +78,7 @@ TexarkanaJohn.bossState.prototype = {
         loadLevel('Boss');
 
         createPlayer();
+        },
 
 	update: function() {
 
