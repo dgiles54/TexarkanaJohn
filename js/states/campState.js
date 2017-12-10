@@ -60,6 +60,7 @@ TexarkanaJohn.campState.prototype = {
         game.stage.backgroundColor = '#787878';
         
         // Load audio
+        templeMusic.stop();
         loadAudio();
 
         // Load level

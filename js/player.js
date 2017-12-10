@@ -42,7 +42,7 @@ function createPlayer() {
     player.deathAnimation = player.animations.add('death', [14, 15, 16, 17], 12, false);
     player.deathAnimation.onComplete.add(function () {
         templeMusic.stop();
-        // health = player.health;
+        health = 5;
         game.state.start(game.state.current);
     });
     // Emitter

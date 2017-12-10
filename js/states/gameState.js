@@ -461,7 +461,7 @@ function crumbleBlock(f_block) {
 
 function resetLevel() {
     templeMusic.stop();
-    health = player.health;
+    health = 5;
     game.state.start(game.state.current);
 }
 
