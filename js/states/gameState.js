@@ -12,6 +12,7 @@ var levelNum = 1,
     maxLevels = 8;
 var reason;
 var healthBG;
+var showSpiderHint = true;
 
 WebFontConfig = {
 
@@ -375,11 +376,6 @@ TexarkanaJohn.gameState.prototype = {
                 hintText.text = 'An oddly placed lever. I wonder what it does? (PRESS "E")';
                 player.hintBubble.visible = true;
                 hintText.visible = true;
-                
-            } else if (player.overlap(spiderWebs)) {
-                hintText.text = 'UGH a spiderweb! I should burn it!! (PRESS "E")'
-                player.hintBubble.visible = true;
-                hintText.visible = true;
             } else {
                 player.hintBubble.visible = false;
                 hintText.visible = false;
@@ -390,7 +386,7 @@ TexarkanaJohn.gameState.prototype = {
             box.body.velocity.x = 0;
         });
         
-        if (player.overlap(spiderWebs)) {
+        if (player.overlap(spiderWebs) && showSpiderHint) {
                 hintText.text = 'UGH a spiderweb! I should burn it!! (PRESS "E")'
                 player.hintBubble.visible = true;
                 hintText.visible = true;

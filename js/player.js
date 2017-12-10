@@ -240,6 +240,7 @@ function burnWeb(player, spiderWeb) {
     
     if (spiderWeb.name != "") {
         if (useKey.isDown) {
+            showSpiderHint = false;
             spiderWebFire.play();
             anim = spiderWeb.animations.play('burn');
             game.physics.arcade.overlap(spiderWeb, spiderSpawners, initializeSpider);
@@ -253,6 +254,7 @@ function burnWeb(player, spiderWeb) {
         }
     } else {
         if (useKey.isDown) {
+            showSpiderHint = false;
             spiderWebFire.play();
             game.physics.arcade.overlap(spiderWeb, spiderSpawners, initializeSpider);
             anim = spiderWeb.animations.play('burn');
