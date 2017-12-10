@@ -1,6 +1,7 @@
 var TexarkanaJohn = TexarkanaJohn || {};
 
 var win, retry, button;
+var cred1, cred2, cred3, cred4;
 
 TexarkanaJohn.gameWinState = function () {};
 TexarkanaJohn.gameWinState.prototype = {
@@ -21,9 +22,9 @@ TexarkanaJohn.gameWinState.prototype = {
         // button.onInputDown.add(this.down);
         // button.onInputOut.add(this.out);
 
-        win = game.add.bitmapText(game.width/2, game.height/2, 'blocktopia', 'You Win', 64);
+        win = game.add.bitmapText(game.width/2, game.height/2 - 20, 'blocktopia', 'You Win!', 82);
         win.anchor.setTo(0.5);
-        retry = game.add.bitmapText(game.width/2, game.height/2 + 66, 'blocktopia', 'Retry', 56);
+        retry = game.add.bitmapText(game.width/2, game.height/2 + 66, 'blocktopia', 'Main Menu', 50);
         retry.anchor.setTo(0.5);
         button = game.add.button(game.width/2, game.height/2 + 64, '', this.actionOnClick);
         button.anchor.setTo(0.5);
@@ -31,6 +32,15 @@ TexarkanaJohn.gameWinState.prototype = {
         button.onInputOver.add(this.over);
         button.onInputDown.add(this.down);
         button.onInputOut.add(this.out);
+        
+        cred1 = game.add.bitmapText(game.width/2, game.height - 110, 'blocktopia', 'Made by:', 24);
+        cred1.anchor.setTo(0.5);
+        cred2 = game.add.bitmapText(game.width/2, game.height - 80, 'blocktopia', 'David Giles', 24);
+        cred2.anchor.setTo(0.5);
+        cred3 = game.add.bitmapText(game.width/2, game.height - 60, 'blocktopia', 'Sheena Wang', 24);
+        cred3.anchor.setTo(0.5);
+        cred4 = game.add.bitmapText(game.width/2, game.height - 40, 'blocktopia', 'Zach Ogburn', 24);
+        cred4.anchor.setTo(0.5);
 
     },
 
